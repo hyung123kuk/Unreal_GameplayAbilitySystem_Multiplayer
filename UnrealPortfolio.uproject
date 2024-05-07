@@ -1,13 +1,19 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.1",
+	"EngineAssociation": "{C44278B9-4049-CE5D-655C-CF8B5F12BE66}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "UnrealPortfolio",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"GameplayAbilities",
+				"UMG",
+				"CoreUObject"
+			]
 		}
 	],
 	"Plugins": [
@@ -17,6 +23,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
 		}
 	]
 }
