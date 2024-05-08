@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/HKUIPlayerControllerBase.h"
 
-void UServerMessageWidgetController::SetWidgetControllerParams(const FServerMessageWidgetControllerParams& WCParams)
+void UServerMessageWidgetController::SetWidgetControllerParams(const FServerMessageWidgetControllerParams& Params)
 {
-	Message = WCParams.Message;
+	Message = Params.Message;
 }

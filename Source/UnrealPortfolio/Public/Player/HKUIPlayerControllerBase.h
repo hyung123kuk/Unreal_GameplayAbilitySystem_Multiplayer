@@ -18,7 +18,8 @@ enum class EServerToClientMessageType : uint8
 	None,
 	ServerConnect,
 	CheckID,
-	SignUp
+	SignUp,
+	Login
 };
 
 DECLARE_MULTICAST_DELEGATE_FourParams(FServerMessageDelegate,const FString&, EServerToClientMessageType, bool, bool);

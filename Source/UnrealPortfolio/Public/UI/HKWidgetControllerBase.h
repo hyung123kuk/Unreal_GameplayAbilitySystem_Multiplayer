@@ -6,6 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "HKWidgetControllerBase.generated.h"
 
+
+
 /**
  * 
  */
@@ -18,4 +20,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() {};
 	virtual void BindCallbacksToDependencies() {};
+
 };

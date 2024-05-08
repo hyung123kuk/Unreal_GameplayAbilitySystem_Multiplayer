@@ -24,7 +24,6 @@ public:
 	
 public:
 	/** Room */
-
 	const URoom* GetRoom() const { return EnteredGameRoom; }
 	void SetRoom(URoom* EnterGameRoom) { EnteredGameRoom = EnterGameRoom; }
 

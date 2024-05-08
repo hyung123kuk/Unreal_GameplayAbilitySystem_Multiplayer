@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/WidgetController/HKWidgetControllerBase.h"
+#include "UI/HKWidgetControllerBase.h"
 #include "ServerMessageWidgetController.generated.h"
 
 
@@ -25,9 +25,9 @@ UCLASS(BlueprintType, Blueprintable)
 class UNREALPORTFOLIO_API UServerMessageWidgetController : public UHKWidgetControllerBase
 {
 	GENERATED_BODY()
-public:
 	
-	void SetWidgetControllerParams(const FServerMessageWidgetControllerParams& WCParams);
+public:
+	void SetWidgetControllerParams(const FServerMessageWidgetControllerParams& Params);
 
 
 protected:

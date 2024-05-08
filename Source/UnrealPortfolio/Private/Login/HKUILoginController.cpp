@@ -11,19 +11,9 @@ AHKUILoginController::AHKUILoginController()
 
 }
 
-void AHKUILoginController::ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage, bool Success)
+void AHKUILoginController::ResponseFromServerToClient_Client_Implementation(const FString& Message, EServerToClientMessageType MessageType, bool ShowPopup,bool bSuccess)
 {
-	Super::ReceiveServerMessage(Message, MessageType, PopupMessage, Success);
-
-	if (MessageType == EServerToClientMessageType::CheckID)
-	{
-		CheckIDSuccessOrNotDelegate.Broadcast(Success);
-	}
-}
-
-void AHKUILoginController::ResponseFromServerToClient_Client_Implementation(const FString& Message, EServerToClientMessageType MessageType, bool bSuccess)
-{
-	ReceiveServerMessage(Message, MessageType, true ,bSuccess);
+	ReceiveServerMessage(Message, MessageType, ShowPopup,bSuccess);
 }
 
 void AHKUILoginController::CheckIDForSignUp_Server_Implementation(const FString& ID)
@@ -41,7 +31,7 @@ void AHKUILoginController::CheckIDForSignUp_Server_Implementation(const FString&
 		}
 	}
 
-	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::CheckID, bSuccess);
+	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::CheckID, true, bSuccess);
 }
 
 void AHKUILoginController::SignUp_Server_Implementation(const FString& ID, const FString& Password, const FString& PasswordConfirm)
@@ -58,6 +48,37 @@ void AHKUILoginController::SignUp_Server_Implementation(const FString& ID, const
 		}
 	}
 
-	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::SignUp, bSuccess);
+	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::SignUp, true, bSuccess);
 }
 
+
+void AHKUILoginController::AttempLogin_Server_Implementation(const FString& ID, const FString& Password)
+{
+	AHKLoginGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLoginGameMode>();
+	FString Message = FString();
+	bool bSuccess = false;
+	if (GameMode)
+	{
+		if (GameMode->AttemptedToLogin(ID, Password, Message))
+		{
+			bSuccess = true;
+		}
+	}
+
+	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::Login, !bSuccess, bSuccess);
+}
+
+void AHKUILoginController::ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage, bool Success)
+{
+	Super::ReceiveServerMessage(Message, MessageType, PopupMessage, Success);
+
+	if (MessageType == EServerToClientMessageType::CheckID)
+	{
+		CheckIDSuccessOrNotDelegate.Broadcast(Success);
+	}
+
+	if (MessageType == EServerToClientMessageType::Login)
+	{
+		LoginSuccessOrNotDelegate.Broadcast(Success);
+	}
+}

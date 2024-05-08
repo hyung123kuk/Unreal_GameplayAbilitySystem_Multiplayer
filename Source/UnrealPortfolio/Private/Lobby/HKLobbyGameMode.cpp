@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+ï»¿// Copyright Druid Mechanics
 
 
 #include "Lobby/HKLobbyGameMode.h"
@@ -9,15 +9,28 @@
 #include "HKDatabaseFunctionLibrary.h"
 
 
+bool AHKLobbyGameMode::AttemptedToLogin(const FString& Id, const FString& Password, FString& ErrorMessage)
+{
+	bool bAttempedToLogin = Super::AttemptedToLogin(Id, Password, ErrorMessage);
+	
+	if (AllPlayers.Contains(Id))
+	{
+		ErrorMessage = TEXT("ì´ë¯¸ ë¡œê·¸ì¸ëœ ì•„ì´ë””ì…ë‹ˆë‹¤.");
+		UE_LOG(ServerLog, Error, TEXT("This ID is already logged in  < ID : %s Password : %s > "), *Id, *Password);
+		bAttempedToLogin = false;
+	}
+
+	return bAttempedToLogin;
+}
+
 void AHKLobbyGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 
 	const FString Id = UGameplayStatics::ParseOption(Options, FString(TEXT("Id")));
 	const FString Password = UGameplayStatics::ParseOption(Options, FString(TEXT("Password")));
-	if (AttemptedToLogin(Id, Password, ErrorMessage) == false)
+	if (!AttemptedToLogin(Id, Password, ErrorMessage))
 	{
-		UE_LOG(ServerLog, Error, TEXT("Player's login attempt failed  < ID : %s Password : %s > "), *Id, *Password);
 		return;
 	}
 }
@@ -108,7 +121,7 @@ void AHKLobbyGameMode::ChangePlayerReadyState(FString Id, bool NewReadyState)
 
 void AHKLobbyGameMode::PlayerAllReady(const URoom* Room)
 {
-	//TODO : ÇÃ·¹ÀÌ¾î°¡ ¸ğµÎ ÁØºñÇÑ ÈÄ ¹æÀåÀÌ ½ÃÀÛÇÏµµ·Ï
+	//TODO : í”Œë ˆì´ì–´ê°€ ëª¨ë‘ ì¤€ë¹„í•œ í›„ ë°©ì¥ì´ ì‹œì‘í•˜ë„ë¡
 	GameStart(Room);
 }
 

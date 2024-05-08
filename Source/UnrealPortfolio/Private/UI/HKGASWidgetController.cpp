@@ -1,7 +1,7 @@
 // Copyright Druid Mechanics
 
 
-#include "UI/WidgetController/HKGASWidgetController.h"
+#include "UI/HKGASWidgetController.h"
 
 void UHKGASWidgetController::SetWidgetControllerParams(const FGASWidgetControllerParams& WCParams)
 {

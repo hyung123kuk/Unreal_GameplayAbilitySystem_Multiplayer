@@ -18,12 +18,11 @@ class UNREALPORTFOLIO_API AHKDedicatedServerGameModeBase : public AGameModeBase
 	
 public:
 	virtual void StartPlay();
-
+	virtual bool AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage);
 	
 protected:
 	/** Database */
 	void ImportMySQLAccountInformationFromJson();
-	bool AttemptedToLogin(const FString& Id, const FString& Password, FString& ErrorMessage);
 	/** Database End */
 
 

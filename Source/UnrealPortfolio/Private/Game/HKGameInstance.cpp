@@ -8,10 +8,10 @@
 void UHKGameInstance::Init()
 {
     Super::Init();
-	GEngine->TravelFailureEvent.AddUObject(this, &UHKGameInstance::OnNetworkLevelChangeFailure);
+	GEngine->NetworkFailureEvent.AddUObject(this, &UHKGameInstance::OnNetworkLevelChangeFailure);
 }
 
-void UHKGameInstance::OnNetworkLevelChangeFailure(UWorld*, ETravelFailure::Type, const FString& ErrorMessage)
+void UHKGameInstance::OnNetworkLevelChangeFailure(UWorld*, UNetDriver*, ENetworkFailure::Type FailType, const FString& ErrorMessage)
 {
     LevelChangeErrorMessage = ErrorMessage;
     OccurredLevelChangeError = true;

@@ -33,22 +33,18 @@ bool AHKLoginGameMode::CheckIDForSignUp(const FString& ID, FString& ErrorMessage
 
 bool AHKLoginGameMode::CheckValidForSignUp(const FString& ID, const FString& Password, const FString& PasswordConfirm, FString& ErrorMessage)
 {
-	UE_LOG(ServerLog, Error, TEXT("CheckValidForSignUp"));
 	if (!CheckIDForSignUp(ID, ErrorMessage))
 	{
-		UE_LOG(ServerLog, Error, TEXT("CheckIDForSignUp"));
 		return false;
 	}
 
 	if (!UHKBlueprintFunctionLibrary::MatchPasswordAndPasswordConfirm(Password, PasswordConfirm, ErrorMessage))
 	{
-		UE_LOG(ServerLog, Error, TEXT("MatchPasswordAndPasswordConfirm"));
 		return false;
 	}
 
 	if (!UHKBlueprintFunctionLibrary::CheckPasswordValidity(Password, ErrorMessage))
 	{
-		UE_LOG(ServerLog, Error, TEXT("CheckPasswordValidity"));
 		return false;
 	}
 
@@ -60,4 +56,5 @@ bool AHKLoginGameMode::CheckValidForSignUp(const FString& ID, const FString& Pas
 
 	return true;
 }
+
 

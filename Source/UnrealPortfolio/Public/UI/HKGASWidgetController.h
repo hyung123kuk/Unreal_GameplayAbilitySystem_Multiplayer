@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/WidgetController/HKWidgetControllerBase.h"
+#include "UI/HKWidgetControllerBase.h"
 #include "HKGASWidgetController.generated.h"
 
 class UAbilitySystemComponent;

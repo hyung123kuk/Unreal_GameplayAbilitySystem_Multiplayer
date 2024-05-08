@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+﻿// Copyright Druid Mechanics
 
 
 #include "Game/HKDedicatedServerGameModeBase.h"
@@ -6,6 +6,7 @@
 #include "MySQLDatabase.h"
 #include "MySQLConnection.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+
 
 void AHKDedicatedServerGameModeBase::StartPlay()
 {
@@ -48,31 +49,23 @@ void AHKDedicatedServerGameModeBase::ImportMySQLAccountInformationFromJson()
 	}
 }
 
-bool AHKDedicatedServerGameModeBase::AttemptedToLogin(const FString& Id, const FString& Password, FString& ErrorMessage)
+bool AHKDedicatedServerGameModeBase::AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage)
 {
-	UE_LOG(ServerLog, Warning, TEXT("Player Login Attempt < ID : %s Password : %s > "), *Id, *Password);
+	UE_LOG(ServerLog, Warning, TEXT("Player Login Attempt < ID : %s Password : %s > "), *ID, *Password);
 
-	bool ExistedID = UHKDatabaseFunctionLibrary::ExistedUserID(UserData, Id);
-
-	if (!ExistedID)
+	if (!UHKDatabaseFunctionLibrary::ExistedUserID(UserData, ID))
 	{
-		ErrorMessage = TEXT("The created ID does not exist...");
+		ErrorMessage = TEXT("존재하지 않는 아이디 입니다.");
+		UE_LOG(ServerLog, Error, TEXT("This ID does not exist < ID : %s > "), *ID);
 		return false;
 	}
 
-	bool MatchPasswordToID = UHKDatabaseFunctionLibrary::MatchPasswordToID(UserData, Id, Password);
-	if (!MatchPasswordToID)
+	if (!UHKDatabaseFunctionLibrary::MatchPasswordToID(UserData, ID, Password))
 	{
-		ErrorMessage = TEXT("Passwords do not match..");
+		ErrorMessage = TEXT("비밀번호가 일치하지 않습니다.");
+		UE_LOG(ServerLog, Error, TEXT("Passwords do not match < ID : %s > "), *ID);
 		return false;
 	}
-
-	//TEST CODE (�ӽ� �ּ�)
-	/*if (AllPlayers.Contains(Id))
-	{
-		ErrorMessage = TEXT("Already logged in..");
-		return false;
-	}*/
 
 	return true;
 }

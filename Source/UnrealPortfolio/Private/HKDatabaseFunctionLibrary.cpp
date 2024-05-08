@@ -58,7 +58,7 @@ bool UHKDatabaseFunctionLibrary::MatchPasswordToID(UMySQLConnection* Database, c
 		return false;
 	}
 
-	FString QueryString = FString::Printf(TEXT("SELECT * FROM member WHERE id = %s AND PASSWORD = sha2(%s,224)"), *ID, *Password);
+	FString QueryString = FString::Printf(TEXT("SELECT * FROM member WHERE id = '%s' AND PASSWORD = sha2('%s',224)"), *ID, *Password);
 	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
 	if (QueryResult.ResultRows.Num() == 0)
 	{

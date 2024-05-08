@@ -19,7 +19,7 @@ public:
 	virtual void Init() override;
 
 	//Netwrok Message
-	void OnNetworkLevelChangeFailure(UWorld*, ETravelFailure::Type, const FString& ErrorMessage);
+	void OnNetworkLevelChangeFailure(UWorld*, UNetDriver*, ENetworkFailure::Type FailType, const FString& ErrorMessage);
 	bool GetNetworkLevelChangeErrorMessage(FString& ErrorMessage);
 	// ~ Network Message
 
