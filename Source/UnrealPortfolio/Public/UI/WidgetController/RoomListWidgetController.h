@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UI/HKWidgetControllerBase.h"
 #include "Interaction/UIPageInterface.h"
-#include "HKRoomListWidgetController.generated.h"
+#include "RoomListWidgetController.generated.h"
 
 USTRUCT(BlueprintType)
 struct FRoomListWidgetControllerParams
@@ -31,7 +31,7 @@ struct FRoomListWidgetControllerParams
 
 
 UCLASS(BlueprintType, Blueprintable)
-class UNREALPORTFOLIO_API UHKRoomListWidgetController : public UHKWidgetControllerBase, public IUIPageInterface
+class UNREALPORTFOLIO_API URoomListWidgetController : public UHKWidgetControllerBase, public IUIPageInterface
 {
 	GENERATED_BODY()
 	

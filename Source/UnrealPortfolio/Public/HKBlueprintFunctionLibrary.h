@@ -26,4 +26,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Network")
 	static bool MatchPasswordAndPasswordConfirm(const FString& Password, const FString& PasswordConfirm, FString& ErrorMessage);
+
 };
