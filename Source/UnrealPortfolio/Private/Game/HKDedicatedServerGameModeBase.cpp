@@ -51,21 +51,23 @@ void AHKDedicatedServerGameModeBase::ImportMySQLAccountInformationFromJson()
 
 bool AHKDedicatedServerGameModeBase::AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage)
 {
-	UE_LOG(ServerLog, Warning, TEXT("Player Login Attempt < ID : %s Password : %s > "), *ID, *Password);
+	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 로그인을 시도합니다."), *ID);
 
 	if (!UHKDatabaseFunctionLibrary::ExistedUserID(UserData, ID))
 	{
 		ErrorMessage = TEXT("존재하지 않는 아이디 입니다.");
-		UE_LOG(ServerLog, Error, TEXT("This ID does not exist < ID : %s > "), *ID);
+		UE_LOG(ServerLog, Error, TEXT("이 아이디(%s)는 존재하지 않는 아이디입니다."), *ID);
 		return false;
 	}
 
 	if (!UHKDatabaseFunctionLibrary::MatchPasswordToID(UserData, ID, Password))
 	{
 		ErrorMessage = TEXT("비밀번호가 일치하지 않습니다.");
-		UE_LOG(ServerLog, Error, TEXT("Passwords do not match < ID : %s > "), *ID);
+		UE_LOG(ServerLog, Error, TEXT("유저가 입력한 비밀번호가 일치하지 않습니다."));
 		return false;
 	}
+
+	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 로그인에 성공했습니다."), *ID);
 
 	return true;
 }

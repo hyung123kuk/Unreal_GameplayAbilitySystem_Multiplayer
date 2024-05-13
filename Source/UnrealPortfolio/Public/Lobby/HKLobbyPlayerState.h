@@ -9,7 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnReadyStateChangedDelegate,FString,PlayerName, bool,NewReadyState);
 
-class URoom;
+class URoomUserInfoWidgetControlle;
+class AHKUILobbyPlayerController;
 
 /**
  * 
@@ -20,31 +21,26 @@ class UNREALPORTFOLIO_API AHKLobbyPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 public:
-	FOnReadyStateChangedDelegate OnReadyStateChanged;
+	virtual void PostInitializeComponents() override;
 	
 public:
-	/** Room */
-	const URoom* GetRoom() const { return EnteredGameRoom; }
-	void SetRoom(URoom* EnterGameRoom) { EnteredGameRoom = EnterGameRoom; }
-
-	const bool GetIsRoomAdmin() const { return IsRoomAdmin; }
+	/** Only Server Func */
+	void SetEnteredRoomName(FString EnterGameRoom) { EnteredGameRoomName = EnterGameRoom; }
 	void SetIsRoomAdmin(bool bIsRoomAdmin) { IsRoomAdmin = bIsRoomAdmin; }
-
+	void SetListenServerIP(FString& ServerIP) { ListenServerIP = ServerIP; }
+	void SetIsReady(bool bIsReady) { IsReady = bIsReady; }
+	/** Only Server Func End*/
+	
+	/** Room Info Get*/
+	FString GetEnteredRoomName() const { return EnteredGameRoomName; }
+	const bool GetIsRoomAdmin() const { return IsRoomAdmin; }
 	const bool GetIsReady() const { return IsReady; }
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void SetIsReady_Server(bool bIsReady);
-
-	/** Room End */
+	/** Room Info Get End*/
 
 	/** Match Making */
 	UFUNCTION(BlueprintCallable)
 	const FString& GetListenServerIP() const { return ListenServerIP; }
-	void SetListenServerIP(FString& ServerIP) { ListenServerIP = ServerIP; }
 	/** Match Making End */
-
-
-	UFUNCTION()
-	void OnRep_ListenServerIP();
 
 	void GameStart();
 
@@ -52,15 +48,54 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
-	UPROPERTY(Replicated)
-	TObjectPtr<URoom> EnteredGameRoom;
+	/** Room */
+	void EnteredGameRoom();
+	void ExitGameRoom();
+	void SendChangedRoomInformationToLocalClientInSameRoom();
+
+	UFUNCTION()
+	void OnRep_GameRoomName();
+	UFUNCTION()
+	void OnRep_RoomAdmin();
+	UFUNCTION()
+	void OnRep_IsReady();
+	UFUNCTION()
+	void OnRep_SelectCharacter();
+	UFUNCTION()
+	void OnRep_ListenServerIP();
+	/** Room End*/
+
+private:
+	UPROPERTY(ReplicatedUsing = OnRep_GameRoomName)
+	FString EnteredGameRoomName;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ListenServerIP)
 	FString ListenServerIP;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_RoomAdmin)
 	bool IsRoomAdmin;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_IsReady)
 	bool IsReady;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SelectCharacter)
+	int SelectCharacter;
+
+	FString ExitedGameRoomName;
+	bool bSameRoomAsLocalClient;
+
+	UPROPERTY()
+	TObjectPtr<AHKLobbyPlayerState> LocalClientPlayerState;
+
+	UPROPERTY()
+	TObjectPtr<AHKUILobbyPlayerController> LocalClientPlayerController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URoomUserInfoWidgetControlle> RoomInfoWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<URoomUserInfoWidgetControlle> RoomInfoWidgetController;
+
+
+
 };

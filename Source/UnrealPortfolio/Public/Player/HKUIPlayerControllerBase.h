@@ -11,7 +11,6 @@ class UHKUserWidget;
 class UServerMessageWidgetController;
 struct FServerMessageWidgetControllerParams;
 
-
 UENUM(BlueprintType)
 enum class EServerToClientMessageType : uint8
 {
@@ -19,15 +18,14 @@ enum class EServerToClientMessageType : uint8
 	ServerConnect,
 	CheckID,
 	SignUp,
-	Login
+	Login,
+	MakeRoom,
 };
 
-DECLARE_MULTICAST_DELEGATE_FourParams(FServerMessageDelegate,const FString&, EServerToClientMessageType, bool, bool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSuccessOrNotDelegate, bool, Success);
+DECLARE_MULTICAST_DELEGATE_FourParams(FServerMessageDelegate,const FString&, EServerToClientMessageType, bool, bool);
 
-/**
- * 
- */
+
 UCLASS()
 class UNREALPORTFOLIO_API AHKUIPlayerControllerBase : public APlayerController
 {
@@ -35,11 +33,15 @@ class UNREALPORTFOLIO_API AHKUIPlayerControllerBase : public APlayerController
 		
 public:
 	virtual void BeginPlay() override;
-	virtual void ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType ,bool PopupMessage = false, bool Success = false);
 
 	FServerMessageDelegate AllServerMessagesDelegate;
 
-private:
+protected:
+	UFUNCTION(Client, Reliable)
+	void SendServerMessage_Client(const FString& Message, EServerToClientMessageType MessageType, bool ShowPopup, bool Success);
+	virtual void ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage = false, bool Success = false);
+
+protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIWidgetClass;
 

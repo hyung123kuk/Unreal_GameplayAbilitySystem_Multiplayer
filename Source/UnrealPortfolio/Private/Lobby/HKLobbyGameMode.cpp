@@ -9,16 +9,26 @@
 #include "HKDatabaseFunctionLibrary.h"
 
 
+
+void AHKLobbyGameMode::StartPlay()
+{
+	Super::StartPlay();
+
+}
+
 bool AHKLobbyGameMode::AttemptedToLogin(const FString& Id, const FString& Password, FString& ErrorMessage)
 {
 	bool bAttempedToLogin = Super::AttemptedToLogin(Id, Password, ErrorMessage);
-	
+	UE_LOG(ServerLog, Warning, TEXT("이미 로그인된 아이디(%s)가 있는지 확인합니다."), *Id);
+
 	if (AllPlayers.Contains(Id))
 	{
 		ErrorMessage = TEXT("이미 로그인된 아이디입니다.");
-		UE_LOG(ServerLog, Error, TEXT("This ID is already logged in  < ID : %s Password : %s > "), *Id, *Password);
+		UE_LOG(ServerLog, Error, TEXT("유저가 이미 로그인된 아이디(%s)로 로그인하여 실패했습니다."), *Id);
 		bAttempedToLogin = false;
 	}
+
+	UE_LOG(ServerLog, Warning, TEXT("이미 로그인된 아이디(%s)가 없어 로비에 입장합니다."), *Id);
 
 	return bAttempedToLogin;
 }
@@ -29,6 +39,11 @@ void AHKLobbyGameMode::PreLogin(const FString& Options, const FString& Address, 
 
 	const FString Id = UGameplayStatics::ParseOption(Options, FString(TEXT("Id")));
 	const FString Password = UGameplayStatics::ParseOption(Options, FString(TEXT("Password")));
+
+	//TEST CODE
+	return; 
+	//TEST CODE
+
 	if (!AttemptedToLogin(Id, Password, ErrorMessage))
 	{
 		return;
@@ -45,11 +60,19 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 		return NewPlayerController;
 	}
 
-	const FString Id = UGameplayStatics::ParseOption(Options, FString(TEXT("Id")));
+	//const FString Id = UGameplayStatics::ParseOption(Options, FString(TEXT("Id")));
+
+	//TEST CODE
+	static int a = 0;
+	const FString Id = FString::FromInt(a); 
+	a++;
+	//TEST CODE
+
 	AHKLobbyPlayerState* NewPlayerState = NewPlayerController->GetPlayerState<AHKLobbyPlayerState>();
 	NewPlayerState->SetPlayerName(Id);
 
 	AllPlayers.Add(Id, NewPlayerState);
+	LobbyPlayers.Add(NewPlayerState);
 
 	return NewPlayerController;
 }
@@ -65,54 +88,105 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	AHKLobbyPlayerState* NewPlayerState = NewPlayer->GetPlayerState<AHKLobbyPlayerState>();
 	FString PlayerIP = *NewPlayerState->GetNetConnection()->LowLevelGetRemoteAddress(false);
 
-	UE_LOG(ServerLog, Warning, TEXT("Player IP : %s"), *PlayerIP);
-
-	//TEST CODE
-
-	if (Rooms.Num() == 0)
-	{
-		URoom* NewRoom = NewObject<URoom>();
-		NewRoom->EnterPlayer(NewPlayerState);
-		NewRoom->ChangeRoomAdmin(NewPlayerState);
-		
-		Rooms.Add(NewRoom);
-	}
-	else
-	{
-		Rooms[0]->EnterPlayer(NewPlayerState);
-	}
-	
-	NewPlayerState->SetRoom(Rooms[0]);
-	NewPlayerState->OnReadyStateChanged.AddDynamic(this, &AHKLobbyGameMode::ChangePlayerReadyState);
-
-
-	//TEST CODE END
+	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 IP 주소 : %s"), *NewPlayerState->GetPlayerName(), *PlayerIP);
 
 }
 
 void AHKLobbyGameMode::Logout(AController* Exiting)
 {
-	const AHKLobbyPlayerState* NewPlayerState = Exiting->GetPlayerState<AHKLobbyPlayerState>();
-	if (::IsValid(NewPlayerState))
+	AHKLobbyPlayerState* ExitPlayerState = Exiting->GetPlayerState<AHKLobbyPlayerState>();
+	if (IsValid(ExitPlayerState))
+		return;
+
+	const FString PlayerID = ExitPlayerState->GetPlayerName();
+	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 로그아웃을 시도합니다."), *PlayerID);
+	FString Meesage;
+	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerID, Meesage);
+	if (PlayerState == nullptr)
+		UE_LOG(ServerLog, Warning, TEXT("로비에 유저(%s)가 존재하지 않습니다."), *PlayerID);
+
+	URoom* Room = FindEnteredRoomWithPlayerState(ExitPlayerState);
+	if (Room)
 	{
-		const FString PlayerID = NewPlayerState->GetName();
-		if (AllPlayers.Contains(PlayerID))
-		{
-			AllPlayers.Remove(PlayerID);
-		}
+		Room->ExitPlayer(ExitPlayerState);
 	}
+	AllPlayers.Remove(PlayerID);
+	LobbyPlayers.Remove(ExitPlayerState);
+
+	UE_LOG(ServerLog, Warning, TEXT("로비에 유저(%s)가 존재하지 않습니다."), *PlayerID);
+}
+
+bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, int MaxPlayers, FString& Message)
+{
+	if (Rooms.Contains(RoomName))
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 이미 존재하는 방 이름(%s)을 만들려다 실패했습니다."), *PlayerId, *RoomName);
+		Message = TEXT("이미 존재하는 방 이름 입니다.");
+		return false;
+	}
+
+	URoom* NewRoom = NewObject<URoom>();
+	NewRoom->RoomInfoSettings(RoomName, RoomPassword, MaxPlayers);
+	Rooms.Add(RoomName, NewRoom);
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)을 만들었습니다."), *PlayerId, *RoomName);
+
+	if (TryToEnterRoom(PlayerId, RoomName, RoomPassword, Message))
+	{
+		AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+		if (PlayerState == nullptr)
+			return false;
+		
+		NewRoom->ChangeRoomAdmin(PlayerState);
+		return true;
+	}
+
+	return false;
+}
+
+bool AHKLobbyGameMode::TryToEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, FString& Message)
+{
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에 입장을 시도합니다."), *PlayerId, *RoomName);
+
+	URoom* Room = FindRoom(RoomName, Message);
+	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (Room == nullptr || PlayerState == nullptr)
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 방(%s)에 입장을 실패합니다."), *PlayerId, *RoomName);
+		return false;
+	}
+
+	if (Room->EnterPlayer(PlayerState, RoomPassword, Message))
+	{
+		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에 입장했습니다."), *PlayerId, *RoomName);
+		LobbyPlayers.Remove(PlayerState);
+		return true;
+	}
+
+	UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 방(%s)에 입장을 실패합니다."), *PlayerId, *RoomName);
+	return false;
+}
+
+bool AHKLobbyGameMode::TryToExitRoomAndGoToLobby(const FString& PlayerId, const FString& RoomName, FString& Message)
+{
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에서 나가 로비로 가려고 시도합니다."), *PlayerId, *RoomName);
+	URoom* Room = FindRoom(RoomName, Message);
+	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	Room->ExitPlayer(PlayerState);
+	LobbyPlayers.Add(PlayerState);
+
+	return true;
 }
 
 void AHKLobbyGameMode::ChangePlayerReadyState(FString Id, bool NewReadyState)
 {
 	if (AllPlayers.Contains(Id))
 	{
-		const AHKLobbyPlayerState* PlayerState = AllPlayers.Find(Id)->Get();
-		const URoom* Room = PlayerState->GetRoom();
+		AHKLobbyPlayerState* PlayerState = AllPlayers.Find(Id)->Get();
+		const URoom* Room = FindEnteredRoomWithPlayerState(PlayerState);
 
-		UE_LOG(ServerLog, Warning, TEXT("%d / %d"),Room->GetReadyPlayer(), Room->GetAllPlayer());
+		UE_LOG(ServerLog, Warning, TEXT("%d / %d"),Room->GetReadyPlayersCount(), Room->GetAllPlayersCount());
 
-		if (Room->ReadyAllPlayer())
+		if (Room->ReadyAllPlayers())
 		{
 			PlayerAllReady(Room);
 		}
@@ -136,11 +210,45 @@ void AHKLobbyGameMode::GameStart(const URoom* Room)
 	for (AHKLobbyPlayerState* Player : JoinPlayers)
 	{
 		Player->SetListenServerIP(AdminPlayerIP);
-		UE_LOG(ServerLog, Log, TEXT("Player ID : %s"), *Player->GetName());
+		UE_LOG(ServerLog, Log, TEXT("Player ID : %s"), *Player->GetPlayerName());
 	}
 
 	UE_LOG(ServerLog, Warning, TEXT("------------------------GameStart------------------------\n"));
 
+}
+
+URoom* AHKLobbyGameMode::FindEnteredRoomWithPlayerState(AHKLobbyPlayerState* PlayerState)
+{
+	FString EnteredRoomName = PlayerState->GetEnteredRoomName();
+	FString Message;
+	URoom* EnteredRoom = FindRoom(EnteredRoomName, Message);
+	return EnteredRoom;
+}
+
+URoom* AHKLobbyGameMode::FindRoom(const FString& RoomName, FString& Message)
+{
+	if (Rooms.Contains(RoomName))
+	{
+		URoom* Room = *Rooms.Find(RoomName);
+		return Room;
+	}
+
+	Message = TEXT("방을 찾을 수 없습니다.");
+	UE_LOG(ServerLog, Error, TEXT("방(%s)을 찾을 수 없습니다."), *RoomName);
+	return nullptr;
+}
+
+AHKLobbyPlayerState* AHKLobbyGameMode::FindPlayerState(const FString& PlayerId, FString& Message)
+{
+	if (AllPlayers.Contains(PlayerId))
+	{
+		AHKLobbyPlayerState* Player = *AllPlayers.Find(PlayerId);
+		return Player;
+	}
+
+	Message = TEXT("플레이어를 찾을 수 없습니다.");
+	UE_LOG(ServerLog, Error, TEXT("플레이어(%s)를 찾을 수 없습니다."), *PlayerId);
+	return nullptr;
 }
 
 

@@ -11,7 +11,6 @@
 void UHKPageWidget::AddElement(UHKWidgetControllerBase* NewElement)
 {
 	IUIPageInterface* NewPageInterface = Cast<IUIPageInterface>(NewElement);
-
 	for (UHKWidgetControllerBase* Element : AllElements)
 	{
 		IUIPageInterface* ElementInterface = Cast<IUIPageInterface>(Element);

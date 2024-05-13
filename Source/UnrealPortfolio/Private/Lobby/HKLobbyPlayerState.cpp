@@ -7,6 +7,75 @@
 #include "Engine/Engine.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Lobby/HKUILobbyPlayerController.h"
+#include "UI/WidgetController/RoomUserInfoWidgetControlle.h"
+
+
+void AHKLobbyPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (GetNetMode() == NM_DedicatedServer)
+	{
+		return;
+	}
+	LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
+	LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerState(this, 0));
+}
+
+void AHKLobbyPlayerState::EnteredGameRoom()
+{
+	if (LocalClientPlayerState->GetEnteredRoomName() == EnteredGameRoomName)
+	{
+		bSameRoomAsLocalClient = true;
+		if (RoomInfoWidgetController == nullptr)
+		{
+			RoomInfoWidgetController = NewObject<URoomUserInfoWidgetControlle>(this, RoomInfoWidgetControllerClass);
+		}
+		LocalClientPlayerController->EnterSameRoomUserWidgetController(RoomInfoWidgetController);
+	}
+}
+
+void AHKLobbyPlayerState::ExitGameRoom()
+{
+	bSameRoomAsLocalClient = false;
+	if (LocalClientPlayerState->GetEnteredRoomName() == ExitedGameRoomName)
+	{
+		LocalClientPlayerController->ExitGameRoomUserWidgetController(RoomInfoWidgetController);
+	}
+}
+
+void AHKLobbyPlayerState::OnRep_RoomAdmin()
+{
+	SendChangedRoomInformationToLocalClientInSameRoom();
+}
+
+void AHKLobbyPlayerState::OnRep_IsReady()
+{
+	SendChangedRoomInformationToLocalClientInSameRoom();
+}
+
+void AHKLobbyPlayerState::OnRep_SelectCharacter()
+{
+	SendChangedRoomInformationToLocalClientInSameRoom();
+}
+
+void AHKLobbyPlayerState::OnRep_GameRoomName()
+{
+
+	if (EnteredGameRoomName.IsEmpty() && !ExitedGameRoomName.IsEmpty())
+	{
+		ExitGameRoom();
+	}
+
+	if (!EnteredGameRoomName.IsEmpty())
+	{
+		EnteredGameRoom();
+	}
+
+	ExitedGameRoomName = EnteredGameRoomName;
+
+	SendChangedRoomInformationToLocalClientInSameRoom();
+}
 
 void AHKLobbyPlayerState::OnRep_ListenServerIP()
 {
@@ -16,6 +85,16 @@ void AHKLobbyPlayerState::OnRep_ListenServerIP()
 	}
 
 	GameStart();
+}
+
+void AHKLobbyPlayerState::SendChangedRoomInformationToLocalClientInSameRoom()
+{
+	//방이 있고, 로컬 플레이어와 같은 방에 있다면
+	if (!EnteredGameRoomName.IsEmpty() && bSameRoomAsLocalClient)
+	{
+		FString UserName = GetPlayerName();
+		RoomInfoWidgetController->SetWidgetControllerParams(FRoomUserInfoWidgetControllerParams(UserName, IsRoomAdmin,IsReady, SelectCharacter));
+	}
 }
 
 void AHKLobbyPlayerState::GameStart()
@@ -48,23 +127,8 @@ void AHKLobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(ThisClass, ListenServerIP);
 	DOREPLIFETIME(ThisClass, IsRoomAdmin);
 	DOREPLIFETIME(ThisClass, IsReady);
-	DOREPLIFETIME(ThisClass, EnteredGameRoom);
+	DOREPLIFETIME(ThisClass, EnteredGameRoomName);
 }
-
-void AHKLobbyPlayerState::SetIsReady_Server_Implementation(bool bIsReady)
-{
-
-	UE_LOG(LogTemp,Log,TEXT("prev : %s , new : %s"),IsReady?TEXT("true"):TEXT("false"), bIsReady ? TEXT("true") : TEXT("false"))
-
-	if (IsReady == bIsReady)
-	{
-		return;
-	}
-
-	IsReady = bIsReady;
-	OnReadyStateChanged.Broadcast(GetPlayerName(), IsReady);
-}
-
 
 
 

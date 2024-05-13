@@ -6,15 +6,6 @@
 #include "Login/HKLoginGameMode.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
 
-AHKUILoginController::AHKUILoginController()
-{
-
-}
-
-void AHKUILoginController::ResponseFromServerToClient_Client_Implementation(const FString& Message, EServerToClientMessageType MessageType, bool ShowPopup,bool bSuccess)
-{
-	ReceiveServerMessage(Message, MessageType, ShowPopup,bSuccess);
-}
 
 void AHKUILoginController::CheckIDForSignUp_Server_Implementation(const FString& ID)
 {
@@ -27,11 +18,11 @@ void AHKUILoginController::CheckIDForSignUp_Server_Implementation(const FString&
 		{
 			Message = TEXT("사용할 수 있는 ID입니다.");
 			bSuccess = true;
-			UE_LOG(ServerLog, Log, TEXT("This is a valid ID! %s "), *ID);
+			UE_LOG(ServerLog, Log, TEXT("유저가 사용할수 있는 아이디(%s) 확인에 성공했습니다."), *ID);
 		}
 	}
 
-	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::CheckID, true, bSuccess);
+	SendServerMessage_Client(Message, EServerToClientMessageType::CheckID, true, bSuccess);
 }
 
 void AHKUILoginController::SignUp_Server_Implementation(const FString& ID, const FString& Password, const FString& PasswordConfirm)
@@ -48,7 +39,7 @@ void AHKUILoginController::SignUp_Server_Implementation(const FString& ID, const
 		}
 	}
 
-	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::SignUp, true, bSuccess);
+	SendServerMessage_Client(Message, EServerToClientMessageType::SignUp, true, bSuccess);
 }
 
 
@@ -65,7 +56,7 @@ void AHKUILoginController::AttempLogin_Server_Implementation(const FString& ID, 
 		}
 	}
 
-	ResponseFromServerToClient_Client(Message, EServerToClientMessageType::Login, !bSuccess, bSuccess);
+	SendServerMessage_Client(Message, EServerToClientMessageType::Login, !bSuccess, bSuccess);
 }
 
 void AHKUILoginController::ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage, bool Success)

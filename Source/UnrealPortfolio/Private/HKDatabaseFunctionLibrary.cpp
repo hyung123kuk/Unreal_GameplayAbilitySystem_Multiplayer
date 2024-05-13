@@ -74,8 +74,8 @@ FMySQLConnectoreQueryResult UHKDatabaseFunctionLibrary::Query(UMySQLConnection* 
 	FMySQLConnectoreQueryResult QueryResult = UMySQLDatabase::MySQLConnectorGetData(Query, Database);
 	if (!QueryResult.Success)
 	{
-		UE_LOG(ServerLog, Warning, TEXT("Fail Query : %s "), *Query);
-		UE_LOG(ServerLog, Warning, TEXT("Error Message : %s "), *QueryResult.ErrorMessage);
+		UE_LOG(ServerLog, Warning, TEXT("쿼리 실패 : %s "), *Query);
+		UE_LOG(ServerLog, Warning, TEXT("쿼리 실패 이유 메세지 : %s "), *QueryResult.ErrorMessage);
 		return FMySQLConnectoreQueryResult();
 	}
 
@@ -122,7 +122,6 @@ bool UHKDatabaseFunctionLibrary::CheckThePossibilityOfQueryInjection(const FStri
 		if (Input.Contains(Word))
 		{
 			ContainedReservedWord = Word;
-			UE_LOG(ServerLog, Error, TEXT(" %s Contains SpecialText : %s "), *Input, *Word);
 			return false;
 		}
 	}
@@ -132,7 +131,6 @@ bool UHKDatabaseFunctionLibrary::CheckThePossibilityOfQueryInjection(const FStri
 		if (Input.Contains(Word,ESearchCase::IgnoreCase))
 		{
 			ContainedReservedWord = Word;
-			UE_LOG(ServerLog, Error, TEXT(" %s Contains ReservedWord : %s "), *Input, *Word);
 			return false;
 		}
 	}

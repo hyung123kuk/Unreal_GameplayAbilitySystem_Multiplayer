@@ -37,6 +37,11 @@ void AHKUIPlayerControllerBase::BeginPlay()
 
 }
 
+void AHKUIPlayerControllerBase::SendServerMessage_Client_Implementation(const FString& Message, EServerToClientMessageType MessageType, bool ShowPopup, bool bSuccess)
+{
+    ReceiveServerMessage(Message, MessageType, ShowPopup, bSuccess);
+}
+
 void AHKUIPlayerControllerBase::ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType,bool PopupMessage, bool Success)
 {
     //에러 메세지

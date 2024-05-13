@@ -7,7 +7,6 @@
 #include "HKUILoginController.generated.h"
 
 
-
 /**
  * 
  */
@@ -17,11 +16,6 @@ class UNREALPORTFOLIO_API AHKUILoginController : public AHKUIPlayerControllerBas
 	GENERATED_BODY()
 	
 public:
-	AHKUILoginController();
-	
-	UFUNCTION(Client, Reliable)
-	void ResponseFromServerToClient_Client(const FString& Message, EServerToClientMessageType MessageType,bool ShowPopup, bool Success);
-
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void CheckIDForSignUp_Server(const FString& ID);
 
@@ -33,8 +27,6 @@ public:
 	
 protected:
 	virtual void ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage = false, bool Success = false) override;
-
-
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||CheckID")

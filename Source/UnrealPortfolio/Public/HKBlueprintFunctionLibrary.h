@@ -18,13 +18,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Network")
 	static void JoinServer(const UObject* WorldContextObject, const FString& InIPAddress, const FString& Id, const FString& Password = TEXT(""));
 	
-	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Network")
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Login")
 	static bool CheckIDValidity(const FString& ID, FString& ErrorMessage);
 
-	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Network")
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Login")
 	static bool CheckPasswordValidity(const FString& Password, FString& ErrorMessage);
 
-	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Network")
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Login")
 	static bool MatchPasswordAndPasswordConfirm(const FString& Password, const FString& PasswordConfirm, FString& ErrorMessage);
 
 };
