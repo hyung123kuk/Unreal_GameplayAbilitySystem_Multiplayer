@@ -7,7 +7,8 @@
 #include "HKLobbyGameMode.generated.h"
 
 class AHKLobbyPlayerState;
-class URoom;
+class ARoom;
+
 
 /**
  * 
@@ -39,19 +40,25 @@ private:
 	/** Match Making */
 	UFUNCTION()
 	void ChangePlayerReadyState(FString Id, bool NewReadyState);
-	void PlayerAllReady(const URoom* Room);
-	void GameStart(const URoom* Room);
+	void PlayerAllReady(const ARoom* Room);
+	void GameStart(const ARoom* Room);
 	/** Match Making End */
 
 private:
-	URoom* FindEnteredRoomWithPlayerState(AHKLobbyPlayerState* PlayerState);
-	URoom* FindRoom(const FString& RoomName, FString& Message);
+	/** Room */
+	UFUNCTION()
+	void DestroyRoom(const FString& RoomName);
+	/** Room End */
+
+private:
+	ARoom* FindEnteredRoomWithPlayerState(AHKLobbyPlayerState* PlayerState);
+	ARoom* FindRoom(const FString& RoomName, FString& Message);
 	AHKLobbyPlayerState* FindPlayerState(const FString& PlayerId, FString& Message);
 
 	
 private:
 	UPROPERTY()
-	TMap<FString, TObjectPtr<URoom>> Rooms;
+	TMap<FString, TObjectPtr<ARoom>> Rooms;
 
 	UPROPERTY()
 	TMap<FString, TObjectPtr<AHKLobbyPlayerState>> AllPlayers;
@@ -59,5 +66,6 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<AHKLobbyPlayerState>> LobbyPlayers;
 
+	int ID;
 };
 

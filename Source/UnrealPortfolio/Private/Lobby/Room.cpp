@@ -4,9 +4,50 @@
 #include "Lobby/Room.h"
 #include "Lobby/HKLobbyPlayerState.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+#include "Lobby/HKUILobbyPlayerController.h"
+#include "UI/WidgetController/LobbyRoomInfoWidgetController.h"
 #include "Lobby/HKUILobbyPlayerController.h"
 
-void URoom::ChangeRoomAdmin(AHKLobbyPlayerState* NewRoomAdminPlayer)
+ARoom::ARoom()
+{
+	PrimaryActorTick.bCanEverTick = false;
+	bAlwaysRelevant = true;
+	bReplicates = true;
+	NetUpdateFrequency = 10.f;
+}
+
+void ARoom::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetNetMode() == NM_DedicatedServer)
+		return;
+	
+	SendChangedRoomInformationToClients();
+}
+
+void ARoom::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, Name);
+	DOREPLIFETIME(ThisClass, bPublicRoom);
+	DOREPLIFETIME(ThisClass, MaxPlayer);
+	DOREPLIFETIME(ThisClass, RoomAdminPlayer);
+	DOREPLIFETIME(ThisClass, JoinPlayers);
+}
+
+void ARoom::InitRoomInfo(const FString& RoomName, const FString& RoomPassword, int RoomMaxPlayer)
+{
+	Name = RoomName;
+	if (RoomPassword.Len() == 0)
+		bPublicRoom = true;
+	Password = RoomPassword;
+	MaxPlayer = RoomMaxPlayer;
+}
+
+void ARoom::ChangeRoomAdmin(AHKLobbyPlayerState* NewRoomAdminPlayer)
 {
 	if (JoinPlayers.Contains(NewRoomAdminPlayer))
 	{
@@ -21,7 +62,7 @@ void URoom::ChangeRoomAdmin(AHKLobbyPlayerState* NewRoomAdminPlayer)
 	}
 }
 
-bool URoom::EnterPlayer(AHKLobbyPlayerState* NewPlayer,const FString& AttempPassword, FString& ErrorMessage) 
+bool ARoom::EnterPlayer(AHKLobbyPlayerState* NewPlayer,const FString& AttempPassword, FString& ErrorMessage) 
 {
 	if (!bPublicRoom && Password != AttempPassword)
 	{
@@ -30,30 +71,42 @@ bool URoom::EnterPlayer(AHKLobbyPlayerState* NewPlayer,const FString& AttempPass
 		return false;
 	}
 
+	if (NewPlayer->GetEnteredRoom() == this)
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어(%s)의 방(%s)에 이미 입장하고 있으나 입장 시도를 했습니다. "), *NewPlayer->GetName(), *Name);
+		ErrorMessage = TEXT("이미 방에 입장하였습니다.");
+		return false;
+	}
+
 	JoinPlayers.Add(NewPlayer);
-	NewPlayer->SetEnteredRoomName(Name);
+	NewPlayer->SetEnteredRoom(this);
 	return true;
 }
 
-void URoom::ExitPlayer(AHKLobbyPlayerState* ExitPlayer)
+bool ARoom::ExitPlayer(AHKLobbyPlayerState* ExitPlayer, FString& Message)
 {
 	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 방(%s)을 나가려 합니다."),*ExitPlayer->GetPlayerName(), *Name);
-	if (JoinPlayers.Contains(ExitPlayer))
+	
+	if (!JoinPlayers.Contains(ExitPlayer))
 	{
 		UE_LOG(ServerLog, Error, TEXT("방(%s)에 해당유저(%s)가 없습니다.."), *Name, *ExitPlayer->GetPlayerName());
-		return;
+		Message = TEXT("방에 존재하지 않는 유저입니다.");
+		return false;
 	}
-	
+
 	JoinPlayers.Remove(ExitPlayer);
-	ExitPlayer->SetEnteredRoomName(TEXT(""));
+	ExitPlayer->SetIsReady(false);
+	ExitPlayer->SetListenServerIP(TEXT(""));
+	ExitPlayer->SetEnteredRoom(nullptr);
 	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 방(%s)을 나갔습니다."), *ExitPlayer->GetPlayerName(), *Name);
 
 	if (JoinPlayers.Num() == 0)
 	{
 		UE_LOG(ServerLog, Warning, TEXT("방(%s)에 유저가 없어 방을 삭제합니다."), *Name);
-
-		//TODO: 방 삭제
-		return;
+		NotifyRemoveRoomToClient();
+		RoomDestroyDelegate.Broadcast(Name);
+		ExitPlayer->SetIsRoomAdmin(false);
+		return true;
 	}
 
 	if (RoomAdminPlayer == ExitPlayer)
@@ -61,13 +114,59 @@ void URoom::ExitPlayer(AHKLobbyPlayerState* ExitPlayer)
 		FString NewAdminPlayerName;
 		UE_LOG(ServerLog, Warning, TEXT("방(%s)에 방장유저(%s)가 나가 새로운 유저(%s)가 방장이 됩니다."), *Name, *ExitPlayer->GetPlayerName(),*NewAdminPlayerName);
 
-		//TODO: 방 권한 넘기기
 		ChangeRoomAdmin(JoinPlayers[0]);
+	}
+	return true;
+}
+
+void ARoom::OnRep_JoinPlayers()
+{
+	SendChangedRoomInformationToClients();
+}
+
+void ARoom::OnRep_Name()
+{
+	SendChangedRoomInformationToClients();
+}
+
+void ARoom::OnRep_PublicRoom()
+{
+	SendChangedRoomInformationToClients();
+}
+
+void ARoom::OnRep_MaxPlayer()
+{
+	SendChangedRoomInformationToClients();
+}
+
+void ARoom::SendChangedRoomInformationToClients()
+{
+	AHKLobbyPlayerState* LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+
+	if (!IsValid(LocalClientPlayerState) || !IsValid(LocalClientPlayerController))
+	{
+		return;
+	}
+
+	if (RoomInfoWidgetController == nullptr)
+	{
+		RoomInfoWidgetController = NewObject<ULobbyRoomInfoWidgetController>(this, ULobbyRoomInfoWidgetController::StaticClass());
+	}
+	LocalClientPlayerController->MakeLobbyRoomWidgetController(RoomInfoWidgetController);
+	RoomInfoWidgetController->SetWidgetControllerParams(FLobbyRoomInfoWidgetControllerParams(Name, MaxPlayer, JoinPlayers.Num(),bPublicRoom));
+}
+
+void ARoom::NotifyRemoveRoomToClient_Implementation()
+{
+	if (RoomInfoWidgetController)
+	{
+		AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+		LocalClientPlayerController->RemoveLobbyRoomWidgetController(RoomInfoWidgetController);
 	}
 }
 
-
-int URoom::GetReadyPlayersCount() const
+int ARoom::GetReadyPlayersCount() const
 {
 	int ReadyPlayerCount = 0;
 	for (const AHKLobbyPlayerState* JoinPlayer : JoinPlayers)

@@ -9,24 +9,49 @@
 #include "Engine/World.h"
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "UI/WidgetController/RoomUserInfoWidgetControlle.h"
+#include "Lobby/Room.h"
 
-
-void AHKLobbyPlayerState::PostInitializeComponents()
+AHKLobbyPlayerState::AHKLobbyPlayerState()
 {
-	Super::PostInitializeComponents();
-	if (GetNetMode() == NM_DedicatedServer)
+	NetUpdateFrequency = 10.f;
+}
+
+void AHKLobbyPlayerState::SetExistingUserWidgetControllers()
+{
+	//들어 온 게 자신일 경우 원래 있던 값들 가져온다.
+	if (GetPlayerController() != nullptr)
+	{
+		AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+
+		if (IsValid(LocalClientPlayerController))
+		{
+			LocalClientPlayerController->CreateAndShowRoomWidget();
+			TArray<AHKLobbyPlayerState*> RoomPlayers = EnteredGameRoom->GetJoinPlayers();
+			for (AHKLobbyPlayerState* RoomPlayer : RoomPlayers)
+			{
+				if (RoomPlayer != this)
+				{
+					RoomPlayer->OnRep_GameRoom();
+				}
+			}
+		}
+	}
+}
+
+void AHKLobbyPlayerState::EnterGameRoom()
+{
+	AHKLobbyPlayerState* LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+
+	if (!IsValid(LocalClientPlayerState) || !IsValid(LocalClientPlayerController))
 	{
 		return;
 	}
-	LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
-	LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerState(this, 0));
-}
 
-void AHKLobbyPlayerState::EnteredGameRoom()
-{
-	if (LocalClientPlayerState->GetEnteredRoomName() == EnteredGameRoomName)
+	if (LocalClientPlayerState->GetEnteredRoom() == EnteredGameRoom)
 	{
 		bSameRoomAsLocalClient = true;
+		SetExistingUserWidgetControllers();
 		if (RoomInfoWidgetController == nullptr)
 		{
 			RoomInfoWidgetController = NewObject<URoomUserInfoWidgetControlle>(this, RoomInfoWidgetControllerClass);
@@ -38,7 +63,15 @@ void AHKLobbyPlayerState::EnteredGameRoom()
 void AHKLobbyPlayerState::ExitGameRoom()
 {
 	bSameRoomAsLocalClient = false;
-	if (LocalClientPlayerState->GetEnteredRoomName() == ExitedGameRoomName)
+	AHKLobbyPlayerState* LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+
+	if (!IsValid(LocalClientPlayerState) || !IsValid(LocalClientPlayerController))
+	{
+		return;
+	}
+
+	if (LocalClientPlayerState->GetEnteredRoom() == PrevGameRoom)
 	{
 		LocalClientPlayerController->ExitGameRoomUserWidgetController(RoomInfoWidgetController);
 	}
@@ -59,20 +92,19 @@ void AHKLobbyPlayerState::OnRep_SelectCharacter()
 	SendChangedRoomInformationToLocalClientInSameRoom();
 }
 
-void AHKLobbyPlayerState::OnRep_GameRoomName()
+void AHKLobbyPlayerState::OnRep_GameRoom()
 {
-
-	if (EnteredGameRoomName.IsEmpty() && !ExitedGameRoomName.IsEmpty())
+	if (EnteredGameRoom == nullptr && PrevGameRoom != nullptr)
 	{
 		ExitGameRoom();
 	}
 
-	if (!EnteredGameRoomName.IsEmpty())
+	if (EnteredGameRoom != nullptr)
 	{
-		EnteredGameRoom();
+		EnterGameRoom();
 	}
 
-	ExitedGameRoomName = EnteredGameRoomName;
+	PrevGameRoom = EnteredGameRoom;
 
 	SendChangedRoomInformationToLocalClientInSameRoom();
 }
@@ -90,7 +122,7 @@ void AHKLobbyPlayerState::OnRep_ListenServerIP()
 void AHKLobbyPlayerState::SendChangedRoomInformationToLocalClientInSameRoom()
 {
 	//방이 있고, 로컬 플레이어와 같은 방에 있다면
-	if (!EnteredGameRoomName.IsEmpty() && bSameRoomAsLocalClient)
+	if (EnteredGameRoom != nullptr && bSameRoomAsLocalClient && RoomInfoWidgetController != nullptr)
 	{
 		FString UserName = GetPlayerName();
 		RoomInfoWidgetController->SetWidgetControllerParams(FRoomUserInfoWidgetControllerParams(UserName, IsRoomAdmin,IsReady, SelectCharacter));
@@ -127,7 +159,7 @@ void AHKLobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(ThisClass, ListenServerIP);
 	DOREPLIFETIME(ThisClass, IsRoomAdmin);
 	DOREPLIFETIME(ThisClass, IsReady);
-	DOREPLIFETIME(ThisClass, EnteredGameRoomName);
+	DOREPLIFETIME(ThisClass, EnteredGameRoom);
 }
 
 

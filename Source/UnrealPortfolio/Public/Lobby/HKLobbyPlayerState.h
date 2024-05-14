@@ -7,8 +7,6 @@
 #include "Lobby/HKLobbyGameMode.h"
 #include "HKLobbyPlayerState.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnReadyStateChangedDelegate,FString,PlayerName, bool,NewReadyState);
-
 class URoomUserInfoWidgetControlle;
 class AHKUILobbyPlayerController;
 
@@ -20,19 +18,20 @@ class UNREALPORTFOLIO_API AHKLobbyPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 	
+
 public:
-	virtual void PostInitializeComponents() override;
-	
-public:
+	AHKLobbyPlayerState();
+
 	/** Only Server Func */
-	void SetEnteredRoomName(FString EnterGameRoom) { EnteredGameRoomName = EnterGameRoom; }
+	void SetEnteredRoom(ARoom* EnterGameRoom) { EnteredGameRoom = EnterGameRoom; }
 	void SetIsRoomAdmin(bool bIsRoomAdmin) { IsRoomAdmin = bIsRoomAdmin; }
-	void SetListenServerIP(FString& ServerIP) { ListenServerIP = ServerIP; }
+	void SetListenServerIP(FString ServerIP) { ListenServerIP = ServerIP; }
 	void SetIsReady(bool bIsReady) { IsReady = bIsReady; }
 	/** Only Server Func End*/
 	
 	/** Room Info Get*/
-	FString GetEnteredRoomName() const { return EnteredGameRoomName; }
+	UFUNCTION(BlueprintCallable)
+	ARoom* GetEnteredRoom() const { return EnteredGameRoom; }
 	const bool GetIsRoomAdmin() const { return IsRoomAdmin; }
 	const bool GetIsReady() const { return IsReady; }
 	/** Room Info Get End*/
@@ -49,12 +48,13 @@ protected:
 
 private:
 	/** Room */
-	void EnteredGameRoom();
+	void SetExistingUserWidgetControllers();
+	void EnterGameRoom();
 	void ExitGameRoom();
 	void SendChangedRoomInformationToLocalClientInSameRoom();
 
 	UFUNCTION()
-	void OnRep_GameRoomName();
+	void OnRep_GameRoom();
 	UFUNCTION()
 	void OnRep_RoomAdmin();
 	UFUNCTION()
@@ -66,8 +66,8 @@ private:
 	/** Room End*/
 
 private:
-	UPROPERTY(ReplicatedUsing = OnRep_GameRoomName)
-	FString EnteredGameRoomName;
+	UPROPERTY(ReplicatedUsing = OnRep_GameRoom)
+	ARoom* EnteredGameRoom;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ListenServerIP)
 	FString ListenServerIP;
@@ -81,14 +81,8 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_SelectCharacter)
 	int SelectCharacter;
 
-	FString ExitedGameRoomName;
+	ARoom* PrevGameRoom;
 	bool bSameRoomAsLocalClient;
-
-	UPROPERTY()
-	TObjectPtr<AHKLobbyPlayerState> LocalClientPlayerState;
-
-	UPROPERTY()
-	TObjectPtr<AHKUILobbyPlayerController> LocalClientPlayerController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URoomUserInfoWidgetControlle> RoomInfoWidgetControllerClass;

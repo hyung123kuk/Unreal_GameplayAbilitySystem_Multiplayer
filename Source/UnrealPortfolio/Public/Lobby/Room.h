@@ -3,50 +3,74 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "GameFramework/Actor.h"
 #include "Room.generated.h"
 
 class AHKLobbyPlayerState;
+class ULobbyRoomInfoWidgetController;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomDestroyDelegate, const FString&, RoomName);
 
 UCLASS()
-class UNREALPORTFOLIO_API URoom : public UObject
+class UNREALPORTFOLIO_API ARoom : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	URoom() {}
-	void RoomInfoSettings(const FString& RoomName, const FString& RoomPassword, int RoomMaxPlayer)
-	{
-		Name = RoomName;
-		if (RoomPassword.Len() == 0)
-			bPublicRoom = true;
-		Password = RoomPassword;
-		MaxPlayer = RoomMaxPlayer;
-	}
+	FRoomDestroyDelegate RoomDestroyDelegate;
+	
+protected:
+	ARoom();
+	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	void InitRoomInfo(const FString& RoomName, const FString& RoomPassword, int RoomMaxPlayer);
 
 	/** Change room information */
 	void ChangeRoomAdmin(AHKLobbyPlayerState* NewRoomAdminPlayer);
 	bool EnterPlayer(AHKLobbyPlayerState* NewPlayer, const FString& AttempPassword, FString& Message);
-	void ExitPlayer(AHKLobbyPlayerState* ExitPlayer);
+	bool ExitPlayer(AHKLobbyPlayerState* ExitPlayer, FString& Message);
+	void SendChangedRoomInformationToClients();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NotifyRemoveRoomToClient();
+
+	UFUNCTION()
+	void OnRep_JoinPlayers();
+	UFUNCTION()
+	void OnRep_Name();
+	UFUNCTION()
+	void OnRep_PublicRoom();
+	UFUNCTION()
+	void OnRep_MaxPlayer();
 	/** End Change room information */
 	
 public:
 	const AHKLobbyPlayerState* GetAdminPlayer() const { return RoomAdminPlayer; }
-	const TArray<TObjectPtr<AHKLobbyPlayerState>> GetJoinPlayers() const { return JoinPlayers; }
+	TArray<TObjectPtr<AHKLobbyPlayerState>> GetJoinPlayers() const { return JoinPlayers; }
 	
 	int GetReadyPlayersCount() const;
 	int GetAllPlayersCount() const { return JoinPlayers.Num(); }
 	bool ReadyAllPlayers() const { return GetAllPlayersCount() == GetReadyPlayersCount(); }
 
-private:
-	UPROPERTY()
+protected:
+	UPROPERTY(Replicated)
 	TObjectPtr<AHKLobbyPlayerState> RoomAdminPlayer;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_JoinPlayers)
 	TArray<TObjectPtr<AHKLobbyPlayerState>> JoinPlayers;
 
+	UPROPERTY(ReplicatedUsing = OnRep_Name, BlueprintReadOnly)
 	FString Name;
-	FString Password;
+	UPROPERTY(ReplicatedUsing = OnRep_PublicRoom)
 	bool bPublicRoom;
+	UPROPERTY(ReplicatedUsing = OnRep_MaxPlayer)
 	int MaxPlayer;
+
+	FString Password;
+private:
+	UPROPERTY()
+	TObjectPtr<ULobbyRoomInfoWidgetController> RoomInfoWidgetController;
+
 };

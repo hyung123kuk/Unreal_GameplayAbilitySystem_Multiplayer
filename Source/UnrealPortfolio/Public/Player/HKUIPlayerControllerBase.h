@@ -20,6 +20,8 @@ enum class EServerToClientMessageType : uint8
 	SignUp,
 	Login,
 	MakeRoom,
+	EnterRoom,
+	ExitRoom,
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSuccessOrNotDelegate, bool, Success);
