@@ -47,6 +47,7 @@ public:
 	/** End Change room information */
 	
 public:
+	FString GetRoomName() const { return Name; }
 	const AHKLobbyPlayerState* GetAdminPlayer() const { return RoomAdminPlayer; }
 	TArray<TObjectPtr<AHKLobbyPlayerState>> GetJoinPlayers() const { return JoinPlayers; }
 	

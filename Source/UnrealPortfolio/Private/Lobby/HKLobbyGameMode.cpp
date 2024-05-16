@@ -7,6 +7,7 @@
 #include "Lobby/HKLobbyPlayerState.h"
 #include "Lobby/Room.h"
 #include "HKDatabaseFunctionLibrary.h"
+#include "HKBlueprintFunctionLibrary.h"
 #include "Engine/Engine.h"
 
 
@@ -14,6 +15,12 @@
 void AHKLobbyGameMode::StartPlay()
 {
 	Super::StartPlay();
+
+}
+
+void AHKLobbyGameMode::Tick(float DeltaSeconds)
+{
+	//TEST CODE : Server State Test
 
 }
 
@@ -95,8 +102,11 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 void AHKLobbyGameMode::Logout(AController* Exiting)
 {
 	AHKLobbyPlayerState* ExitPlayerState = Exiting->GetPlayerState<AHKLobbyPlayerState>();
-	if (IsValid(ExitPlayerState))
+	if (!IsValid(ExitPlayerState))
+	{
+		Super::Logout(Exiting);
 		return;
+	}
 
 	const FString PlayerID = ExitPlayerState->GetPlayerName();
 	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 로그아웃을 시도합니다."), *PlayerID);
@@ -108,12 +118,13 @@ void AHKLobbyGameMode::Logout(AController* Exiting)
 	ARoom* Room = FindEnteredRoomWithPlayerState(ExitPlayerState);
 	if (Room)
 	{
+		UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 들어간 방(%s)에서 나갑니다."), *PlayerID, *Room->GetName());
 		Room->ExitPlayer(ExitPlayerState, Meesage);
 	}
 	AllPlayers.Remove(PlayerID);
 	LobbyPlayers.Remove(ExitPlayerState);
 
-	UE_LOG(ServerLog, Warning, TEXT("로비에 유저(%s)가 존재하지 않습니다."), *PlayerID);
+	Super::Logout(Exiting);
 }
 
 bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, int MaxPlayers, FString& Message)
@@ -122,6 +133,20 @@ bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const FString& PlayerId, const FStr
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 이미 존재하는 방 이름(%s)을 만들려다 실패했습니다."), *PlayerId, *RoomName);
 		Message = TEXT("이미 존재하는 방 이름 입니다.");
+		return false;
+	}
+
+	if (RoomName.Len() > MaxRoomNameLen)
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 생성한 방 이름(%s)이 제한 글자수(%d) 보다 큽니다."), *PlayerId, *RoomName, MaxRoomNameLen);
+		Message = FString("방 이름은 %d 자리 이하만 가능합니다.", MaxRoomNameLen);
+		return false;
+	}
+
+	if (RoomName.Len() > MaxRoomPasswordLen)
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 생성한 방 비밀번호(%s)가 제한 글자수(%d) 보다 큽니다."), *PlayerId, *RoomPassword, MaxRoomPasswordLen);
+		Message = FString("방 비밀번호는 %d 자리 이하만 가능합니다.", MaxRoomPasswordLen);
 		return false;
 	}
 

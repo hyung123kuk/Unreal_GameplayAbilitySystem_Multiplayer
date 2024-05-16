@@ -8,6 +8,7 @@
 #include "HKLobbyPlayerState.generated.h"
 
 class URoomUserInfoWidgetControlle;
+class UUserInfoWidgetController;
 class AHKUILobbyPlayerController;
 
 /**
@@ -21,6 +22,8 @@ class UNREALPORTFOLIO_API AHKLobbyPlayerState : public APlayerState
 
 public:
 	AHKLobbyPlayerState();
+	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 
 	/** Only Server Func */
 	void SetEnteredRoom(ARoom* EnterGameRoom) { EnteredGameRoom = EnterGameRoom; }
@@ -28,7 +31,7 @@ public:
 	void SetListenServerIP(FString ServerIP) { ListenServerIP = ServerIP; }
 	void SetIsReady(bool bIsReady) { IsReady = bIsReady; }
 	/** Only Server Func End*/
-	
+
 	/** Room Info Get*/
 	UFUNCTION(BlueprintCallable)
 	ARoom* GetEnteredRoom() const { return EnteredGameRoom; }
@@ -47,6 +50,20 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
+
+	/** Lobby */
+	void EnterLobbyNewPlayer();
+	void ExitLobbyPlayer();
+	void SendChangePlayerInformationToLocalClient();
+
+	UFUNCTION()
+	void OnRep_Introduction();
+	UFUNCTION()
+	void OnRep_Level();
+	UFUNCTION()
+	void OnRep_Exp();
+	/** Lobby End*/
+
 	/** Room */
 	void SetExistingUserWidgetControllers();
 	void EnterGameRoom();
@@ -66,6 +83,27 @@ private:
 	/** Room End*/
 
 private:
+
+	/** Lobby */
+	UPROPERTY(ReplicatedUsing = OnRep_Introduction)
+	FString Introduction;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Level)
+	int PlayerLevel;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Exp)
+	int PlayerExp;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserInfoWidgetController> UserInfoWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserInfoWidgetController> UserInfoWidgetController;
+	/** Lobby End*/
+
+private:
+
+	/** Room */
 	UPROPERTY(ReplicatedUsing = OnRep_GameRoom)
 	ARoom* EnteredGameRoom;
 
@@ -89,7 +127,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<URoomUserInfoWidgetControlle> RoomInfoWidgetController;
-
-
+	/** Room End*/
 
 };

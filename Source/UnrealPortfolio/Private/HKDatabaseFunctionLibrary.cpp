@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+ï»¿// Copyright Druid Mechanics
 
 
 #include "HKDatabaseFunctionLibrary.h"
@@ -74,8 +74,8 @@ FMySQLConnectoreQueryResult UHKDatabaseFunctionLibrary::Query(UMySQLConnection* 
 	FMySQLConnectoreQueryResult QueryResult = UMySQLDatabase::MySQLConnectorGetData(Query, Database);
 	if (!QueryResult.Success)
 	{
-		UE_LOG(ServerLog, Warning, TEXT("Äõ¸® ½ÇÆĞ : %s "), *Query);
-		UE_LOG(ServerLog, Warning, TEXT("Äõ¸® ½ÇÆĞ ÀÌÀ¯ ¸Ş¼¼Áö : %s "), *QueryResult.ErrorMessage);
+		UE_LOG(ServerLog, Warning, TEXT("ì¿¼ë¦¬ ì‹¤íŒ¨ : %s "), *Query);
+		UE_LOG(ServerLog, Warning, TEXT("ì¿¼ë¦¬ ì‹¤íŒ¨ ì´ìœ  ë©”ì„¸ì§€ : %s "), *QueryResult.ErrorMessage);
 		return FMySQLConnectoreQueryResult();
 	}
 
@@ -88,8 +88,8 @@ bool UHKDatabaseFunctionLibrary::CheckThePossibilityOfQueryInjection(const FStri
 	return CheckThePossibilityOfQueryInjection(Input, ReservedWord);
 }
 
-//Æ¯¼ö¹®ÀÚ Ã¼Å©
-//¿¹¾à¾î Ã¼Å©
+//íŠ¹ìˆ˜ë¬¸ì ì²´í¬
+//ì˜ˆì•½ì–´ ì²´í¬
 bool UHKDatabaseFunctionLibrary::CheckThePossibilityOfQueryInjection(const FString& Input, FString& ContainedReservedWord)
 {
 	static const FString SpecialTexts[]

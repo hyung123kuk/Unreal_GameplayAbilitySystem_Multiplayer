@@ -19,7 +19,8 @@ class UNREALPORTFOLIO_API AHKLobbyGameMode : public AHKDedicatedServerGameModeBa
 	GENERATED_BODY()
 	
 	virtual void StartPlay() override;
-	
+	virtual void Tick(float DeltaSeconds) override;
+
 private:
 	/** Login */
 	virtual bool AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage) override;

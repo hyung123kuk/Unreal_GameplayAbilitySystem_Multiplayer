@@ -10,10 +10,12 @@ class UUserWidget;
 class AHKLobbyPlayerState;
 class URoomUserInfoWidgetControlle;
 class ULobbyRoomInfoWidgetController;
+class UUserInfoWidgetController;
 class ARoom;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLobbyRoomInfoDelegate, ULobbyRoomInfoWidgetController*, RoomController);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserInfoDelegate, UUserInfoWidgetController*, UserInfoController);
 
 
 UCLASS()
@@ -32,6 +34,9 @@ public:
 	//** From Client End */
 
 	//** Lobby UI */
+	void SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController);
+	void EnterLobbyUserWidgetController(UUserInfoWidgetController* EnterUserInfoController);
+	void ExitLobbyUserWidgetController(UUserInfoWidgetController* ExitUserInfoController);
 	void MakeLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	void RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	//** Lobby UI End*/
@@ -46,6 +51,7 @@ protected:
 	virtual void ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage = false, bool Success = false) override;
 
 public:
+	//** Notify SuccessOrNot From Server */
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate MakeRoomSuccessOrNotDelegate;
 
@@ -54,23 +60,38 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate ExitRoomSuccessOrNotDelegate;
+	//** Notify SuccessOrNot From Server End*/
 
-	UPROPERTY(BlueprintAssignable, Category = "ChangeRoomInfo")
+	//** Lobby UI */
+	UPROPERTY(BlueprintAssignable, Category = "Lobby")
+	FUserInfoDelegate MyUserInfoDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Lobby")
+	FUserInfoDelegate EnterLobbyNewUserDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Lobby")
+	FUserInfoDelegate ExitLobbyUserDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Lobby")
 	FLobbyRoomInfoDelegate MakeNewRoomDelegate;
 
-	UPROPERTY(BlueprintAssignable, Category = "ChangeRoomInfo")
+	UPROPERTY(BlueprintAssignable, Category = "Lobby")
 	FLobbyRoomInfoDelegate RemoveRoomDelegate;
 
-	UPROPERTY(BlueprintAssignable, Category = "ChangeRoomInfo")
+	UPROPERTY(BlueprintAssignable, Category = "Lobby")
 	FLobbyRoomInfoDelegate ChangeRoomInfoDelegate;
+	//** Lobby UI End*/
 
-	UPROPERTY(BlueprintAssignable, Category = "ChangeRoomInfo")
+	//** Room UI */
+	UPROPERTY(BlueprintAssignable, Category = "Room")
 	FRoomUserControllerDelegate EnterRoomNewUserDelegate;
 
-	UPROPERTY(BlueprintAssignable, Category = "ChangeRoomInfo")
+	UPROPERTY(BlueprintAssignable, Category = "Room")
 	FRoomUserControllerDelegate ExitRoomUserDelegate;
+	//** Room UI End*/
 
 protected:
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIPopupRoomClass;
 

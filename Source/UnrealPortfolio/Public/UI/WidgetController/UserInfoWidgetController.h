@@ -7,15 +7,20 @@
 #include "Interaction/UIPageInterface.h"
 #include "UserInfoWidgetController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChangeUserInfoValueSignature);
+
 USTRUCT(BlueprintType)
 struct FUserInfoWidgetControllerParams
 {
 	GENERATED_BODY()
 
 	FUserInfoWidgetControllerParams() {}
-	FUserInfoWidgetControllerParams(FString& playerName, int playerLevel) :
+	FUserInfoWidgetControllerParams(FString& playerName, FString& enterRoomName, FString& introduction ,int playerLevel, int playerExp) :
 		PlayerName(playerName),
-		PlayerLevel(playerLevel) {}
+		EnterRoomName(enterRoomName),
+		Introduction(introduction),
+		PlayerLevel(playerLevel),
+		PlayerExp(playerExp) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString PlayerName;
@@ -30,8 +35,7 @@ struct FUserInfoWidgetControllerParams
 	int PlayerLevel;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int PlayerExe;
-
+	int PlayerExp;
 
 };
 
@@ -49,6 +53,9 @@ public:
 
 	virtual FString GetElementName() override;
 
+	UPROPERTY(BlueprintAssignable, Category = "ChangeValue")
+	FChangeUserInfoValueSignature ChangeUserInfoValueSignature;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	FString PlayerName;
@@ -63,6 +70,6 @@ protected:
 	int PlayerLevel;
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
-	int PlayerExe;
+	int PlayerExp;
 	
 };

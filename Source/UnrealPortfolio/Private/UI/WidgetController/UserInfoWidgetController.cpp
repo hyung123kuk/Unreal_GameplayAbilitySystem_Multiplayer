@@ -9,7 +9,9 @@ void UUserInfoWidgetController::SetWidgetControllerParams(const FUserInfoWidgetC
 	EnterRoomName = Params.EnterRoomName;
 	Introduction = Params.Introduction;
 	PlayerLevel = Params.PlayerLevel;
-	PlayerExe = Params.PlayerExe;
+	PlayerExp = Params.PlayerExp;
+	ChangeUserInfoValueSignature.Broadcast();
+
 }
 
 FString UUserInfoWidgetController::GetElementName()

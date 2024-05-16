@@ -27,4 +27,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Login")
 	static bool MatchPasswordAndPasswordConfirm(const FString& Password, const FString& PasswordConfirm, FString& ErrorMessage);
 
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|CheckStringLen")
+	static FString CheckStringLimitLen(const FString& InputString , int LimitLen);
+
+public:
+	//** SystemVariable */
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMaxIDLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMinIDLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMinPasswordLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMaxRoomNameLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMaxRoomPasswordLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMaxUserIntroductionLen();
+	//** SystemVariable End */
+
 };

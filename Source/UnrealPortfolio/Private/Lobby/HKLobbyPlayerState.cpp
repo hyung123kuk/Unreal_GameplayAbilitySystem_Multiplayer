@@ -9,11 +9,92 @@
 #include "Engine/World.h"
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "UI/WidgetController/RoomUserInfoWidgetControlle.h"
+#include "UI/WidgetController/UserInfoWidgetController.h"
 #include "Lobby/Room.h"
 
 AHKLobbyPlayerState::AHKLobbyPlayerState()
 {
 	NetUpdateFrequency = 10.f;
+}
+
+void AHKLobbyPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetNetMode() != NM_DedicatedServer)
+	{
+		EnterLobbyNewPlayer();
+	}
+}
+
+void AHKLobbyPlayerState::Destroyed()
+{
+	if (GetNetMode() != NM_DedicatedServer)
+	{
+		ExitGameRoom();
+		ExitLobbyPlayer();
+	}
+
+	Super::Destroyed();
+}
+
+void AHKLobbyPlayerState::EnterLobbyNewPlayer()
+{
+	if (UserInfoWidgetController == nullptr)
+	{
+		UserInfoWidgetController = NewObject<UUserInfoWidgetController>(this, UserInfoWidgetControllerClass);
+	}
+
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	if (IsValid(LocalClientPlayerController))
+	{
+		if (GetPlayerController() != nullptr)
+		{
+			//현재 플레이어
+			LocalClientPlayerController->SetMyUserInfoWidgetController(UserInfoWidgetController);
+		}
+		else
+		{
+			//다른 플레이어
+			LocalClientPlayerController->EnterLobbyUserWidgetController(UserInfoWidgetController);
+		}
+
+		SendChangePlayerInformationToLocalClient();
+	}
+}
+
+void AHKLobbyPlayerState::ExitLobbyPlayer()
+{
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	if (IsValid(LocalClientPlayerController))
+	{
+		LocalClientPlayerController->ExitLobbyUserWidgetController(UserInfoWidgetController);
+	}
+}
+
+void AHKLobbyPlayerState::SendChangePlayerInformationToLocalClient()
+{
+	if (UserInfoWidgetController != nullptr)
+	{
+		FString UserName = GetPlayerName();
+		FString EnterRoomName = EnteredGameRoom != nullptr ? EnteredGameRoom->GetRoomName() : TEXT("");
+		UserInfoWidgetController->SetWidgetControllerParams(FUserInfoWidgetControllerParams(UserName, EnterRoomName, Introduction, PlayerLevel, PlayerExp));
+	}
+}
+
+void AHKLobbyPlayerState::OnRep_Introduction()
+{
+	SendChangePlayerInformationToLocalClient();
+}
+
+void AHKLobbyPlayerState::OnRep_Level()
+{
+	SendChangePlayerInformationToLocalClient();
+}
+
+void AHKLobbyPlayerState::OnRep_Exp()
+{
+	SendChangePlayerInformationToLocalClient();
 }
 
 void AHKLobbyPlayerState::SetExistingUserWidgetControllers()
@@ -107,6 +188,7 @@ void AHKLobbyPlayerState::OnRep_GameRoom()
 	PrevGameRoom = EnteredGameRoom;
 
 	SendChangedRoomInformationToLocalClientInSameRoom();
+	SendChangePlayerInformationToLocalClient();
 }
 
 void AHKLobbyPlayerState::OnRep_ListenServerIP()
@@ -156,10 +238,18 @@ void AHKLobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	/** Lobby */
+	DOREPLIFETIME(ThisClass, Introduction);
+	DOREPLIFETIME(ThisClass, PlayerLevel);
+	DOREPLIFETIME(ThisClass, PlayerExp);
+	/** Lobby End*/
+
+	/** Room */
 	DOREPLIFETIME(ThisClass, ListenServerIP);
 	DOREPLIFETIME(ThisClass, IsRoomAdmin);
 	DOREPLIFETIME(ThisClass, IsReady);
 	DOREPLIFETIME(ThisClass, EnteredGameRoom);
+	/** Room End*/
 }
 
 

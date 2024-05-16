@@ -21,10 +21,10 @@ void UHKBlueprintFunctionLibrary::JoinServer(const UObject* WorldContextObject, 
 //숫자,영문, 특수문자 @ . - _ 만 사용가능
 bool UHKBlueprintFunctionLibrary::CheckIDValidity(const FString& ID, FString& ErrorMessage)
 {
-    if (ID.Len() < 6 || ID.Len() > 12)
+    if (ID.Len() < MinIDLen || ID.Len() > MaxIDLen)
     {
-        UE_LOG(ServerLog, Error, TEXT("입력된 아이디(%s)의 문자열 길이가 6~12자리 사이가 아닙니다."), *ID);
-        ErrorMessage = FString::Printf(TEXT("문자열 길이는 6~12자리만 가능합니다."));
+        UE_LOG(ServerLog, Error, TEXT("입력된 아이디(%s)의 문자열 길이가 %d~%d자리 사이가 아닙니다."), *ID, MinIDLen, MaxIDLen);
+        ErrorMessage = FString::Printf(TEXT("문자열 길이는 %d~%d자리만 가능합니다."), MinIDLen, MaxIDLen);
         return false;
     }
 
@@ -49,10 +49,10 @@ bool UHKBlueprintFunctionLibrary::CheckIDValidity(const FString& ID, FString& Er
 //영문, 숫자가 함께 있어야 함
 bool UHKBlueprintFunctionLibrary::CheckPasswordValidity(const FString& Password, FString& ErrorMessage)
 {
-    if (Password.Len() < 8)
+    if (Password.Len() < MinPasswordLen)
     {
-        UE_LOG(ServerLog, Error, TEXT("입력된 비밀번호의 문자열 길이가 8자리 이상이 아닙니다."));
-        ErrorMessage = FString::Printf(TEXT("비밀번호는 8자리 이상만 가능합니다."));
+        UE_LOG(ServerLog, Error, TEXT("입력된 비밀번호의 문자열 길이가 %d자리 이상이 아닙니다."), MinPasswordLen);
+        ErrorMessage = FString::Printf(TEXT("비밀번호는 %d자리 이상만 가능합니다."), MinPasswordLen);
         return false;
     }
 
@@ -103,3 +103,47 @@ bool UHKBlueprintFunctionLibrary::MatchPasswordAndPasswordConfirm(const FString&
     ErrorMessage = TEXT("");
     return true;
 }
+
+FString UHKBlueprintFunctionLibrary::CheckStringLimitLen(const FString& InputString, int LimitLen)
+{
+    if (InputString.Len() > LimitLen)
+    {
+        return InputString.Mid(0, LimitLen);
+    }
+
+    return InputString;
+}
+
+#pragma region 시스템 변수
+
+int UHKBlueprintFunctionLibrary::GetMaxIDLen()
+{
+    return MaxIDLen;
+}
+
+int UHKBlueprintFunctionLibrary::GetMinIDLen()
+{
+    return MinIDLen;
+}
+
+int UHKBlueprintFunctionLibrary::GetMinPasswordLen()
+{
+    return MinPasswordLen;
+}
+
+int UHKBlueprintFunctionLibrary::GetMaxRoomNameLen()
+{
+    return MaxRoomNameLen;
+}
+
+int UHKBlueprintFunctionLibrary::GetMaxRoomPasswordLen()
+{
+    return MaxRoomPasswordLen;
+}
+
+int UHKBlueprintFunctionLibrary::GetMaxUserIntroductionLen()
+{
+    return MaxUserIntroductionLen;
+}
+
+#pragma endregion

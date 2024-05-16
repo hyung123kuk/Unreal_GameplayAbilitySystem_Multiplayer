@@ -55,6 +55,21 @@ void AHKUILobbyPlayerController::TryToExitRoomToServer_Implementation(const FStr
     SendServerMessage_Client(Message, EServerToClientMessageType::ExitRoom, !bSuccess, bSuccess);
 }
 
+void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
+{
+    MyUserInfoDelegate.Broadcast(UserInfoWidgetController);
+}
+
+void AHKUILobbyPlayerController::EnterLobbyUserWidgetController(UUserInfoWidgetController* EnterUserInfoController)
+{
+    EnterLobbyNewUserDelegate.Broadcast(EnterUserInfoController);
+}
+
+void AHKUILobbyPlayerController::ExitLobbyUserWidgetController(UUserInfoWidgetController* ExitUserInfoController)
+{
+    ExitLobbyUserDelegate.Broadcast(ExitUserInfoController);
+}
+
 void AHKUILobbyPlayerController::MakeLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController)
 {
     MakeNewRoomDelegate.Broadcast(RoomInfoController);
