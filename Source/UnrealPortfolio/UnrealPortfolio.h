@@ -24,3 +24,7 @@ static const int MaxRoomNameLen = 12;
 static const int MaxRoomPasswordLen = 8;
 static const int MaxUserIntroductionLen = 30;
 //* Room End */
+
+//* Chat */
+static const int MaxChattingLen = 30;
+//* Chat End */

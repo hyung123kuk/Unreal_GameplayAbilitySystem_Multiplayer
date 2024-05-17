@@ -99,7 +99,7 @@ void AHKLobbyPlayerState::OnRep_Exp()
 
 void AHKLobbyPlayerState::SetExistingUserWidgetControllers()
 {
-	//들어 온 게 자신일 경우 원래 있던 값들 가져온다.
+	//처음 들어왔을 경우 있던 값 초기화
 	if (GetPlayerController() != nullptr)
 	{
 		AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));

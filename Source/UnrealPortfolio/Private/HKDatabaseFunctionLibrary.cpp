@@ -68,6 +68,40 @@ bool UHKDatabaseFunctionLibrary::MatchPasswordToID(UMySQLConnection* Database, c
 	return true;
 }
 
+bool UHKDatabaseFunctionLibrary::RecordChatInDatabase(UMySQLConnection* Database, const FString& ID, FString RoomName, FString ChattingMessage)
+{
+	if (!CheckThePossibilityOfQueryInjection(ID))
+	{
+		return false;
+	}
+
+	FString DBRecordRoomName;
+	if (RoomName.IsEmpty())
+	{
+		DBRecordRoomName.Append(TEXT("Lobby"));
+	}
+	else
+	{
+		DBRecordRoomName.Append(TEXT("Room_"));
+	}
+
+	//DB저장 전 예약어는 빼고 넣음
+	FString ContainedReservedWord;
+	while (!CheckThePossibilityOfQueryInjection(ChattingMessage, ContainedReservedWord))
+	{
+		ChattingMessage = ChattingMessage.Replace(*ContainedReservedWord, TEXT(""), ESearchCase::IgnoreCase);
+	}
+	while (!CheckThePossibilityOfQueryInjection(RoomName, ContainedReservedWord))
+	{
+		RoomName = RoomName.Replace(*ContainedReservedWord, TEXT(""), ESearchCase::IgnoreCase);
+	}
+	DBRecordRoomName.Append(RoomName);
+
+	FString QueryString = FString::Printf(TEXT("INSERT INTO `userdata`.`chatting_log` (`user_id`,`chat_message`,`place`,`time`) VALUES('%s', '%s', '%s', NOW());"), *ID, *ChattingMessage, *RoomName);
+	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+
+	return true;
+}
 
 FMySQLConnectoreQueryResult UHKDatabaseFunctionLibrary::Query(UMySQLConnection* Database,const FString& Query)
 {

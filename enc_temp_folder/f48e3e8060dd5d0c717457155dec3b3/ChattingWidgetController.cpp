@@ -7,7 +7,6 @@ void UChattingWidgetController::SetWidgetControllerParams(const FChattingWidgetC
 {
 	UserName = Params.UserName;
 	Chat = Params.Chat;
-
 }
 
 FString UChattingWidgetController::GetElementName()

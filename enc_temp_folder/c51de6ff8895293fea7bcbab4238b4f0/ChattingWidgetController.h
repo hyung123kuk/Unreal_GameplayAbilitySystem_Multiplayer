@@ -7,9 +7,6 @@
 #include "Interaction/UIPageInterface.h"
 #include "ChattingWidgetController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChttingResetSignature);
-
-
 USTRUCT(BlueprintType)
 struct FChattingWidgetControllerParams
 {
@@ -39,9 +36,6 @@ public:
 	void SetWidgetControllerParams(const FChattingWidgetControllerParams& Params);
 
 	virtual FString GetElementName() override;
-	
-	UPROPERTY(BlueprintAssignable, Category = "ChangeValue")
-	FChangeRoomUserInfoValueSignature FChttingResetSignature;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")

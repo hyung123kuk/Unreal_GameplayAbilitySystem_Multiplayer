@@ -35,6 +35,7 @@ public:
 	bool TryToMakeAndEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, int MaxPlayers, FString& Message);
 	bool TryToEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, FString& Message);
 	bool TryToExitRoomAndGoToLobby(const FString& PlayerId, const FString& RoomName, FString& Message);
+	bool TryToSendMessageOtherClients(const FString& PlayerId, const FString& ChattingMessage, FString& Message);
 	/** Client's request End */
 
 private:

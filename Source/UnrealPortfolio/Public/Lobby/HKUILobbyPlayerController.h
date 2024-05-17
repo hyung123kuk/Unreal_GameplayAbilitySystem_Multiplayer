@@ -11,11 +11,13 @@ class AHKLobbyPlayerState;
 class URoomUserInfoWidgetControlle;
 class ULobbyRoomInfoWidgetController;
 class UUserInfoWidgetController;
+class UChattingWidgetController;
 class ARoom;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLobbyRoomInfoDelegate, ULobbyRoomInfoWidgetController*, RoomController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserInfoDelegate, UUserInfoWidgetController*, UserInfoController);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChattingMessageDelegate, UChattingWidgetController*, ChattingMessageController);
 
 
 UCLASS()
@@ -31,6 +33,8 @@ public:
 	void TryToEnteredRoomToServer(const FString& UserName, const FString& RoomName, const FString& RoomPassword);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToExitRoomToServer(const FString& UserName, const FString& RoomName);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToSendChattingMessageToServer(const FString& UserName, const FString& Message);
 	//** From Client End */
 
 	//** Lobby UI */
@@ -40,6 +44,11 @@ public:
 	void MakeLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	void RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	//** Lobby UI End*/
+
+	//** Chatting UI */
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void NotifyReceiveChattingMessageToClient(const FString& SendUserName, const FString& ChattingMessage);
+	//** Chatting UI End*/
 
 	//** Popup Room UI */
 	void CreateAndShowRoomWidget();
@@ -60,6 +69,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate ExitRoomSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
+	FMessageSuccessOrNotDelegate SendChattingMessageSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */
@@ -81,6 +93,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Lobby")
 	FLobbyRoomInfoDelegate ChangeRoomInfoDelegate;
 	//** Lobby UI End*/
+
+	//** Chatting UI */
+	UPROPERTY(BlueprintAssignable, Category = "Chatting")
+	FChattingMessageDelegate RecieveChattingMessageDelegate;
+	//** Chatting UI End*/
 
 	//** Room UI */
 	UPROPERTY(BlueprintAssignable, Category = "Room")
@@ -104,4 +121,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> UIPopupStoreInstance;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UChattingWidgetController> ChattingWidgetControllerClass;
 };

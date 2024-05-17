@@ -8,6 +8,7 @@
 #include "Lobby/Room.h"
 #include "HKDatabaseFunctionLibrary.h"
 #include "HKBlueprintFunctionLibrary.h"
+#include "Lobby/HKUILobbyPlayerController.h"
 #include "Engine/Engine.h"
 
 
@@ -208,10 +209,53 @@ bool AHKLobbyGameMode::TryToExitRoomAndGoToLobby(const FString& PlayerId, const 
 	if (Room->ExitPlayer(PlayerState, Message))
 	{
 		LobbyPlayers.Add(PlayerState);
+		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 로비로 나가는 것을 성공합니다."), *PlayerId);
 		return true;
 	}
 
+	UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 로비로 나가는 것을 실패합니다."), *PlayerId);
 	return false;
+}
+
+bool AHKLobbyGameMode::TryToSendMessageOtherClients(const FString& PlayerId, const FString& ChattingMessage, FString& Message)
+{
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 채팅(%s)보내기를 시도합니다."), *PlayerId, *ChattingMessage);
+
+	if (ChattingMessage.Len() > MaxChattingLen)
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 보낸 채팅(%s)길이가 제한 글자수(%d) 보다 큽니다."), *PlayerId, *ChattingMessage, MaxChattingLen);
+		Message = FString("채팅길이는 %d 자리 이하만 가능합니다.", MaxChattingLen);
+		return false;
+	}
+
+	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	TArray<TObjectPtr<AHKLobbyPlayerState>> PlayersToReceive;
+	ARoom* Room = PlayerState->GetEnteredRoom();
+	FString RoomName;
+	if (Room != nullptr)
+	{
+		RoomName = Room->GetRoomName();
+		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에서 채팅(%s)을 보냅니다.."), *PlayerId, *RoomName, *ChattingMessage);
+		PlayersToReceive = Room->GetJoinPlayers();
+	}
+	else
+	{
+		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 로비에서 채팅(%s)을 보냅니다.."), *PlayerId, *ChattingMessage);
+		PlayersToReceive = LobbyPlayers;
+	}
+
+	for (AHKLobbyPlayerState* PlayerToReceive : PlayersToReceive)
+	{
+		AHKUILobbyPlayerController* LobbyPlayerController = Cast<AHKUILobbyPlayerController>(PlayerToReceive->GetPlayerController());
+		if (LobbyPlayerController != nullptr)
+		{
+			LobbyPlayerController->NotifyReceiveChattingMessageToClient(PlayerId, ChattingMessage);
+		}
+	}
+
+	UHKDatabaseFunctionLibrary::RecordChatInDatabase(UserData, PlayerId, RoomName, ChattingMessage);
+
+	return true;
 }
 
 void AHKLobbyGameMode::ChangePlayerReadyState(FString Id, bool NewReadyState)

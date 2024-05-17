@@ -44,6 +44,8 @@ public:
 	static int GetMaxRoomPasswordLen();
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
 	static int GetMaxUserIntroductionLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMaxChattingLen();
 	//** SystemVariable End */
 
 };

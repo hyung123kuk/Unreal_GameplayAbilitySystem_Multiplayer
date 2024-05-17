@@ -7,6 +7,8 @@
 #include "Interaction/UIPageInterface.h"
 #include "RoomUserInfoWidgetControlle.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChangeRoomUserInfoValueSignature);
+
 USTRUCT(BlueprintType)
 struct FRoomUserInfoWidgetControllerParams
 {
@@ -47,6 +49,9 @@ public:
 	void SetWidgetControllerParams(const FRoomUserInfoWidgetControllerParams& Params);
 	
 	virtual FString GetElementName() override;
+
+	UPROPERTY(BlueprintAssignable, Category = "ChangeValue")
+	FChangeRoomUserInfoValueSignature ChangeRoomValueSignature;
 
 protected:
 

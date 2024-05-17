@@ -6,6 +6,7 @@
 #include "Lobby/HKLobbyGameMode.h"
 #include "Lobby/HKLobbyPlayerState.h"
 #include "UI/WidgetController/RoomUserInfoWidgetControlle.h"
+#include "UI/WidgetController/ChattingWidgetController.h"
 
 void AHKUILobbyPlayerController::TryToMakeRoomToServer_Implementation(const FString& UserName, const FString& RoomName, const FString& RoomPassword, int MaxPlayers)
 {
@@ -55,6 +56,22 @@ void AHKUILobbyPlayerController::TryToExitRoomToServer_Implementation(const FStr
     SendServerMessage_Client(Message, EServerToClientMessageType::ExitRoom, !bSuccess, bSuccess);
 }
 
+void AHKUILobbyPlayerController::TryToSendChattingMessageToServer_Implementation(const FString& UserName, const FString& ChatMessage)
+{
+    AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
+    FString Message = FString();
+    bool bSuccess = false;
+    if (GameMode)
+    {
+        if (GameMode->TryToSendMessageOtherClients(UserName, ChatMessage, Message))
+        {
+            bSuccess = true;
+        }
+    }
+
+    SendServerMessage_Client(Message, EServerToClientMessageType::SendChattingMessage, !bSuccess, bSuccess);
+}
+
 void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
 {
     MyUserInfoDelegate.Broadcast(UserInfoWidgetController);
@@ -78,6 +95,16 @@ void AHKUILobbyPlayerController::MakeLobbyRoomWidgetController(ULobbyRoomInfoWid
 void AHKUILobbyPlayerController::RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController)
 {
     RemoveRoomDelegate.Broadcast(RoomInfoController);
+}
+
+void AHKUILobbyPlayerController::NotifyReceiveChattingMessageToClient_Implementation(const FString& SendUserName, const FString& ChattingMessage)
+{
+    UChattingWidgetController* ChattingWidgetController = NewObject<UChattingWidgetController>(this, ChattingWidgetControllerClass);
+    if (ChattingWidgetController != nullptr)
+    {
+        ChattingWidgetController->SetWidgetControllerParams(FChattingWidgetControllerParams(SendUserName, ChattingMessage));
+    }
+    RecieveChattingMessageDelegate.Broadcast(ChattingWidgetController);
 }
 
 void AHKUILobbyPlayerController::CreateAndShowRoomWidget()
@@ -116,6 +143,10 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     if (MessageType == EServerToClientMessageType::ExitRoom)
     {
         ExitRoomSuccessOrNotDelegate.Broadcast(Success);
+    }
+    if (MessageType == EServerToClientMessageType::SendChattingMessage)
+    {
+        SendChattingMessageSuccessOrNotDelegate.Broadcast(Success);
     }
 }
 

@@ -146,4 +146,9 @@ int UHKBlueprintFunctionLibrary::GetMaxUserIntroductionLen()
     return MaxUserIntroductionLen;
 }
 
+int UHKBlueprintFunctionLibrary::GetMaxChattingLen()
+{
+    return MaxChattingLen;
+}
+
 #pragma endregion
