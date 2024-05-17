@@ -35,6 +35,8 @@ public:
 	void TryToExitRoomToServer(const FString& UserName, const FString& RoomName);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToSendChattingMessageToServer(const FString& UserName, const FString& Message);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToChangeUserIntroductionMessageToServer(const FString& UserName, const FString& Introduction);
 	//** From Client End */
 
 	//** Lobby UI */
@@ -72,6 +74,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate SendChattingMessageSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
+	FMessageSuccessOrNotDelegate ChangeIntroductionMessageSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */

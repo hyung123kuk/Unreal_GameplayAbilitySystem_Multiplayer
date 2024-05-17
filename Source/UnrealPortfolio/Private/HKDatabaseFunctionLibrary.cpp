@@ -68,6 +68,23 @@ bool UHKDatabaseFunctionLibrary::MatchPasswordToID(UMySQLConnection* Database, c
 	return true;
 }
 
+
+bool UHKDatabaseFunctionLibrary::GetUserInformation(UMySQLConnection* Database, const FString& ID, FString& Introduction, int& Gold, int& Exp)
+{
+	FString QueryString = FString::Printf(TEXT("SELECT `introduction`,`gold`,`exp` FROM `userdata`.`member` WHERE `id` = '%s';"), *ID);
+	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+	if (QueryResult.Success)
+	{
+		FMySQLConnectorQueryResultRow UserData = QueryResult.ResultRows[0];
+		Introduction = UserData.Fields[0].Value;
+		Gold = FCString::Atoi(*UserData.Fields[1].Value);
+		Exp = FCString::Atoi(*UserData.Fields[2].Value);
+		return true;
+	}
+
+	return false;
+}
+
 bool UHKDatabaseFunctionLibrary::RecordChatInDatabase(UMySQLConnection* Database, const FString& ID, FString RoomName, FString ChattingMessage)
 {
 	if (!CheckThePossibilityOfQueryInjection(ID))
@@ -86,20 +103,28 @@ bool UHKDatabaseFunctionLibrary::RecordChatInDatabase(UMySQLConnection* Database
 	}
 
 	//DB저장 전 예약어는 빼고 넣음
-	FString ContainedReservedWord;
-	while (!CheckThePossibilityOfQueryInjection(ChattingMessage, ContainedReservedWord))
-	{
-		ChattingMessage = ChattingMessage.Replace(*ContainedReservedWord, TEXT(""), ESearchCase::IgnoreCase);
-	}
-	while (!CheckThePossibilityOfQueryInjection(RoomName, ContainedReservedWord))
-	{
-		RoomName = RoomName.Replace(*ContainedReservedWord, TEXT(""), ESearchCase::IgnoreCase);
-	}
+	RemovePossibilityOfQueryInjection(ChattingMessage);
+	RemovePossibilityOfQueryInjection(RoomName);
 	DBRecordRoomName.Append(RoomName);
 
-	FString QueryString = FString::Printf(TEXT("INSERT INTO `userdata`.`chatting_log` (`user_id`,`chat_message`,`place`,`time`) VALUES('%s', '%s', '%s', NOW());"), *ID, *ChattingMessage, *RoomName);
+	FString QueryString = FString::Printf(TEXT("INSERT INTO `userdata`.`chatting_log` (`user_id`,`chat_message`,`place`,`time`) VALUES('%s', '%s', '%s', NOW());"), *ID, *ChattingMessage, *DBRecordRoomName);
 	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
 
+	return true;
+}
+
+bool UHKDatabaseFunctionLibrary::ChangeUserIntroduction(UMySQLConnection* Database, const FString& ID, FString& Introduction)
+{
+	if (!CheckThePossibilityOfQueryInjection(ID))
+	{
+		return false;
+	}
+
+	//DB저장 전 예약어는 빼고 넣음
+	RemovePossibilityOfQueryInjection(Introduction);
+	FString QueryString = FString::Printf(TEXT("UPDATE `userdata`.`member` SET `introduction` = '%s' WHERE `id` = '%s';"), *Introduction, *ID);
+	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+	
 	return true;
 }
 
@@ -114,6 +139,15 @@ FMySQLConnectoreQueryResult UHKDatabaseFunctionLibrary::Query(UMySQLConnection* 
 	}
 
 	return QueryResult;
+}
+
+void UHKDatabaseFunctionLibrary::RemovePossibilityOfQueryInjection(FString& Input)
+{
+	FString ContainedReservedWord;
+	while (!CheckThePossibilityOfQueryInjection(Input, ContainedReservedWord))
+	{
+		Input = Input.Replace(*ContainedReservedWord, TEXT(""), ESearchCase::IgnoreCase);
+	}
 }
 
 bool UHKDatabaseFunctionLibrary::CheckThePossibilityOfQueryInjection(const FString& Input)

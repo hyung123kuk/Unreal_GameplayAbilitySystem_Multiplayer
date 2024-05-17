@@ -77,7 +77,21 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 	//TEST CODE
 
 	AHKLobbyPlayerState* NewPlayerState = NewPlayerController->GetPlayerState<AHKLobbyPlayerState>();
+	FString UserIntroduction;
+	int UserGold = 0;
+	int UserExp = 0;
+	if (!UHKDatabaseFunctionLibrary::GetUserInformation(UserData, Id, UserIntroduction, UserGold, UserExp))
+	{
+		UE_LOG(ServerLog, Error, TEXT("유저(%s)정보를 데이터 베이스에서 찾기를 실패했습니다."), *Id);
+		ErrorMessage = TEXT("유저 데이터를 찾을 수 없습니다.");
+		return NewPlayerController;
+	}
+	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 정보 : 소개(%s) , 골드(%d) , 경험치(%d) "), *Id, *UserIntroduction, UserGold, UserExp);
+
 	NewPlayerState->SetPlayerName(Id);
+	NewPlayerState->SetIntroduction(UserIntroduction);
+	NewPlayerState->SetGold(UserGold);
+	NewPlayerState->SetExp(UserExp);
 
 	AllPlayers.Add(Id, NewPlayerState);
 	LobbyPlayers.Add(NewPlayerState);
@@ -93,6 +107,7 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	if (GetNetMode() == NM_Standalone)
 		return;
 
+	//PostLogin에서 IP가져올 수 있음
 	AHKLobbyPlayerState* NewPlayerState = NewPlayer->GetPlayerState<AHKLobbyPlayerState>();
 	FString PlayerIP = *NewPlayerState->GetNetConnection()->LowLevelGetRemoteAddress(true);
 
@@ -253,8 +268,26 @@ bool AHKLobbyGameMode::TryToSendMessageOtherClients(const FString& PlayerId, con
 		}
 	}
 
-	UHKDatabaseFunctionLibrary::RecordChatInDatabase(UserData, PlayerId, RoomName, ChattingMessage);
+	if (!UHKDatabaseFunctionLibrary::RecordChatInDatabase(UserData, PlayerId, RoomName, ChattingMessage))
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 보낸 채팅(%s)을 데이터베이스에 넣는 것을 실패했습니다."), *PlayerId, *ChattingMessage);
+	}
 
+	return true;
+}
+
+bool AHKLobbyGameMode::TryToChangeIntroductionMessage(const FString& PlayerId, FString& Introduction, FString& Message)
+{
+	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	
+	if (!UHKDatabaseFunctionLibrary::ChangeUserIntroduction(UserData, PlayerId, Introduction))
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 보낸 소개(%s) 수정을 데이터베이스에 넣는 것을 실패했습니다."), *PlayerId, *Introduction);
+		Message = FString("소개 변경이 실패하였습니다.");
+		return false;
+	}
+
+	PlayerState->SetIntroduction(Introduction);
 	return true;
 }
 

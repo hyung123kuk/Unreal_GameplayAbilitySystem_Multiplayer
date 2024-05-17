@@ -33,12 +33,17 @@ protected:
 	/** Login End*/
 
 	/** Lobby */
+	static bool GetUserInformation(UMySQLConnection* Database, const FString& ID, FString& Introduction, int& Gold, int& Exp);
 	static bool RecordChatInDatabase(UMySQLConnection* Database, const FString& ID,FString RoomName, FString ChattingMessage);
+	static bool ChangeUserIntroduction(UMySQLConnection* Database, const FString& ID, FString& NewIntroduction);
 	/** Lobby End*/
 
 private:
 	static FMySQLConnectoreQueryResult Query(UMySQLConnection* Database,const FString& Query);
 	
+	//쿼리 인젝션 가능성이 있는 문자 지워주는 함수
+	static void RemovePossibilityOfQueryInjection(FString& Input);
+
 	//간단한 쿼리 인젝션 예방 함수
 	static bool CheckThePossibilityOfQueryInjection(const FString& Input);
 	static bool CheckThePossibilityOfQueryInjection(const FString& Input, FString& ContainedReservedWord);

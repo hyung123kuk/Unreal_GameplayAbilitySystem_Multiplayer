@@ -23,6 +23,7 @@ enum class EServerToClientMessageType : uint8
 	EnterRoom,
 	ExitRoom,
 	SendChattingMessage,
+	ChangeIntroduction,
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSuccessOrNotDelegate, bool, Success);

@@ -72,6 +72,23 @@ void AHKUILobbyPlayerController::TryToSendChattingMessageToServer_Implementation
     SendServerMessage_Client(Message, EServerToClientMessageType::SendChattingMessage, !bSuccess, bSuccess);
 }
 
+void AHKUILobbyPlayerController::TryToChangeUserIntroductionMessageToServer_Implementation(const FString& UserName, const FString& Introduction)
+{
+    AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
+    FString IntroductionCopy = Introduction;
+    FString Message = FString();
+    bool bSuccess = false;
+    if (GameMode)
+    {
+        if (GameMode->TryToChangeIntroductionMessage(UserName, IntroductionCopy, Message))
+        {
+            bSuccess = true;
+        }
+    }
+
+    SendServerMessage_Client(Message, EServerToClientMessageType::ChangeIntroduction, !bSuccess, bSuccess);
+}
+
 void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
 {
     MyUserInfoDelegate.Broadcast(UserInfoWidgetController);
@@ -147,6 +164,10 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     if (MessageType == EServerToClientMessageType::SendChattingMessage)
     {
         SendChattingMessageSuccessOrNotDelegate.Broadcast(Success);
+    }
+    if (MessageType == EServerToClientMessageType::ChangeIntroduction)
+    {
+        ChangeIntroductionMessageSuccessOrNotDelegate.Broadcast(Success);
     }
 }
 
