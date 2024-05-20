@@ -77,8 +77,7 @@ void AHKLobbyPlayerState::SendChangePlayerInformationToLocalClient()
 	if (UserInfoWidgetController != nullptr)
 	{
 		FString UserName = GetPlayerName();
-		FString EnterRoomName = EnteredGameRoom != nullptr ? EnteredGameRoom->GetRoomName() : TEXT("");
-		UserInfoWidgetController->SetWidgetControllerParams(FUserInfoWidgetControllerParams(UserName, EnterRoomName, Introduction, PlayerLevel, PlayerExp));
+		UserInfoWidgetController->SetWidgetControllerParams(FUserInfoWidgetControllerParams(UserName, EnteredGameRoom, Introduction, PlayerLevel, PlayerExp));
 	}
 }
 

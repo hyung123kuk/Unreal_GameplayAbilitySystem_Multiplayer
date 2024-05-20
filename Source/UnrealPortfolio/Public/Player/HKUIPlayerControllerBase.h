@@ -15,17 +15,26 @@ UENUM(BlueprintType)
 enum class EServerToClientMessageType : uint8
 {
 	None,
+	//** Login Notify */
 	ServerConnect,
 	CheckID,
 	SignUp,
 	Login,
+	//** Login Notify End*/
+
+	//** Lobby Notify */
+	SendChattingMessage,
+	ChangeIntroduction,
+	//** Lobby Notify End */
+
+	//** Room Notify */
 	MakeRoom,
 	EnterRoom,
 	ExitRoom,
-	SendChattingMessage,
-	ChangeIntroduction,
 	ChangeReadyState,
 	GameStart,
+	FollowRoomUser,
+	//** Room Notify End*/
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSuccessOrNotDelegate, bool, Success);

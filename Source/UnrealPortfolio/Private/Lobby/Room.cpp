@@ -79,6 +79,13 @@ bool ARoom::EnterPlayer(AHKLobbyPlayerState* NewPlayer,const FString& AttempPass
 		return false;
 	}
 
+	if (!AreThereRemainingSeatInTheRoom())
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어(%s)의 방(%s)에 입장을 시도했으나 남은자리(%d/%d)가 없습니다. "), *NewPlayer->GetName(), *Name,JoinPlayers.Num(), MaxPlayer);
+		ErrorMessage = TEXT("방에 남은 자리가 없습니다.");
+		return false;
+	}
+
 	JoinPlayers.Add(NewPlayer);
 	NewPlayer->SetEnteredRoom(this);
 	return true;
@@ -156,6 +163,16 @@ void ARoom::SendChangedRoomInformationToClients()
 	}
 	LocalClientPlayerController->MakeLobbyRoomWidgetController(RoomInfoWidgetController);
 	RoomInfoWidgetController->SetWidgetControllerParams(FLobbyRoomInfoWidgetControllerParams(Name, MaxPlayer, JoinPlayers.Num(),bPublicRoom));
+}
+
+bool ARoom::AreThereRemainingSeatInTheRoom()
+{
+	if (JoinPlayers.Num() >= MaxPlayer)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void ARoom::NotifyRemoveRoomToClient_Implementation()

@@ -6,7 +6,7 @@
 void UUserInfoWidgetController::SetWidgetControllerParams(const FUserInfoWidgetControllerParams& Params)
 {
 	PlayerName = Params.PlayerName;
-	EnterRoomName = Params.EnterRoomName;
+	EnterRoom = Params.EnterRoom;
 	Introduction = Params.Introduction;
 	PlayerLevel = Params.PlayerLevel;
 	PlayerExp = Params.PlayerExp;

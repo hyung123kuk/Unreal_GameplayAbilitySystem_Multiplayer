@@ -122,6 +122,22 @@ void AHKUILobbyPlayerController::TryToGameStart_Implementation(const FString& Ro
     SendServerMessage_Client(Message, EServerToClientMessageType::GameStart, !bSuccess, bSuccess);
 }
 
+void AHKUILobbyPlayerController::TryToFollowRoomUser_Implementation(const FString& UserToFollow, const FString& RoomPassword)
+{
+    AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
+    FString Message = FString();
+    bool bSuccess = false;
+    if (GameMode)
+    {
+        if (GameMode->TryToFollowRoomUser(*this, UserToFollow, RoomPassword, Message))
+        {
+            bSuccess = true;
+        }
+    }
+
+    SendServerMessage_Client(Message, EServerToClientMessageType::FollowRoomUser, !bSuccess, bSuccess);
+}
+
 void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
 {
     MyUserInfoDelegate.Broadcast(UserInfoWidgetController);
@@ -182,6 +198,18 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
 {
     Super::ReceiveServerMessage(Message, MessageType, PopupMessage, Success);
 
+    //** Lobby Notify */
+    if (MessageType == EServerToClientMessageType::SendChattingMessage)
+    {
+        SendChattingMessageSuccessOrNotDelegate.Broadcast(Success);
+    }
+    if (MessageType == EServerToClientMessageType::ChangeIntroduction)
+    {
+        ChangeIntroductionMessageSuccessOrNotDelegate.Broadcast(Success);
+    }
+    //** Lobby Notify End */
+
+    //** Room Notify */
     if (MessageType == EServerToClientMessageType::MakeRoom)
     {
         MakeRoomSuccessOrNotDelegate.Broadcast(Success);
@@ -194,14 +222,6 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     {
         ExitRoomSuccessOrNotDelegate.Broadcast(Success);
     }
-    if (MessageType == EServerToClientMessageType::SendChattingMessage)
-    {
-        SendChattingMessageSuccessOrNotDelegate.Broadcast(Success);
-    }
-    if (MessageType == EServerToClientMessageType::ChangeIntroduction)
-    {
-        ChangeIntroductionMessageSuccessOrNotDelegate.Broadcast(Success);
-    }
     if (MessageType == EServerToClientMessageType::ChangeReadyState)
     {
         ChangeReadyStateSuccessOrNotDelegate.Broadcast(Success);
@@ -210,6 +230,11 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     {
         GameStartSuccessOrNotDelegate.Broadcast(Success);
     }
+    if (MessageType == EServerToClientMessageType::FollowRoomUser)
+    {
+        FollowRoomUserSuccessOrNotDelegate.Broadcast(Success);
+    }
+    //** Room Notify End*/
 }
 
 

@@ -41,6 +41,8 @@ public:
 	void TryToChangeReadyState(bool IsReady);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToGameStart(const FString& RoomName);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToFollowRoomUser(const FString& UserToFollow, const FString& RoomPassword);
 	//** From Client End */
 
 	//** Lobby UI */
@@ -67,6 +69,13 @@ protected:
 
 public:
 	//** Notify SuccessOrNot From Server */
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Lobby")
+	FMessageSuccessOrNotDelegate SendChattingMessageSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Lobby")
+	FMessageSuccessOrNotDelegate ChangeIntroductionMessageSuccessOrNotDelegate;
+
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate MakeRoomSuccessOrNotDelegate;
 
@@ -77,16 +86,13 @@ public:
 	FMessageSuccessOrNotDelegate ExitRoomSuccessOrNotDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
-	FMessageSuccessOrNotDelegate SendChattingMessageSuccessOrNotDelegate;
-
-	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
-	FMessageSuccessOrNotDelegate ChangeIntroductionMessageSuccessOrNotDelegate;
-
-	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate ChangeReadyStateSuccessOrNotDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate GameStartSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
+	FMessageSuccessOrNotDelegate FollowRoomUserSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */

@@ -9,16 +9,18 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeUserInfoValueSignature, UUserInfoWidgetController*, UserInfoController);
 
+class ARoom;
+
 USTRUCT(BlueprintType)
 struct FUserInfoWidgetControllerParams
 {
 	GENERATED_BODY()
 
 	FUserInfoWidgetControllerParams() {}
-	FUserInfoWidgetControllerParams(FString& playerName, FString& enterRoomName, FString& introduction ,int playerLevel, int playerExp) :
+	FUserInfoWidgetControllerParams(FString& playerName, ARoom* enterRoom, FString& introduction ,int playerLevel, int playerExp) :
 		PlayerName(playerName),
-		EnterRoomName(enterRoomName),
-		Introduction(introduction),
+		EnterRoom(enterRoom),
+		Introduction(introduction), 
 		PlayerLevel(playerLevel),
 		PlayerExp(playerExp) {}
 
@@ -26,7 +28,7 @@ struct FUserInfoWidgetControllerParams
 	FString PlayerName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString EnterRoomName;
+	ARoom* EnterRoom;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Introduction;
@@ -61,7 +63,7 @@ protected:
 	FString PlayerName;
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
-	FString EnterRoomName;
+	TObjectPtr<ARoom> EnterRoom;
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	FString Introduction;

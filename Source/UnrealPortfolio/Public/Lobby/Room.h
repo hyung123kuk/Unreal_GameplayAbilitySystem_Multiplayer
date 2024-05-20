@@ -33,6 +33,9 @@ public:
 	bool ExitPlayer(AHKLobbyPlayerState* ExitPlayer, FString& Message);
 	void SendChangedRoomInformationToClients();
 
+	UFUNCTION(BlueprintCallable)
+	bool AreThereRemainingSeatInTheRoom();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void NotifyRemoveRoomToClient();
 
@@ -47,13 +50,17 @@ public:
 	/** End Change room information */
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	FString GetRoomName() const { return Name; }
 	const AHKLobbyPlayerState* GetAdminPlayer() const { return RoomAdminPlayer; }
 	TArray<TObjectPtr<AHKLobbyPlayerState>> GetJoinPlayers() const { return JoinPlayers; }
-	
 	int GetReadyPlayersCount() const;
 	int GetAllPlayersCount() const { return JoinPlayers.Num(); }
+
+	UFUNCTION(BlueprintCallable)
+	FString GetRoomName() const { return Name; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPublicRoom() const { return bPublicRoom; }
+
 	UFUNCTION(BlueprintCallable)
 	bool ReadyAllPlayers() const { return (GetAllPlayersCount() - 1) == GetReadyPlayersCount(); }
 

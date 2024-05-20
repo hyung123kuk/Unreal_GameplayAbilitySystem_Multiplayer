@@ -40,6 +40,7 @@ public:
 	bool TryToChangeIntroductionMessage(const APlayerController& Player, FString& Introduction, FString& Message);
 	bool TryToChangeReadyState(const APlayerController& Player, bool IsReady, FString& Message);
 	bool TryToGameStart(const APlayerController& Player,const FString& RoomName, FString& Message);
+	bool TryToFollowRoomUser(const APlayerController& Player,const FString& UserToFollow, const FString& RoomPassword, FString& Message);
 	/** Client's request End */
 
 private:

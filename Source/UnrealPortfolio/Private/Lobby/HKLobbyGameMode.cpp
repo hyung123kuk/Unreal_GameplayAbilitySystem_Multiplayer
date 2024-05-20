@@ -331,6 +331,29 @@ bool AHKLobbyGameMode::TryToGameStart(const APlayerController& Player, const FSt
 	return true;
 }
 
+bool AHKLobbyGameMode::TryToFollowRoomUser(const APlayerController& Player, const FString& UserToFollow, const FString& RoomPassword, FString& Message)
+{
+	const FString& PlayerId = GetPlayerIDWithController(Player);
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 따라가기를 시도합니다."), *PlayerId, *UserToFollow);
+	AHKLobbyPlayerState* FollowPlayerState = FindPlayerState(UserToFollow, Message);
+	if (FollowPlayerState->GetEnteredRoom() == nullptr)
+	{
+		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 들어간 방이 없어 플레이어 따라가기를 실패합니다."), *UserToFollow);
+		Message = TEXT("해당 플레이어는 들어간 방이 없습니다.");
+		return false;
+	}
+
+	ARoom* Room = FindEnteredRoomWithPlayerState(FollowPlayerState);
+	if (TryToEnterRoom(Player, Room->GetRoomName(), RoomPassword, Message))
+	{
+		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 따라가기에 성공합니다."), *PlayerId, *UserToFollow);
+		return true;
+	}
+
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 따라가기에 실패합니다."), *PlayerId, *UserToFollow);
+	return false;
+}
+
 void AHKLobbyGameMode::GameStart(const ARoom* Room)
 {
 	const AHKLobbyPlayerState* AdminPlayer = Room->GetAdminPlayer();
