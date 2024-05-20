@@ -47,13 +47,15 @@ public:
 	/** End Change room information */
 	
 public:
+	UFUNCTION(BlueprintCallable)
 	FString GetRoomName() const { return Name; }
 	const AHKLobbyPlayerState* GetAdminPlayer() const { return RoomAdminPlayer; }
 	TArray<TObjectPtr<AHKLobbyPlayerState>> GetJoinPlayers() const { return JoinPlayers; }
 	
 	int GetReadyPlayersCount() const;
 	int GetAllPlayersCount() const { return JoinPlayers.Num(); }
-	bool ReadyAllPlayers() const { return GetAllPlayersCount() == GetReadyPlayersCount(); }
+	UFUNCTION(BlueprintCallable)
+	bool ReadyAllPlayers() const { return (GetAllPlayersCount() - 1) == GetReadyPlayersCount(); }
 
 protected:
 	UPROPERTY(Replicated)

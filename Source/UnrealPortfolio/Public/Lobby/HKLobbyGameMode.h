@@ -7,6 +7,7 @@
 #include "HKLobbyGameMode.generated.h"
 
 class AHKLobbyPlayerState;
+class AHKUILobbyPlayerController;
 class ARoom;
 
 
@@ -32,18 +33,17 @@ private:
 
 public:
 	/** Client's request */
-	bool TryToMakeAndEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, int MaxPlayers, FString& Message);
-	bool TryToEnterRoom(const FString& PlayerId, const FString& RoomName, const FString& RoomPassword, FString& Message);
-	bool TryToExitRoomAndGoToLobby(const FString& PlayerId, const FString& RoomName, FString& Message);
-	bool TryToSendMessageOtherClients(const FString& PlayerId, const FString& ChattingMessage, FString& Message);
-	bool TryToChangeIntroductionMessage(const FString& PlayerId, FString& Introduction, FString& Message);
+	bool TryToMakeAndEnterRoom(const APlayerController& Player, const FString& RoomName, const FString& RoomPassword, int MaxPlayers, FString& Message);
+	bool TryToEnterRoom(const APlayerController& Player, const FString& RoomName, const FString& RoomPassword, FString& Message);
+	bool TryToExitRoomAndGoToLobby(const APlayerController& Player, const FString& RoomName, FString& Message);
+	bool TryToSendMessageOtherClients(const APlayerController& Player, const FString& ChattingMessage, FString& Message);
+	bool TryToChangeIntroductionMessage(const APlayerController& Player, FString& Introduction, FString& Message);
+	bool TryToChangeReadyState(const APlayerController& Player, bool IsReady, FString& Message);
+	bool TryToGameStart(const APlayerController& Player,const FString& RoomName, FString& Message);
 	/** Client's request End */
 
 private:
 	/** Match Making */
-	UFUNCTION()
-	void ChangePlayerReadyState(FString Id, bool NewReadyState);
-	void PlayerAllReady(const ARoom* Room);
 	void GameStart(const ARoom* Room);
 	/** Match Making End */
 
@@ -54,6 +54,7 @@ private:
 	/** Room End */
 
 private:
+	FString GetPlayerIDWithController(const APlayerController& PlayerController);
 	ARoom* FindEnteredRoomWithPlayerState(AHKLobbyPlayerState* PlayerState);
 	ARoom* FindRoom(const FString& RoomName, FString& Message);
 	AHKLobbyPlayerState* FindPlayerState(const FString& PlayerId, FString& Message);

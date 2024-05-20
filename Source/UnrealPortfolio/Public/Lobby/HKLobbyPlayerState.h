@@ -38,8 +38,10 @@ public:
 	/** Room Info Get*/
 	UFUNCTION(BlueprintCallable)
 	ARoom* GetEnteredRoom() const { return EnteredGameRoom; }
-	const bool GetIsRoomAdmin() const { return IsRoomAdmin; }
-	const bool GetIsReady() const { return IsReady; }
+	UFUNCTION(BlueprintCallable)
+	bool GetIsReady() const { return IsReady; }
+	UFUNCTION(BlueprintCallable)
+	bool GetIsRoomAdmin() const { return IsRoomAdmin; }
 	/** Room Info Get End*/
 
 	/** Match Making */

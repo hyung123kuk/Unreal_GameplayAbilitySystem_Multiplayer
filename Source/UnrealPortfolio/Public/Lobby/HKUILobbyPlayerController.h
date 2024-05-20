@@ -28,15 +28,19 @@ class UNREALPORTFOLIO_API AHKUILobbyPlayerController : public AHKUIPlayerControl
 public:
 	//** From Client */
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void TryToMakeRoomToServer(const FString& UserName, const FString& RoomName, const FString& RoomPassword, int MaxPlayers);
+	void TryToMakeRoomToServer(const FString& RoomName, const FString& RoomPassword, int MaxPlayers);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void TryToEnteredRoomToServer(const FString& UserName, const FString& RoomName, const FString& RoomPassword);
+	void TryToEnteredRoomToServer(const FString& RoomName, const FString& RoomPassword);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void TryToExitRoomToServer(const FString& UserName, const FString& RoomName);
+	void TryToExitRoomToServer(const FString& RoomName);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void TryToSendChattingMessageToServer(const FString& UserName, const FString& Message);
+	void TryToSendChattingMessageToServer(const FString& Message);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void TryToChangeUserIntroductionMessageToServer(const FString& UserName, const FString& Introduction);
+	void TryToChangeUserIntroductionMessageToServer(const FString& Introduction);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToChangeReadyState(bool IsReady);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToGameStart(const FString& RoomName);
 	//** From Client End */
 
 	//** Lobby UI */
@@ -77,6 +81,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate ChangeIntroductionMessageSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
+	FMessageSuccessOrNotDelegate ChangeReadyStateSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
+	FMessageSuccessOrNotDelegate GameStartSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */

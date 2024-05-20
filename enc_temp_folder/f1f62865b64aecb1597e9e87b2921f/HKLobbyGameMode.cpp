@@ -156,14 +156,14 @@ bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const APlayerController& Player, co
 	if (RoomName.Len() > MaxRoomNameLen)
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 생성한 방 이름(%s)이 제한 글자수(%d) 보다 큽니다."), *PlayerId, *RoomName, MaxRoomNameLen);
-		Message = FString(TEXT("방 이름은 %d 자리 이하만 가능합니다."), MaxRoomNameLen);
+		Message = FString("방 이름은 %d 자리 이하만 가능합니다.", MaxRoomNameLen);
 		return false;
 	}
 
 	if (RoomName.Len() > MaxRoomPasswordLen)
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 생성한 방 비밀번호(%s)가 제한 글자수(%d) 보다 큽니다."), *PlayerId, *RoomPassword, MaxRoomPasswordLen);
-		Message = FString(TEXT("방 비밀번호는 %d 자리 이하만 가능합니다."), MaxRoomPasswordLen);
+		Message = FString("방 비밀번호는 %d 자리 이하만 가능합니다.", MaxRoomPasswordLen);
 		return false;
 	}
 
