@@ -7,7 +7,7 @@
 #include "Interaction/UIPageInterface.h"
 #include "RoomUserInfoWidgetControlle.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChangeRoomUserInfoValueSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeRoomUserInfoValueSignature, URoomUserInfoWidgetControlle*, UserInfoController);
 
 USTRUCT(BlueprintType)
 struct FRoomUserInfoWidgetControllerParams

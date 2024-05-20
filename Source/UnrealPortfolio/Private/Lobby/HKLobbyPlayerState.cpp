@@ -125,8 +125,8 @@ void AHKLobbyPlayerState::SetExistingUserWidgetControllers()
 
 void AHKLobbyPlayerState::EnterGameRoom()
 {
-	AHKLobbyPlayerState* LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
 	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	AHKLobbyPlayerState* LocalClientPlayerState = LocalClientPlayerController->GetPlayerState<AHKLobbyPlayerState>();
 
 	if (!IsValid(LocalClientPlayerState) || !IsValid(LocalClientPlayerController))
 	{
@@ -148,8 +148,8 @@ void AHKLobbyPlayerState::EnterGameRoom()
 void AHKLobbyPlayerState::ExitGameRoom()
 {
 	bSameRoomAsLocalClient = false;
-	AHKLobbyPlayerState* LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
 	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	AHKLobbyPlayerState* LocalClientPlayerState = LocalClientPlayerController->GetPlayerState<AHKLobbyPlayerState>();
 
 	if (!IsValid(LocalClientPlayerState) || !IsValid(LocalClientPlayerController))
 	{
@@ -223,18 +223,18 @@ void AHKLobbyPlayerState::GameStart()
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			//World->ServerTravel("/Game/Maps/Game?listen");
+			UGameplayStatics::OpenLevel(GetWorld(), FName(*FString("Game")), true, "listen");
 		}
-		UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=Game?Host=true")));	
+		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=Game?Host=true")));	
 	}
 	else
 	{
 		APlayerController* PlayerController = GetPlayerController();
 		if (PlayerController)
 		{
-			//PlayerController->ClientTravel(ListenServerIP, ETravelType::TRAVEL_Absolute);
+			PlayerController->ClientTravel("127.0.0.1:7777", ETravelType::TRAVEL_Absolute);
 		}
-		UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=192.168.0.101")));//, *ListenServerIP,*GetPlayerName()));
+		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=192.168.0.101")));//, *ListenServerIP,*GetPlayerName()));
 	}
 }
 

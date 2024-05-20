@@ -7,7 +7,7 @@
 #include "Interaction/UIPageInterface.h"
 #include "UserInfoWidgetController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChangeUserInfoValueSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeUserInfoValueSignature, UUserInfoWidgetController*, UserInfoController);
 
 USTRUCT(BlueprintType)
 struct FUserInfoWidgetControllerParams

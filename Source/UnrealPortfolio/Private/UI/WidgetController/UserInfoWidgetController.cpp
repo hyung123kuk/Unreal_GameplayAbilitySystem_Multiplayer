@@ -10,7 +10,7 @@ void UUserInfoWidgetController::SetWidgetControllerParams(const FUserInfoWidgetC
 	Introduction = Params.Introduction;
 	PlayerLevel = Params.PlayerLevel;
 	PlayerExp = Params.PlayerExp;
-	ChangeUserInfoValueSignature.Broadcast();
+	ChangeUserInfoValueSignature.Broadcast(this);
 
 }
 

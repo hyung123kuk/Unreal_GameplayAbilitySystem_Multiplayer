@@ -73,12 +73,26 @@ bool UHKDatabaseFunctionLibrary::GetUserInformation(UMySQLConnection* Database, 
 {
 	FString QueryString = FString::Printf(TEXT("SELECT `introduction`,`gold`,`exp` FROM `userdata`.`member` WHERE `id` = '%s';"), *ID);
 	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
-	if (QueryResult.Success)
+	if (QueryResult.ResultRows.Num() > 0)
 	{
 		FMySQLConnectorQueryResultRow UserData = QueryResult.ResultRows[0];
-		Introduction = UserData.Fields[0].Value;
-		Gold = FCString::Atoi(*UserData.Fields[1].Value);
-		Exp = FCString::Atoi(*UserData.Fields[2].Value);
+		if (UserData.Fields.Num() == 0)
+		{
+			return false;
+		}
+
+		if (UserData.Fields.Num() > 0)
+		{
+			Introduction = UserData.Fields[0].Value;
+		}
+		if (UserData.Fields.Num() > 1)
+		{
+			Gold = FCString::Atoi(*UserData.Fields[1].Value);
+		}
+		if (UserData.Fields.Num() > 2)
+		{
+			Exp = FCString::Atoi(*UserData.Fields[2].Value);
+		}
 		return true;
 	}
 

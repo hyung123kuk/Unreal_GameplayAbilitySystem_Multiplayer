@@ -9,7 +9,7 @@ void ULobbyRoomInfoWidgetController::SetWidgetControllerParams(const FLobbyRoomI
 	MaxPlayerNum = Params.MaxPlayerNum;
 	NowPlayerNum = Params.NowPlayerNum;
 	PublicRoom = Params.PublicRoom;
-	ChangeRoomValueSignature.Broadcast();
+	ChangeRoomValueSignature.Broadcast(this);
 }
 
 

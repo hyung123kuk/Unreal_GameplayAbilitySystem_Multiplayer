@@ -146,6 +146,7 @@ void AHKLobbyGameMode::Logout(AController* Exiting)
 bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const APlayerController& Player, const FString& RoomName, const FString& RoomPassword, int MaxPlayers, FString& Message)
 {
 	const FString& PlayerId = GetPlayerIDWithController(Player);
+	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
 	if (Rooms.Contains(RoomName))
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 이미 존재하는 방 이름(%s)을 만들려다 실패했습니다."), *PlayerId, *RoomName);
@@ -175,11 +176,7 @@ bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const APlayerController& Player, co
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)을 만들었습니다."), *PlayerId, *RoomName);
 
 	if (TryToEnterRoom(Player, RoomName, RoomPassword, Message))
-	{
-		AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
-		if (PlayerState == nullptr)
-			return false;
-		
+	{		
 		NewRoom->ChangeRoomAdmin(PlayerState);
 		return true;
 	}

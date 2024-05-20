@@ -59,6 +59,7 @@ void ARoom::ChangeRoomAdmin(AHKLobbyPlayerState* NewRoomAdminPlayer)
 		//룸매니저 변경
 		RoomAdminPlayer = NewRoomAdminPlayer;
 		NewRoomAdminPlayer->SetIsRoomAdmin(true);
+		NewRoomAdminPlayer->SetIsReady(false);
 	}
 }
 
@@ -141,8 +142,8 @@ void ARoom::OnRep_MaxPlayer()
 
 void ARoom::SendChangedRoomInformationToClients()
 {
-	AHKLobbyPlayerState* LocalClientPlayerState = Cast<AHKLobbyPlayerState>(UGameplayStatics::GetPlayerState(this, 0));
 	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	AHKLobbyPlayerState* LocalClientPlayerState = LocalClientPlayerController->GetPlayerState<AHKLobbyPlayerState>();
 
 	if (!IsValid(LocalClientPlayerState) || !IsValid(LocalClientPlayerController))
 	{

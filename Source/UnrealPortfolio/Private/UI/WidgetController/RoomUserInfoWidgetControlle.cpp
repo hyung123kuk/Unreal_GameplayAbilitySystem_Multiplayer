@@ -9,7 +9,7 @@ void URoomUserInfoWidgetControlle::SetWidgetControllerParams(const FRoomUserInfo
 	RoomAdmin = Params.RoomAdmin;
 	IsReady = Params.IsReady;
 	SelectCharacter = Params.SelectCharacter;
-	ChangeRoomValueSignature.Broadcast();
+	ChangeRoomValueSignature.Broadcast(this);
 }
 
 
