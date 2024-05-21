@@ -29,7 +29,6 @@ public:
 	void SetEnteredRoom(ARoom* EnterGameRoom) { EnteredGameRoom = EnterGameRoom; }
 	void SetIsRoomAdmin(bool bIsRoomAdmin) { IsRoomAdmin = bIsRoomAdmin; }
 	void SetIntroduction(FString NewIntroduction) { Introduction = NewIntroduction; }
-	void SetGold (int SetPlayerGold) { PlayerGold = SetPlayerGold; }
 	void SetExp (int SetExp) { PlayerExp = SetExp; }
 	void SetListenServerIP(FString ServerIP) { ListenServerIP = ServerIP; }
 	void SetIsReady(bool bIsReady) { IsReady = bIsReady; }
@@ -67,8 +66,6 @@ private:
 	void OnRep_Level();
 	UFUNCTION()
 	void OnRep_Exp();
-	UFUNCTION()
-	void OnRep_Gold();
 	/** Lobby End*/
 
 	/** Room */
@@ -100,9 +97,6 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Exp)
 	int PlayerExp;
-
-	UPROPERTY(ReplicatedUsing = OnRep_Gold)
-	int PlayerGold;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserInfoWidgetController> UserInfoWidgetControllerClass;

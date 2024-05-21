@@ -19,6 +19,9 @@ class UNREALPORTFOLIO_API ARoom : public AActor
 public:
 	FRoomDestroyDelegate RoomDestroyDelegate;
 	
+	//서버에서만 사용 가능
+	FString Password;
+
 protected:
 	ARoom();
 	virtual void BeginPlay() override;
@@ -78,7 +81,7 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_MaxPlayer)
 	int MaxPlayer;
 
-	FString Password;
+
 private:
 	UPROPERTY()
 	TObjectPtr<ULobbyRoomInfoWidgetController> RoomInfoWidgetController;

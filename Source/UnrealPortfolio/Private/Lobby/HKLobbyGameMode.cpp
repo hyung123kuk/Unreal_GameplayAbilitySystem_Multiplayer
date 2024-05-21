@@ -77,6 +77,7 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 	//TEST CODE
 
 	AHKLobbyPlayerState* NewPlayerState = NewPlayerController->GetPlayerState<AHKLobbyPlayerState>();
+
 	FString UserIntroduction;
 	int UserGold = 0;
 	int UserExp = 0;
@@ -90,7 +91,7 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 
 	NewPlayerState->SetPlayerName(Id);
 	NewPlayerState->SetIntroduction(UserIntroduction);
-	NewPlayerState->SetGold(UserGold);
+	Cast<AHKUILobbyPlayerController>(NewPlayerController)->SetGold(UserGold);
 	NewPlayerState->SetExp(UserExp);
 
 	AllPlayers.Add(Id, NewPlayerState);
@@ -109,6 +110,10 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 
 	//PostLogin에서 IP가져올 수 있음
 	AHKLobbyPlayerState* NewPlayerState = NewPlayer->GetPlayerState<AHKLobbyPlayerState>();
+	if (NewPlayerState == nullptr)
+	{
+		return;
+	}
 	FString PlayerIP = *NewPlayerState->GetNetConnection()->LowLevelGetRemoteAddress(true);
 
 	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 IP 주소 : %s"), *NewPlayerState->GetPlayerName(), *PlayerIP);
@@ -147,6 +152,11 @@ bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const APlayerController& Player, co
 {
 	const FString& PlayerId = GetPlayerIDWithController(Player);
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (PlayerState == nullptr)
+	{
+		return false;
+	}
+
 	if (Rooms.Contains(RoomName))
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 이미 존재하는 방 이름(%s)을 만들려다 실패했습니다."), *PlayerId, *RoomName);
@@ -161,7 +171,7 @@ bool AHKLobbyGameMode::TryToMakeAndEnterRoom(const APlayerController& Player, co
 		return false;
 	}
 
-	if (RoomName.Len() > MaxRoomPasswordLen)
+	if (RoomPassword.Len() > MaxRoomPasswordLen)
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 생성한 방 비밀번호(%s)가 제한 글자수(%d) 보다 큽니다."), *PlayerId, *RoomPassword, MaxRoomPasswordLen);
 		Message = FString(TEXT("방 비밀번호는 %d 자리 이하만 가능합니다."), MaxRoomPasswordLen);
@@ -190,6 +200,7 @@ bool AHKLobbyGameMode::TryToEnterRoom(const APlayerController& Player, const FSt
 
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에 입장을 시도합니다."), *PlayerId, *RoomName);
 	ARoom* Room = FindRoom(RoomName, Message);
+
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
 	if (Room == nullptr || PlayerState == nullptr)
 	{
@@ -221,7 +232,17 @@ bool AHKLobbyGameMode::TryToExitRoomAndGoToLobby(const APlayerController& Player
 
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에서 나가 로비로 가려고 시도합니다."), *PlayerId, *RoomName);
 	ARoom* Room = FindRoom(RoomName, Message);
+	if (Room == nullptr)
+	{
+		return false;
+	}
+
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (PlayerState == nullptr)
+	{
+		return false;
+	}
+
 	if (Room->ExitPlayer(PlayerState, Message))
 	{
 		LobbyPlayers.Add(PlayerState);
@@ -246,6 +267,11 @@ bool AHKLobbyGameMode::TryToSendMessageOtherClients(const APlayerController& Pla
 	}
 
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (PlayerState == nullptr)
+	{
+		return false;
+	}
+
 	TArray<TObjectPtr<AHKLobbyPlayerState>> PlayersToReceive;
 	ARoom* Room = PlayerState->GetEnteredRoom();
 	FString RoomName;
@@ -283,6 +309,10 @@ bool AHKLobbyGameMode::TryToChangeIntroductionMessage(const APlayerController& P
 	const FString& PlayerId = GetPlayerIDWithController(Player);
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) (%s)로 자기소개 변경을 시도합니다."), *PlayerId, *Introduction);
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (PlayerState == nullptr)
+	{
+		return false;
+	}
 	
 	if (!UHKDatabaseFunctionLibrary::ChangeUserIntroduction(UserData, PlayerId, Introduction))
 	{
@@ -301,6 +331,11 @@ bool AHKLobbyGameMode::TryToChangeReadyState(const APlayerController& Player, bo
 	const FString& PlayerId = GetPlayerIDWithController(Player);
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 준비상태를 (%s)로변경합니다."), *PlayerId, IsReady ? TEXT("해제 -> 준비"):TEXT("준비 -> 해제"));
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (PlayerState == nullptr)
+	{
+		return false;
+	}
+
 	if (PlayerState->GetEnteredRoom() == nullptr)
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 들어간 방이 없어 준비상태 변경을 실패합니다."), *PlayerId);
@@ -318,7 +353,17 @@ bool AHKLobbyGameMode::TryToGameStart(const APlayerController& Player, const FSt
 	const FString& PlayerId = GetPlayerIDWithController(Player);
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 방(%s)에서 게임 시작을 시도합니다."), *PlayerId, *RoomName);
 	AHKLobbyPlayerState* PlayerState = FindPlayerState(PlayerId, Message);
+	if (PlayerState == nullptr)
+	{
+		return false;
+	}
+
 	ARoom* TryStartRoom = FindEnteredRoomWithPlayerState(PlayerState);
+	if (TryStartRoom == nullptr)
+	{
+		return false;
+	}
+
 	if (!TryStartRoom->ReadyAllPlayers())
 	{
 		UE_LOG(ServerLog, Warning, TEXT("방(%s)에서 모든 플레이어가 준비가 되지 않아, 게임 시작에 실패합니다."), *PlayerId);
@@ -336,6 +381,11 @@ bool AHKLobbyGameMode::TryToFollowRoomUser(const APlayerController& Player, cons
 	const FString& PlayerId = GetPlayerIDWithController(Player);
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 따라가기를 시도합니다."), *PlayerId, *UserToFollow);
 	AHKLobbyPlayerState* FollowPlayerState = FindPlayerState(UserToFollow, Message);
+	if (FollowPlayerState == nullptr)
+	{
+		return false;
+	}
+
 	if (FollowPlayerState->GetEnteredRoom() == nullptr)
 	{
 		UE_LOG(ServerLog, Error, TEXT("플레이어가(%s) 들어간 방이 없어 플레이어 따라가기를 실패합니다."), *UserToFollow);
@@ -344,6 +394,10 @@ bool AHKLobbyGameMode::TryToFollowRoomUser(const APlayerController& Player, cons
 	}
 
 	ARoom* Room = FindEnteredRoomWithPlayerState(FollowPlayerState);
+	if (Room == nullptr)
+	{
+		return false;
+	}
 	if (TryToEnterRoom(Player, Room->GetRoomName(), RoomPassword, Message))
 	{
 		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 따라가기에 성공합니다."), *PlayerId, *UserToFollow);
@@ -352,6 +406,45 @@ bool AHKLobbyGameMode::TryToFollowRoomUser(const APlayerController& Player, cons
 
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 따라가기에 실패합니다."), *PlayerId, *UserToFollow);
 	return false;
+}
+
+bool AHKLobbyGameMode::TryToInviteLobbyUser(const APlayerController& Player, const FString& UserToInvite, FString& Message)
+{
+	const FString& PlayerId = GetPlayerIDWithController(Player);
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 초대를 시도합니다."), *PlayerId, *UserToInvite);
+
+	AHKLobbyPlayerState* UserStateToInvite = FindPlayerState(UserToInvite, Message);
+	if (UserStateToInvite == nullptr)
+	{
+		return false;
+	}
+
+	ARoom* InvitedUserRoom = FindEnteredRoomWithPlayerState(UserStateToInvite);
+	if (InvitedUserRoom != nullptr)
+	{
+		UE_LOG(ServerLog, Warning, TEXT("초대받은 플레이어는(%s) 이미 다른 방에(%s) 있습니다."), *UserToInvite,*InvitedUserRoom->GetRoomName());
+		Message = TEXT("해당 플레이어는 이미 다른 방에 입장했습니다.");
+		return false;
+	}
+
+	AHKLobbyPlayerState* FollowPlayerState = FindPlayerState(PlayerId, Message);
+	if (FollowPlayerState == nullptr)
+	{
+		return false;
+	}
+	ARoom* SendRoom = FindEnteredRoomWithPlayerState(FollowPlayerState);
+	if (SendRoom == nullptr)
+	{
+		UE_LOG(ServerLog, Warning, TEXT("초대한 플레이어는(%s) 들어간 방이 없습니다."), *UserToInvite);
+		Message = TEXT("초대할 방이 없습니다.");
+		return false;
+	}
+
+	AHKUILobbyPlayerController* InvitedPlayerController = Cast<AHKUILobbyPlayerController>(UserStateToInvite->GetPlayerController());
+	InvitedPlayerController->NotifyInviteRoomMessageToClient(PlayerId, SendRoom->GetRoomName(), SendRoom->Password);
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 초대에 성공합니다."), *PlayerId, *UserToInvite);
+
+	return true;
 }
 
 void AHKLobbyGameMode::GameStart(const ARoom* Room)
@@ -375,6 +468,11 @@ void AHKLobbyGameMode::DestroyRoom(const FString& RoomName)
 {
 	FString Message;
 	ARoom* DestroyRoom = FindRoom(RoomName,Message);
+	if (DestroyRoom == nullptr)
+	{
+		return;
+	}
+
 	DestroyRoom->RoomDestroyDelegate.Clear();
 	TArray<TObjectPtr<AHKLobbyPlayerState>> JoinPlayers = DestroyRoom->GetJoinPlayers();
 	for (AHKLobbyPlayerState* JoinPlayer : JoinPlayers)

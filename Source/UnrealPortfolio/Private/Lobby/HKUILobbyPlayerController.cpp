@@ -7,6 +7,9 @@
 #include "Lobby/HKLobbyPlayerState.h"
 #include "UI/WidgetController/RoomUserInfoWidgetControlle.h"
 #include "UI/WidgetController/ChattingWidgetController.h"
+#include "UI/WidgetController/InviteRoomWidgetController.h"
+#include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 void AHKUILobbyPlayerController::TryToMakeRoomToServer_Implementation(const FString& RoomName, const FString& RoomPassword, int MaxPlayers)
 {
@@ -138,6 +141,42 @@ void AHKUILobbyPlayerController::TryToFollowRoomUser_Implementation(const FStrin
     SendServerMessage_Client(Message, EServerToClientMessageType::FollowRoomUser, !bSuccess, bSuccess);
 }
 
+void AHKUILobbyPlayerController::TryToInviteLobbyUser_Implementation(const FString& UserToInvite)
+{
+    AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
+    FString Message = FString();
+    bool bSuccess = false;
+    if (GameMode)
+    {
+        if (GameMode->TryToInviteLobbyUser(*this, UserToInvite, Message))
+        {
+            bSuccess = true;
+        }
+    }
+
+    SendServerMessage_Client(Message, EServerToClientMessageType::InviteLobbyUser, !bSuccess, bSuccess);
+}
+
+void AHKUILobbyPlayerController::NotifyReceiveChattingMessageToClient_Implementation(const FString& SendUserName, const FString& ChattingMessage)
+{
+    UChattingWidgetController* ChattingWidgetController = NewObject<UChattingWidgetController>(this, ChattingWidgetControllerClass);
+    if (ChattingWidgetController != nullptr)
+    {
+        ChattingWidgetController->SetWidgetControllerParams(FChattingWidgetControllerParams(SendUserName, ChattingMessage));
+    }
+    RecieveChattingMessageDelegate.Broadcast(ChattingWidgetController);
+}
+
+void AHKUILobbyPlayerController::NotifyInviteRoomMessageToClient_Implementation(const FString& SendUserName, const FString& InvitedRoom, const FString& RoomPassword)
+{
+    UInviteRoomWidgetController* InviteMessageWidgetController = NewObject<UInviteRoomWidgetController>(this, InviteWidgetControllerClass);
+    if (InviteMessageWidgetController != nullptr)
+    {
+        InviteMessageWidgetController->SetWidgetControllerParams(FInviteRoomWidgetControllerParams(SendUserName, InvitedRoom, RoomPassword));
+    }
+    RecieveInviteMessageDelegate.Broadcast(InviteMessageWidgetController);
+}
+
 void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
 {
     MyUserInfoDelegate.Broadcast(UserInfoWidgetController);
@@ -161,16 +200,6 @@ void AHKUILobbyPlayerController::MakeLobbyRoomWidgetController(ULobbyRoomInfoWid
 void AHKUILobbyPlayerController::RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController)
 {
     RemoveRoomDelegate.Broadcast(RoomInfoController);
-}
-
-void AHKUILobbyPlayerController::NotifyReceiveChattingMessageToClient_Implementation(const FString& SendUserName, const FString& ChattingMessage)
-{
-    UChattingWidgetController* ChattingWidgetController = NewObject<UChattingWidgetController>(this, ChattingWidgetControllerClass);
-    if (ChattingWidgetController != nullptr)
-    {
-        ChattingWidgetController->SetWidgetControllerParams(FChattingWidgetControllerParams(SendUserName, ChattingMessage));
-    }
-    RecieveChattingMessageDelegate.Broadcast(ChattingWidgetController);
 }
 
 void AHKUILobbyPlayerController::CreateAndShowRoomWidget()
@@ -234,7 +263,21 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     {
         FollowRoomUserSuccessOrNotDelegate.Broadcast(Success);
     }
+    if (MessageType == EServerToClientMessageType::InviteLobbyUser)
+    {
+        InviteLobbyUserSuccessOrNotDelegate.Broadcast(Success);
+    }
     //** Room Notify End*/
 }
 
+void AHKUILobbyPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+    DOREPLIFETIME(ThisClass, PlayerGold);
+}
+
+void AHKUILobbyPlayerController::OnRep_Gold()
+{
+
+}

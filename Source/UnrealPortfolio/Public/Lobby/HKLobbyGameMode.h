@@ -41,6 +41,7 @@ public:
 	bool TryToChangeReadyState(const APlayerController& Player, bool IsReady, FString& Message);
 	bool TryToGameStart(const APlayerController& Player,const FString& RoomName, FString& Message);
 	bool TryToFollowRoomUser(const APlayerController& Player,const FString& UserToFollow, const FString& RoomPassword, FString& Message);
+	bool TryToInviteLobbyUser(const APlayerController& Player,const FString& UserToInvite, FString& Message);
 	/** Client's request End */
 
 private:

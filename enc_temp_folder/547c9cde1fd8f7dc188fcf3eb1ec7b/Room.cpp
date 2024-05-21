@@ -152,6 +152,7 @@ void ARoom::SendChangedRoomInformationToClients()
 	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	if (!IsValid(LocalClientPlayerController))
 	{
+		UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Non LocalClientPlayerController"), true, true, FLinearColor::Green, 2.0f);
 		return;
 	}
 

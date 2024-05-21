@@ -34,6 +34,7 @@ enum class EServerToClientMessageType : uint8
 	ChangeReadyState,
 	GameStart,
 	FollowRoomUser,
+	InviteLobbyUser,
 	//** Room Notify End*/
 };
 
@@ -63,12 +64,13 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> UIWidgetInstance;
 
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UHKUserWidget> ErrorMessageClass;
 
 	UPROPERTY()
 	TObjectPtr<UHKUserWidget> ErrorMessageInstance;
-	
+
 	UPROPERTY()
 	TObjectPtr<UServerMessageWidgetController> ErrorMessageWidgetController;
 

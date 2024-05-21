@@ -12,12 +12,14 @@ class URoomUserInfoWidgetControlle;
 class ULobbyRoomInfoWidgetController;
 class UUserInfoWidgetController;
 class UChattingWidgetController;
+class UInviteRoomWidgetController;
 class ARoom;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLobbyRoomInfoDelegate, ULobbyRoomInfoWidgetController*, RoomController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserInfoDelegate, UUserInfoWidgetController*, UserInfoController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChattingMessageDelegate, UChattingWidgetController*, ChattingMessageController);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInviteMessageDelegate, UInviteRoomWidgetController*, InviteMessageController);
 
 
 UCLASS()
@@ -43,7 +45,16 @@ public:
 	void TryToGameStart(const FString& RoomName);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToFollowRoomUser(const FString& UserToFollow, const FString& RoomPassword);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToInviteLobbyUser(const FString& UserToInvite);
 	//** From Client End */
+
+	//** From Server */
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void NotifyReceiveChattingMessageToClient(const FString& SendUserName, const FString& ChattingMessage);
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void NotifyInviteRoomMessageToClient(const FString& SendUserName,const FString& InvitedRoom,const FString& RoomPassword);
+	//** From Server End*/
 
 	//** Lobby UI */
 	void SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController);
@@ -52,11 +63,6 @@ public:
 	void MakeLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	void RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	//** Lobby UI End*/
-
-	//** Chatting UI */
-	UFUNCTION(BlueprintCallable, Client, Reliable)
-	void NotifyReceiveChattingMessageToClient(const FString& SendUserName, const FString& ChattingMessage);
-	//** Chatting UI End*/
 
 	//** Popup Room UI */
 	void CreateAndShowRoomWidget();
@@ -69,7 +75,6 @@ protected:
 
 public:
 	//** Notify SuccessOrNot From Server */
-
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Lobby")
 	FMessageSuccessOrNotDelegate SendChattingMessageSuccessOrNotDelegate;
 
@@ -93,6 +98,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate FollowRoomUserSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
+	FMessageSuccessOrNotDelegate InviteLobbyUserSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */
@@ -115,10 +123,13 @@ public:
 	FLobbyRoomInfoDelegate ChangeRoomInfoDelegate;
 	//** Lobby UI End*/
 
-	//** Chatting UI */
+	//** From Server */
 	UPROPERTY(BlueprintAssignable, Category = "Chatting")
 	FChattingMessageDelegate RecieveChattingMessageDelegate;
-	//** Chatting UI End*/
+
+	UPROPERTY(BlueprintAssignable, Category = "Chatting")
+	FInviteMessageDelegate RecieveInviteMessageDelegate;
+	//** From Server End*/
 
 	//** Room UI */
 	UPROPERTY(BlueprintAssignable, Category = "Room")
@@ -144,4 +155,19 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UChattingWidgetController> ChattingWidgetControllerClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInviteRoomWidgetController> InviteWidgetControllerClass;
+
+public:
+	void SetGold(int SetPlayerGold) { PlayerGold = SetPlayerGold; }
+
+private:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnRep_Gold();
+
+	UPROPERTY(ReplicatedUsing = OnRep_Gold)
+	int PlayerGold;
 };

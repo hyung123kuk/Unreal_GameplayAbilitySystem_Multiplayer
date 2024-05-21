@@ -96,10 +96,6 @@ void AHKLobbyPlayerState::OnRep_Exp()
 	SendChangePlayerInformationToLocalClient();
 }
 
-void AHKLobbyPlayerState::OnRep_Gold()
-{
-}
-
 void AHKLobbyPlayerState::SetExistingUserWidgetControllers()
 {
 	//처음 들어왔을 경우 있던 값 초기화
@@ -245,7 +241,6 @@ void AHKLobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(ThisClass, Introduction);
 	DOREPLIFETIME(ThisClass, PlayerLevel);
 	DOREPLIFETIME(ThisClass, PlayerExp);
-	DOREPLIFETIME(ThisClass, PlayerGold);
 	/** Lobby End*/
 
 	/** Room */
