@@ -9,6 +9,7 @@
 class AHKLobbyPlayerState;
 class AHKUILobbyPlayerController;
 class ARoom;
+class AStore;
 
 
 /**
@@ -23,6 +24,10 @@ class UNREALPORTFOLIO_API AHKLobbyGameMode : public AHKDedicatedServerGameModeBa
 	virtual void Tick(float DeltaSeconds) override;
 
 private:
+	/** Init */
+	void InitializeStoreItemFromDatabase();
+	/** Init End*/
+
 	/** Login */
 	virtual bool AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage) override;
 	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
@@ -42,6 +47,7 @@ public:
 	bool TryToGameStart(const APlayerController& Player,const FString& RoomName, FString& Message);
 	bool TryToFollowRoomUser(const APlayerController& Player,const FString& UserToFollow, const FString& RoomPassword, FString& Message);
 	bool TryToInviteLobbyUser(const APlayerController& Player,const FString& UserToInvite, FString& Message);
+	bool TryToEnterStore(const APlayerController& Player, FString& Message);
 	/** Client's request End */
 
 private:
@@ -54,6 +60,8 @@ private:
 	UFUNCTION()
 	void DestroyRoom(const FString& RoomName);
 	/** Room End */
+
+
 
 private:
 	FString GetPlayerIDWithController(const APlayerController& PlayerController);
@@ -71,6 +79,9 @@ private:
 
 	UPROPERTY()
 	TArray<TObjectPtr<AHKLobbyPlayerState>> LobbyPlayers;
+
+	UPROPERTY()
+	TObjectPtr<AStore> Store;
 
 	int ID;
 };

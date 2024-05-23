@@ -10,19 +10,29 @@
 #include "HKBlueprintFunctionLibrary.h"
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "Engine/Engine.h"
+#include "Lobby/Store.h"
 
 
 
 void AHKLobbyGameMode::StartPlay()
 {
 	Super::StartPlay();
-
+	InitializeStoreItemFromDatabase();
 }
 
 void AHKLobbyGameMode::Tick(float DeltaSeconds)
 {
 	//TEST CODE : Server State Test
 
+}
+
+void AHKLobbyGameMode::InitializeStoreItemFromDatabase()
+{
+	Store = GetWorld()->SpawnActorDeferred<AStore>(AStore::StaticClass(), FTransform::Identity, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	TArray<FStoreItemDefaultInfo> ItemsInfo;
+	UHKDatabaseFunctionLibrary::GetStoreItemsInformation(UserData, ItemsInfo);
+	Store->SetStoreItems(ItemsInfo);
+	Store->FinishSpawning(FTransform::Identity);
 }
 
 bool AHKLobbyGameMode::AttemptedToLogin(const FString& Id, const FString& Password, FString& ErrorMessage)
@@ -443,6 +453,21 @@ bool AHKLobbyGameMode::TryToInviteLobbyUser(const APlayerController& Player, con
 	AHKUILobbyPlayerController* InvitedPlayerController = Cast<AHKUILobbyPlayerController>(UserStateToInvite->GetPlayerController());
 	InvitedPlayerController->NotifyInviteRoomMessageToClient(PlayerId, SendRoom->GetRoomName(), SendRoom->Password);
 	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 다른 플레이어(%s) 초대에 성공합니다."), *PlayerId, *UserToInvite);
+
+	return true;
+}
+
+bool AHKLobbyGameMode::TryToEnterStore(const APlayerController& Player, FString& Message)
+{
+	const FString& PlayerId = GetPlayerIDWithController(Player);
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 상점에 입장하려 시도합니다."), *PlayerId);
+	AHKLobbyPlayerState* FollowPlayerState = FindPlayerState(PlayerId, Message);
+	if (FollowPlayerState == nullptr)
+	{
+		return false;
+	}
+
+
 
 	return true;
 }

@@ -157,6 +157,22 @@ void AHKUILobbyPlayerController::TryToInviteLobbyUser_Implementation(const FStri
     SendServerMessage_Client(Message, EServerToClientMessageType::InviteLobbyUser, !bSuccess, bSuccess);
 }
 
+void AHKUILobbyPlayerController::TryToEnterStore_Implementation()
+{
+    AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
+    FString Message = FString();
+    bool bSuccess = false;
+    if (GameMode)
+    {
+        if (GameMode->TryToEnterStore(*this, Message))
+        {
+            bSuccess = true;
+        }
+    }
+
+    SendServerMessage_Client(Message, EServerToClientMessageType::EnterStore, !bSuccess, bSuccess);
+}
+
 void AHKUILobbyPlayerController::NotifyReceiveChattingMessageToClient_Implementation(const FString& SendUserName, const FString& ChattingMessage)
 {
     UChattingWidgetController* ChattingWidgetController = NewObject<UChattingWidgetController>(this, ChattingWidgetControllerClass);
@@ -238,6 +254,13 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     }
     //** Lobby Notify End */
 
+    //** Store Notify */
+    if (MessageType == EServerToClientMessageType::EnterStore)
+    {
+        EnterStoreSuccessOrNotDelegate.Broadcast(Success);
+    }
+    //** Store Notify End*/
+    
     //** Room Notify */
     if (MessageType == EServerToClientMessageType::MakeRoom)
     {
@@ -279,5 +302,7 @@ void AHKUILobbyPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 
 void AHKUILobbyPlayerController::OnRep_Gold()
 {
-
+    ChangeGoldDelegate.Broadcast(PlayerGold);
 }
+
+

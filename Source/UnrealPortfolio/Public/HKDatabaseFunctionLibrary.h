@@ -11,6 +11,7 @@ class AHKLobbyGameMode;
 class AHKLoginGameMode;
 class AHKDedicatedServerGameModeBase;
 struct FMySQLConnectoreQueryResult;
+struct FStoreItemDefaultInfo;
 
 UCLASS()
 class UNREALPORTFOLIO_API UHKDatabaseFunctionLibrary : public UBlueprintFunctionLibrary
@@ -25,12 +26,17 @@ class UNREALPORTFOLIO_API UHKDatabaseFunctionLibrary : public UBlueprintFunction
 	friend AHKDedicatedServerGameModeBase;
 
 protected:
+
 	/** Login */
 	static UMySQLConnection* AttemptToConnectDataBase(const FString& Host, const FString& UserName, const FString& UserPassword,const FString& DatabaseName);
 	static bool CreateUserID(UMySQLConnection* Database, const FString& ID, const FString& Password);
 	static bool ExistedUserID(UMySQLConnection* Database, const FString& ID);
 	static bool MatchPasswordToID(UMySQLConnection* Database, const FString& ID,const FString& Password);
 	/** Login End*/
+
+	/** Store */
+	static bool GetStoreItemsInformation(UMySQLConnection* Database, TArray<FStoreItemDefaultInfo>& Items);
+	/** Store End*/
 
 	/** Lobby */
 	static bool GetUserInformation(UMySQLConnection* Database, const FString& ID, FString& Introduction, int& Gold, int& Exp);

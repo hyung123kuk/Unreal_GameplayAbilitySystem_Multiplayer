@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #define DatabaseInfoFilePath TEXT("D:\\Contents\\UnrealPortfolio2\\DataBaseAccountInformation.json")
+#define DefaultItemsImagePath TEXT("/Game/Assets/ItemImages/")
 
 
 DECLARE_LOG_CATEGORY_EXTERN(ServerLog, Log, All);

@@ -27,6 +27,11 @@ enum class EServerToClientMessageType : uint8
 	ChangeIntroduction,
 	//** Lobby Notify End */
 
+	//** Store Notify */
+	EnterStore,
+	//** Store Notify End*/
+
+
 	//** Room Notify */
 	MakeRoom,
 	EnterRoom,

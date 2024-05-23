@@ -5,6 +5,7 @@
 #include "MySQLDatabase.h"
 #include "MySQLConnection.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Lobby/Store.h"
 
 UMySQLConnection* UHKDatabaseFunctionLibrary::AttemptToConnectDataBase(const FString& Host, const FString& UserName, const FString& UserPassword, const FString& DatabaseName)
 {
@@ -63,6 +64,54 @@ bool UHKDatabaseFunctionLibrary::MatchPasswordToID(UMySQLConnection* Database, c
 	if (QueryResult.ResultRows.Num() == 0)
 	{
 		return false;
+	}
+
+	return true;
+}
+
+bool UHKDatabaseFunctionLibrary::GetStoreItemsInformation(UMySQLConnection* Database, TArray<FStoreItemDefaultInfo>& Items)
+{
+	FString QueryString = FString::Printf(TEXT("SELECT * FROM `userdata`.`store_item` WHERE `is_sale` = 1"));
+	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+	if (QueryResult.ResultRows.Num() > 0)
+	{
+		for (int i = 0; i < QueryResult.ResultRows.Num(); i++)
+		{
+
+			FMySQLConnectorQueryResultRow ItemData = QueryResult.ResultRows[i];
+			int StoreItemId;
+			FString StoreItemName;
+			int StoreItemCost;
+			FString StoreItemTexture;
+			FString StoreItemExplanation;
+
+			if (ItemData.Fields.Num() > 0)
+			{
+				StoreItemId = FCString::Atoi(*ItemData.Fields[0].Value);
+			}
+			if (ItemData.Fields.Num() > 1)
+			{
+				StoreItemName = ItemData.Fields[1].Value;
+			}
+			if (ItemData.Fields.Num() > 2)
+			{
+				StoreItemCost = FCString::Atoi(*ItemData.Fields[2].Value);
+			}
+			if (ItemData.Fields.Num() > 3)
+			{
+				StoreItemTexture = ItemData.Fields[3].Value;
+			}
+			if (ItemData.Fields.Num() > 4)
+			{
+				StoreItemExplanation = ItemData.Fields[4].Value;
+			}
+
+
+			UE_LOG(ServerLog, Warning, TEXT("데이터 베이스에서 스토어 아이템(%s)을 가격(%d)으로 가져왔습니다. "), *StoreItemName, StoreItemCost);
+
+			FStoreItemDefaultInfo ItemInfo (StoreItemId, StoreItemName, StoreItemCost, StoreItemTexture, StoreItemExplanation);
+			Items.Add(ItemInfo);
+		}
 	}
 
 	return true;

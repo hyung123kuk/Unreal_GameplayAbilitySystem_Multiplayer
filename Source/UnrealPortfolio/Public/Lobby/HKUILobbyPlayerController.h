@@ -21,6 +21,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserInfoDelegate, UUserInfoWidgetCo
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChattingMessageDelegate, UChattingWidgetController*, ChattingMessageController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInviteMessageDelegate, UInviteRoomWidgetController*, InviteMessageController);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeGoldValueDelegate, int, Gold);
+
 
 UCLASS()
 class UNREALPORTFOLIO_API AHKUILobbyPlayerController : public AHKUIPlayerControllerBase
@@ -47,6 +49,8 @@ public:
 	void TryToFollowRoomUser(const FString& UserToFollow, const FString& RoomPassword);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToInviteLobbyUser(const FString& UserToInvite);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void TryToEnterStore();
 	//** From Client End */
 
 	//** From Server */
@@ -101,6 +105,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Room")
 	FMessageSuccessOrNotDelegate InviteLobbyUserSuccessOrNotDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Store")
+	FMessageSuccessOrNotDelegate EnterStoreSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */
@@ -161,6 +168,11 @@ protected:
 
 public:
 	void SetGold(int SetPlayerGold) { PlayerGold = SetPlayerGold; }
+	UFUNCTION(BlueprintCallable)
+	int GetGold() { return PlayerGold; }
+
+	UPROPERTY(BlueprintAssignable, Category = "PlayerInfo")
+	FChangeGoldValueDelegate ChangeGoldDelegate;
 
 private:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

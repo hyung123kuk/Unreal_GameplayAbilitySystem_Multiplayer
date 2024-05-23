@@ -4,11 +4,13 @@
 #include "Game/HKGameInstance.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/AssetManager.h"
 
 void UHKGameInstance::Init()
 {
     Super::Init();
 	GEngine->NetworkFailureEvent.AddUObject(this, &UHKGameInstance::OnNetworkLevelChangeFailure);
+
 }
 
 void UHKGameInstance::OnNetworkLevelChangeFailure(UWorld*, UNetDriver*, ENetworkFailure::Type FailType, const FString& ErrorMessage)
