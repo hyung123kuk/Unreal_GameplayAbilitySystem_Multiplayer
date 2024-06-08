@@ -13,6 +13,7 @@ class ULobbyRoomInfoWidgetController;
 class UUserInfoWidgetController;
 class UChattingWidgetController;
 class UInviteRoomWidgetController;
+class UStoreWidgetController;
 class ARoom;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
@@ -30,6 +31,11 @@ class UNREALPORTFOLIO_API AHKUILobbyPlayerController : public AHKUIPlayerControl
 	GENERATED_BODY()
 	
 public:
+	//** Init Info */
+	UFUNCTION(Client, Reliable)
+	void NotifyUserItemsMessageToClient(const TArray<int>& Ids,const TArray<int>& Count);
+	//** Init Info End*/
+
 	//** From Client */
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToMakeRoomToServer(const FString& RoomName, const FString& RoomPassword, int MaxPlayers);
@@ -50,14 +56,16 @@ public:
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void TryToInviteLobbyUser(const FString& UserToInvite);
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void TryToEnterStore();
+	void TryToPurchaseItem(int ItemID);
 	//** From Client End */
 
 	//** From Server */
-	UFUNCTION(BlueprintCallable, Client, Reliable)
+	UFUNCTION(Client, Reliable)
 	void NotifyReceiveChattingMessageToClient(const FString& SendUserName, const FString& ChattingMessage);
-	UFUNCTION(BlueprintCallable, Client, Reliable)
+	UFUNCTION(Client, Reliable)
 	void NotifyInviteRoomMessageToClient(const FString& SendUserName,const FString& InvitedRoom,const FString& RoomPassword);
+	UFUNCTION(Client, Reliable)
+	void NotifyPurchaseItemMessageToClient(const int ItemId, const int ItemCount, const int LeftGold);
 	//** From Server End*/
 
 	//** Lobby UI */
@@ -66,6 +74,7 @@ public:
 	void ExitLobbyUserWidgetController(UUserInfoWidgetController* ExitUserInfoController);
 	void MakeLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	void RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
+	void SetStoreWidgetController(UStoreWidgetController* StoreInfoController);
 	//** Lobby UI End*/
 
 	//** Popup Room UI */
@@ -107,7 +116,7 @@ public:
 	FMessageSuccessOrNotDelegate InviteLobbyUserSuccessOrNotDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||Store")
-	FMessageSuccessOrNotDelegate EnterStoreSuccessOrNotDelegate;
+	FMessageSuccessOrNotDelegate PurchaseItemSuccessOrNotDelegate;
 	//** Notify SuccessOrNot From Server End*/
 
 	//** Lobby UI */
@@ -128,6 +137,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Lobby")
 	FLobbyRoomInfoDelegate ChangeRoomInfoDelegate;
+
 	//** Lobby UI End*/
 
 	//** From Server */
@@ -160,6 +170,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> UIPopupStoreInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UStoreWidgetController> StoreInfoWidgetController;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UChattingWidgetController> ChattingWidgetControllerClass;
 
@@ -167,19 +180,18 @@ protected:
 	TSubclassOf<UInviteRoomWidgetController> InviteWidgetControllerClass;
 
 public:
-	void SetGold(int SetPlayerGold) { PlayerGold = SetPlayerGold; }
+	UFUNCTION(Client, Reliable)
+	void SetGold(int SetPlayerGold);
+	
 	UFUNCTION(BlueprintCallable)
 	int GetGold() { return PlayerGold; }
 
 	UPROPERTY(BlueprintAssignable, Category = "PlayerInfo")
 	FChangeGoldValueDelegate ChangeGoldDelegate;
 
+
 private:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	UFUNCTION()
-	void OnRep_Gold();
-
-	UPROPERTY(ReplicatedUsing = OnRep_Gold)
 	int PlayerGold;
+
+
 };

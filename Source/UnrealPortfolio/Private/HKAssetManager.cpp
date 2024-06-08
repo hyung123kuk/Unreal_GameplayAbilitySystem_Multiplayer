@@ -27,7 +27,7 @@ void UHKAssetManager::StartInitialLoading()
 }
 
 
-UTexture2D* UHKAssetManager::GetStoreItemTexture(FString TextureName)
+UTexture2D* UHKAssetManager::GetItemTexture(FString TextureName)
 {
 	return ItemsTexture.Find(TextureName)->Get();
 }

@@ -31,6 +31,12 @@ protected:
 	/** Database */
 	UPROPERTY()
 	TObjectPtr<UMySQLConnection> UserData;
+
+	FString DatabaseHost;
+	FString DatabaseUserName;
+	FString DatabaseUserPassword;
+	FString DatabaseName;
+	bool Init = false;
 	/** Database End */
 
 };

@@ -7,8 +7,16 @@
 #include "Store.generated.h"
 
 class UTexture2D;
+class UStoreWidgetController;
 
-USTRUCT()
+UENUM(BlueprintType)
+enum class EStoreCategoryType : uint8
+{
+	Character,
+	Consumable,
+};
+
+USTRUCT(BlueprintType)
 struct FStoreItemDefaultInfo
 {
 	GENERATED_BODY()
@@ -20,24 +28,36 @@ struct FStoreItemDefaultInfo
 		Cost(cost),
 		TextureName(textureName),
 		Explanation(explanation)
-	{}
+	{
+		if (id >= 100)
+		{
+			ItemType = EStoreCategoryType::Consumable;
+		}
+		else
+		{
+			ItemType = EStoreCategoryType::Character;
+		}
+	}
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int Id;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
+	EStoreCategoryType ItemType;
+
+	UPROPERTY(BlueprintReadOnly)
 	FString Name;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int Cost;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString TextureName;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString Explanation;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UTexture2D> Texture;
 };
 
@@ -48,14 +68,16 @@ class UNREALPORTFOLIO_API AStore : public AActor
 	
 protected:	
 	AStore();
-
+	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
 	void SetStoreItems(TArray<FStoreItemDefaultInfo> itemsInfo) { ItemsInfo = itemsInfo; }
 	const TArray<FStoreItemDefaultInfo> GetStoreItems() { return ItemsInfo; }
 
-	void InitializeSaleItems(TArray<FStoreItemDefaultInfo> Items);
+	bool GetItemGoldWithItemID(int ItemID, int& Gold);
+
+	void SendChangedStoreInformationToClients();
 
 	UFUNCTION()
 	void OnRep_ItemInfo();
@@ -63,5 +85,9 @@ public:
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_ItemInfo)
 	TArray<FStoreItemDefaultInfo> ItemsInfo;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UStoreWidgetController> StoreInfoWidgetController;
 
 };

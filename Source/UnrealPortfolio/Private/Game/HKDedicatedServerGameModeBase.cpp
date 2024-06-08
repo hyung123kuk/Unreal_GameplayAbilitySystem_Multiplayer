@@ -24,29 +24,24 @@ void AHKDedicatedServerGameModeBase::StartPlay()
 
 void AHKDedicatedServerGameModeBase::ImportMySQLAccountInformationFromJson()
 {
-	FString DatabaseInfo;
-
-	FFileHelper::LoadFileToString(DatabaseInfo, DatabaseInfoFilePath);
-	TSharedRef<TJsonReader<TCHAR>> jsonReader = TJsonReaderFactory<TCHAR>::Create(DatabaseInfo);
-	TSharedPtr<FJsonObject> jsonObj = MakeShareable(new FJsonObject());
-
-	FString DatabaseHost;
-	FString DatabaseUserName;
-	FString DatabaseUserPassword;
-	FString DatabaseName;
-	if (FJsonSerializer::Deserialize(jsonReader, jsonObj) && jsonObj.IsValid())
+	if (!Init)
 	{
+		FString DatabaseInfo;
+
+		FFileHelper::LoadFileToString(DatabaseInfo, DatabaseInfoFilePath);
+		TSharedRef<TJsonReader<TCHAR>> jsonReader = TJsonReaderFactory<TCHAR>::Create(DatabaseInfo);
+		TSharedPtr<FJsonObject> jsonObj = MakeShareable(new FJsonObject());
+		FJsonSerializer::Deserialize(jsonReader, jsonObj);
+		checkf(jsonObj.IsValid(), TEXT("There is no Json file to retrieve database information in path : %s"), DatabaseInfoFilePath);
+		
 		jsonObj->TryGetStringField(TEXT("Host"), DatabaseHost);
 		jsonObj->TryGetStringField(TEXT("UserName"), DatabaseUserName);
 		jsonObj->TryGetStringField(TEXT("UserPassword"), DatabaseUserPassword);
 		jsonObj->TryGetStringField(TEXT("DatabaseName"), DatabaseName);
+		Init = true;
+	}
 
-		UserData = UHKDatabaseFunctionLibrary::AttemptToConnectDataBase(DatabaseHost, DatabaseUserName, DatabaseUserPassword, DatabaseName);
-	}
-	else
-	{
-		checkf(false, TEXT("There is no Json file to retrieve database information in path : %s"), DatabaseInfoFilePath);
-	}
+	UserData = UHKDatabaseFunctionLibrary::AttemptToConnectDataBase(DatabaseHost, DatabaseUserName, DatabaseUserPassword, DatabaseName);
 }
 
 bool AHKDedicatedServerGameModeBase::AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage)

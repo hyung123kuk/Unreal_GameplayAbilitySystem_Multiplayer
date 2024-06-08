@@ -47,7 +47,7 @@ public:
 	bool TryToGameStart(const APlayerController& Player,const FString& RoomName, FString& Message);
 	bool TryToFollowRoomUser(const APlayerController& Player,const FString& UserToFollow, const FString& RoomPassword, FString& Message);
 	bool TryToInviteLobbyUser(const APlayerController& Player,const FString& UserToInvite, FString& Message);
-	bool TryToEnterStore(const APlayerController& Player, FString& Message);
+	bool TryToPurchaseItem(APlayerController& Player, int ItemId, FString& Message);
 	/** Client's request End */
 
 private:

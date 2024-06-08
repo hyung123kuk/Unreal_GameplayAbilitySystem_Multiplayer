@@ -10,6 +10,17 @@
 #include "UI/WidgetController/InviteRoomWidgetController.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Item/Inventory.h"
+#include "HKBlueprintFunctionLibrary.h"
+
+void AHKUILobbyPlayerController::NotifyUserItemsMessageToClient_Implementation(const TArray<int>& Ids, const TArray<int>& Count)
+{
+    UInventory* Inventory = UHKBlueprintFunctionLibrary::GetInventory(this);
+    if (Inventory != nullptr)
+    {
+        Inventory->AddItemsToArray(Ids, Count);
+    }
+}
 
 void AHKUILobbyPlayerController::TryToMakeRoomToServer_Implementation(const FString& RoomName, const FString& RoomPassword, int MaxPlayers)
 {
@@ -157,20 +168,20 @@ void AHKUILobbyPlayerController::TryToInviteLobbyUser_Implementation(const FStri
     SendServerMessage_Client(Message, EServerToClientMessageType::InviteLobbyUser, !bSuccess, bSuccess);
 }
 
-void AHKUILobbyPlayerController::TryToEnterStore_Implementation()
+void AHKUILobbyPlayerController::TryToPurchaseItem_Implementation(int ItemID)
 {
     AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
     FString Message = FString();
     bool bSuccess = false;
     if (GameMode)
     {
-        if (GameMode->TryToEnterStore(*this, Message))
+        if (GameMode->TryToPurchaseItem(*this, ItemID, Message))
         {
             bSuccess = true;
         }
     }
 
-    SendServerMessage_Client(Message, EServerToClientMessageType::EnterStore, !bSuccess, bSuccess);
+    SendServerMessage_Client(Message, EServerToClientMessageType::PurchaseItem, !bSuccess, bSuccess);
 }
 
 void AHKUILobbyPlayerController::NotifyReceiveChattingMessageToClient_Implementation(const FString& SendUserName, const FString& ChattingMessage)
@@ -191,6 +202,12 @@ void AHKUILobbyPlayerController::NotifyInviteRoomMessageToClient_Implementation(
         InviteMessageWidgetController->SetWidgetControllerParams(FInviteRoomWidgetControllerParams(SendUserName, InvitedRoom, RoomPassword));
     }
     RecieveInviteMessageDelegate.Broadcast(InviteMessageWidgetController);
+}
+
+void AHKUILobbyPlayerController::NotifyPurchaseItemMessageToClient_Implementation(const int ItemId, const int ItemCount, const int LeftGold)
+{
+    SetGold_Implementation(LeftGold);
+    UHKBlueprintFunctionLibrary::GetInventory(this)->AddItem(ItemId,ItemCount);
 }
 
 void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
@@ -216,6 +233,14 @@ void AHKUILobbyPlayerController::MakeLobbyRoomWidgetController(ULobbyRoomInfoWid
 void AHKUILobbyPlayerController::RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController)
 {
     RemoveRoomDelegate.Broadcast(RoomInfoController);
+}
+
+void AHKUILobbyPlayerController::SetStoreWidgetController(UStoreWidgetController* StoreInfoController)
+{
+    if (StoreInfoWidgetController == nullptr)
+    {
+        StoreInfoWidgetController = StoreInfoController;
+    }
 }
 
 void AHKUILobbyPlayerController::CreateAndShowRoomWidget()
@@ -255,9 +280,9 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     //** Lobby Notify End */
 
     //** Store Notify */
-    if (MessageType == EServerToClientMessageType::EnterStore)
+    if (MessageType == EServerToClientMessageType::PurchaseItem)
     {
-        EnterStoreSuccessOrNotDelegate.Broadcast(Success);
+        PurchaseItemSuccessOrNotDelegate.Broadcast(Success);
     }
     //** Store Notify End*/
     
@@ -293,15 +318,10 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     //** Room Notify End*/
 }
 
-void AHKUILobbyPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-    DOREPLIFETIME(ThisClass, PlayerGold);
-}
-
-void AHKUILobbyPlayerController::OnRep_Gold()
+void AHKUILobbyPlayerController::SetGold_Implementation(int SetPlayerGold)
 {
+    PlayerGold = SetPlayerGold;
     ChangeGoldDelegate.Broadcast(PlayerGold);
 }
 

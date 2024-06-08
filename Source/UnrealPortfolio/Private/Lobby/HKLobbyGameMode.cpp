@@ -11,7 +11,7 @@
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "Engine/Engine.h"
 #include "Lobby/Store.h"
-
+#include "MySQLConnection.h"
 
 
 void AHKLobbyGameMode::StartPlay()
@@ -22,7 +22,6 @@ void AHKLobbyGameMode::StartPlay()
 
 void AHKLobbyGameMode::Tick(float DeltaSeconds)
 {
-	//TEST CODE : Server State Test
 
 }
 
@@ -87,25 +86,11 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 	//TEST CODE
 
 	AHKLobbyPlayerState* NewPlayerState = NewPlayerController->GetPlayerState<AHKLobbyPlayerState>();
-
-	FString UserIntroduction;
-	int UserGold = 0;
-	int UserExp = 0;
-	if (!UHKDatabaseFunctionLibrary::GetUserInformation(UserData, Id, UserIntroduction, UserGold, UserExp))
-	{
-		UE_LOG(ServerLog, Error, TEXT("유저(%s)정보를 데이터 베이스에서 찾기를 실패했습니다."), *Id);
-		ErrorMessage = TEXT("유저 데이터를 찾을 수 없습니다.");
-		return NewPlayerController;
-	}
-	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 정보 : 소개(%s) , 골드(%d) , 경험치(%d) "), *Id, *UserIntroduction, UserGold, UserExp);
-
 	NewPlayerState->SetPlayerName(Id);
-	NewPlayerState->SetIntroduction(UserIntroduction);
-	Cast<AHKUILobbyPlayerController>(NewPlayerController)->SetGold(UserGold);
-	NewPlayerState->SetExp(UserExp);
 
 	AllPlayers.Add(Id, NewPlayerState);
 	LobbyPlayers.Add(NewPlayerState);
+
 
 	return NewPlayerController;
 }
@@ -118,15 +103,34 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	if (GetNetMode() == NM_Standalone)
 		return;
 
-	//PostLogin에서 IP가져올 수 있음
 	AHKLobbyPlayerState* NewPlayerState = NewPlayer->GetPlayerState<AHKLobbyPlayerState>();
-	if (NewPlayerState == nullptr)
+	const FString Id = NewPlayerState->GetPlayerName();
+
+	FString UserIntroduction;
+	int UserGold = 0;
+	int UserExp = 0;
+	if (!UHKDatabaseFunctionLibrary::GetUserInformation(UserData, Id, UserIntroduction, UserGold, UserExp))
 	{
+		UE_LOG(ServerLog, Error, TEXT("유저(%s)정보를 데이터 베이스에서 찾기를 실패했습니다."), *Id);
 		return;
 	}
-	FString PlayerIP = *NewPlayerState->GetNetConnection()->LowLevelGetRemoteAddress(true);
+	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 정보 : 소개(%s) , 골드(%d) , 경험치(%d) "), *Id, *UserIntroduction, UserGold, UserExp);
 
-	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 IP 주소 : %s"), *NewPlayerState->GetPlayerName(), *PlayerIP);
+	NewPlayerState->SetIntroduction(UserIntroduction);
+	NewPlayerState->SetExp(UserExp);
+
+	//PostLogin에서 Client에 PlayerController가 만들어짐이 확인 되어 _Implementation ToClient 실행 가능 
+	AHKUILobbyPlayerController* LobbyPlayerController = Cast<AHKUILobbyPlayerController>(NewPlayer);
+	LobbyPlayerController->SetGold(UserGold);
+	TArray<int> ItemIds;
+	TArray<int> ItemCounts;
+	if (UHKDatabaseFunctionLibrary::GetUserItemsInformation(UserData, Id, ItemIds, ItemCounts))
+	{
+		LobbyPlayerController->NotifyUserItemsMessageToClient(ItemIds, ItemCounts);
+	}
+
+	FString PlayerIP = *NewPlayerState->GetNetConnection()->LowLevelGetRemoteAddress(true);
+	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 IP 주소 : %s"), *Id, *PlayerIP);
 
 }
 
@@ -435,7 +439,7 @@ bool AHKLobbyGameMode::TryToInviteLobbyUser(const APlayerController& Player, con
 		UE_LOG(ServerLog, Warning, TEXT("초대받은 플레이어는(%s) 이미 다른 방에(%s) 있습니다."), *UserToInvite,*InvitedUserRoom->GetRoomName());
 		Message = TEXT("해당 플레이어는 이미 다른 방에 입장했습니다.");
 		return false;
-	}
+	}   
 
 	AHKLobbyPlayerState* FollowPlayerState = FindPlayerState(PlayerId, Message);
 	if (FollowPlayerState == nullptr)
@@ -457,17 +461,34 @@ bool AHKLobbyGameMode::TryToInviteLobbyUser(const APlayerController& Player, con
 	return true;
 }
 
-bool AHKLobbyGameMode::TryToEnterStore(const APlayerController& Player, FString& Message)
+bool AHKLobbyGameMode::TryToPurchaseItem(APlayerController& Player, int ItemId, FString& Message)
 {
 	const FString& PlayerId = GetPlayerIDWithController(Player);
-	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 상점에 입장하려 시도합니다."), *PlayerId);
-	AHKLobbyPlayerState* FollowPlayerState = FindPlayerState(PlayerId, Message);
-	if (FollowPlayerState == nullptr)
+	UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 아이템(%d) 구매를 시도합니다."), *PlayerId, ItemId);
+	AHKUILobbyPlayerController* LobbyPlayerCotroller = Cast<AHKUILobbyPlayerController>(&Player);
+	int Cost;
+	if (!Store->GetItemGoldWithItemID(ItemId, Cost))
 	{
+		UE_LOG(ServerLog, Warning, TEXT("아이템(%d)찾지 못해 플레이어가(%s) 아이템 구매에 실패합니다."), *PlayerId, ItemId);
+		Message = TEXT("해당 아이템을 찾지 못했습니다.");
 		return false;
 	}
 
+	int LeftGold = 0;
 
+	if (!UHKDatabaseFunctionLibrary::PurchaseItem(UserData, PlayerId, ItemId, LeftGold))
+	{
+		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 아이템 구매에 실패합니다."), *PlayerId);
+		Message = TEXT("아이템을 구매할 돈을 가지고 있지 않습니다.");
+		return false;
+	}
+
+	if (!UserData->MySQLCheckConnection())
+	{
+		ImportMySQLAccountInformationFromJson();
+	}
+
+	LobbyPlayerCotroller->NotifyPurchaseItemMessageToClient(ItemId,1,LeftGold);
 
 	return true;
 }

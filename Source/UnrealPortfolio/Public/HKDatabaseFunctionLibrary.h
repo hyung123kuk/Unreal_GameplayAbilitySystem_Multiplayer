@@ -36,10 +36,12 @@ protected:
 
 	/** Store */
 	static bool GetStoreItemsInformation(UMySQLConnection* Database, TArray<FStoreItemDefaultInfo>& Items);
+	static bool PurchaseItem(UMySQLConnection* Database,const FString& ID, int ItemID, int& LeftGold);
 	/** Store End*/
 
 	/** Lobby */
 	static bool GetUserInformation(UMySQLConnection* Database, const FString& ID, FString& Introduction, int& Gold, int& Exp);
+	static bool GetUserItemsInformation(UMySQLConnection* Database, const FString& ID, TArray<int>& Ids, TArray<int>& Count);
 	static bool RecordChatInDatabase(UMySQLConnection* Database, const FString& ID,FString RoomName, FString ChattingMessage);
 	static bool ChangeUserIntroduction(UMySQLConnection* Database, const FString& ID, FString& NewIntroduction);
 	/** Lobby End*/

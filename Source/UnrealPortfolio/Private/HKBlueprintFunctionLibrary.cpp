@@ -4,6 +4,8 @@
 #include "HKBlueprintFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Engine/World.h"
+#include "Game/HKGameInstance.h"
 
 void UHKBlueprintFunctionLibrary::JoinServer(const UObject* WorldContextObject, const FString& InIPAddress, const FString& Id, const FString& Password)
 {
@@ -112,6 +114,13 @@ FString UHKBlueprintFunctionLibrary::CheckStringLimitLen(const FString& InputStr
     }
 
     return InputString;
+}
+
+UInventory* UHKBlueprintFunctionLibrary::GetInventory(const UObject* WorldContextObject)
+{
+    UHKGameInstance* GameInstance = Cast<UHKGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
+
+    return GameInstance->GetInventory();
 }
 
 #pragma region 시스템 변수

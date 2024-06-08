@@ -117,11 +117,41 @@ bool UHKDatabaseFunctionLibrary::GetStoreItemsInformation(UMySQLConnection* Data
 	return true;
 }
 
+bool UHKDatabaseFunctionLibrary::PurchaseItem(UMySQLConnection* Database, const FString& ID, int ItemID, int& LeftGold)
+{
+	FString QueryString = FString::Printf(TEXT("CALL PURCHASE_ITEM('%s',%d);"), *ID, ItemID);
+	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+	int itemCount;
+	if (QueryResult.ResultRows.Num() > 0)
+	{
+		FMySQLConnectorQueryResultRow UserData = QueryResult.ResultRows[0];
+		if (UserData.Fields.Num() == 0)
+		{
+			return false;
+		}
+
+		if (UserData.Fields.Num() > 0)
+		{
+			itemCount = FCString::Atoi(*UserData.Fields[0].Value);
+		}
+		if (UserData.Fields.Num() > 1)
+		{
+			LeftGold = FCString::Atoi(*UserData.Fields[1].Value);
+		}
+
+		UE_LOG(ServerLog, Warning, TEXT("남은 골드(%d) 아이템 개수(%d)"), LeftGold, itemCount);
+		return true;
+	}
+
+	return false;
+}
+
 
 bool UHKDatabaseFunctionLibrary::GetUserInformation(UMySQLConnection* Database, const FString& ID, FString& Introduction, int& Gold, int& Exp)
 {
 	FString QueryString = FString::Printf(TEXT("SELECT `introduction`,`gold`,`exp` FROM `userdata`.`member` WHERE `id` = '%s';"), *ID);
 	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+
 	if (QueryResult.ResultRows.Num() > 0)
 	{
 		FMySQLConnectorQueryResultRow UserData = QueryResult.ResultRows[0];
@@ -142,6 +172,41 @@ bool UHKDatabaseFunctionLibrary::GetUserInformation(UMySQLConnection* Database, 
 		{
 			Exp = FCString::Atoi(*UserData.Fields[2].Value);
 		}
+		return true;
+	}
+
+	return false;
+}
+
+bool UHKDatabaseFunctionLibrary::GetUserItemsInformation(UMySQLConnection* Database, const FString& ID, TArray<int>& Ids, TArray<int>& Count)
+{
+	FString QueryString = FString::Printf(TEXT("SELECT item_id,item_count FROM member_item WHERE user_id = '%s';"), *ID);
+	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString);
+	if (!Database->MySQLCheckConnection())
+	{
+		UE_LOG(ServerLog, Error, TEXT("First GET_USERALLITEMS After"));
+	}
+	if (QueryResult.ResultRows.Num() > 0)
+	{
+		for (FMySQLConnectorQueryResultRow Row : QueryResult.ResultRows)
+		{
+			if (Row.Fields.Num() < 2)
+			{
+				continue;
+			}
+
+			int ItemId = 0;
+			int ItemCount = 0;
+
+			ItemId = FCString::Atoi(*Row.Fields[0].Value);
+			ItemCount = FCString::Atoi(*Row.Fields[1].Value);
+
+			Ids.Add(ItemId);
+			Count.Add(ItemCount);
+
+			UE_LOG(ServerLog, Warning, TEXT("유저(%s)의 아이템(%d)을 개수(%d)"), *ID, ItemId, ItemCount);
+		}
+
 		return true;
 	}
 
@@ -200,6 +265,7 @@ FMySQLConnectoreQueryResult UHKDatabaseFunctionLibrary::Query(UMySQLConnection* 
 		UE_LOG(ServerLog, Warning, TEXT("쿼리 실패 이유 메세지 : %s "), *QueryResult.ErrorMessage);
 		return FMySQLConnectoreQueryResult();
 	}
+
 
 	return QueryResult;
 }

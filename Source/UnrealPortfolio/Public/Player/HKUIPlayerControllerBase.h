@@ -28,7 +28,7 @@ enum class EServerToClientMessageType : uint8
 	//** Lobby Notify End */
 
 	//** Store Notify */
-	EnterStore,
+	PurchaseItem,
 	//** Store Notify End*/
 
 

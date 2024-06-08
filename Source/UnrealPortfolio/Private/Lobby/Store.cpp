@@ -5,6 +5,10 @@
 #include "HKDatabaseFunctionLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "HKAssetManager.h"
+#include "UI/WidgetController/StoreWidgetController.h"
+#include "Lobby/HKUILobbyPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 AStore::AStore()
@@ -13,7 +17,16 @@ AStore::AStore()
 	bAlwaysRelevant = true;
 	bReplicates = true;
 	NetUpdateFrequency = 10.f;
+}
 
+void AStore::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetNetMode() == NM_DedicatedServer)
+		return;
+
+	SendChangedStoreInformationToClients();
 }
 
 void AStore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -22,23 +35,48 @@ void AStore::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(ThisClass, ItemsInfo);
 }
 
-void AStore::InitializeSaleItems(TArray<FStoreItemDefaultInfo> Items)
+
+
+bool AStore::GetItemGoldWithItemID(int ItemID, int& Gold)
 {
-	if (Items.Num() == 0)
+	for (FStoreItemDefaultInfo ItemInfo : ItemsInfo)
+	{
+		if (ItemInfo.Id == ItemID)
+		{
+			Gold = ItemInfo.Cost;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+void AStore::SendChangedStoreInformationToClients()
+{
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	if (!IsValid(LocalClientPlayerController))
 	{
 		return;
 	}
 
-	ItemsInfo = Items;
+	if (StoreInfoWidgetController == nullptr)
+	{
+		StoreInfoWidgetController = NewObject<UStoreWidgetController>(this, UStoreWidgetController::StaticClass());
+	}
+	LocalClientPlayerController->SetStoreWidgetController(StoreInfoWidgetController);
+	StoreInfoWidgetController->SetWidgetControllerParams(ItemsInfo);
 }
 
 void AStore::OnRep_ItemInfo()
 {
 	for (int i = 0; i < ItemsInfo.Num(); i++)
 	{
-		if(!ItemsInfo[i].TextureName.IsEmpty())
-			ItemsInfo[i].Texture = UHKAssetManager::Get().GetStoreItemTexture(ItemsInfo[i].TextureName);
+		if (!ItemsInfo[i].TextureName.IsEmpty())
+			ItemsInfo[i].Texture = UHKAssetManager::Get().GetItemTexture(ItemsInfo[i].TextureName);
 	}
+
+	SendChangedStoreInformationToClients();
 }
 
 

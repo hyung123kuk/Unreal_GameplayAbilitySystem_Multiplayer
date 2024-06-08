@@ -16,7 +16,7 @@ class UNREALPORTFOLIO_API UHKAssetManager : public UAssetManager
 public:
 	static UHKAssetManager& Get();
 
-	UTexture2D* GetStoreItemTexture(FString TextureName);
+	UTexture2D* GetItemTexture(FString TextureName);
 
 protected:
 	virtual void StartInitialLoading() override;
