@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "ItemInfoData.h"
+#include "Item/ItemInfoData.h"
 #include "Inventory.generated.h"
+
+class UInventoryWidgetController;
 
 
 USTRUCT(BlueprintType)
@@ -42,6 +44,8 @@ private:
 	void AddConsumableItem(const FUserItem Item);
 	void AddCharacter(const FUserItem Item);
 
+	void SendChangedInventoryInformationToClients();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UItemInfoData> ConsumableItemsInfo;
@@ -54,4 +58,9 @@ protected:
 
 	UPROPERTY()
 	TArray<FUserItem> Characters;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UInventoryWidgetController> InventoryWidgetController;
+
 };

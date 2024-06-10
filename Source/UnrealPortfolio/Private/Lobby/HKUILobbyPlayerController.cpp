@@ -243,6 +243,14 @@ void AHKUILobbyPlayerController::SetStoreWidgetController(UStoreWidgetController
     }
 }
 
+void AHKUILobbyPlayerController::SetInventoryWidgetController(UInventoryWidgetController* InventoryInfoController)
+{
+    if (InventoryWidgetController == nullptr)
+    {
+        InventoryWidgetController = InventoryInfoController;
+    }
+}
+
 void AHKUILobbyPlayerController::CreateAndShowRoomWidget()
 {
     if (UIPopupRoomInstance == nullptr)

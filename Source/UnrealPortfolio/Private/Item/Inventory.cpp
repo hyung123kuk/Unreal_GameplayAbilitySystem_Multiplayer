@@ -1,7 +1,9 @@
 // Copyright Druid Mechanics
 
 #include "Item/Inventory.h"
-#include "Item/ItemInfoData.h"
+#include "Lobby/HKUILobbyPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "UI/WidgetController/InventoryWidgetController.h"
 
 void UInventory::AddItemsToArray(const TArray<FUserItem> Items)
 {
@@ -34,6 +36,7 @@ void UInventory::AddItem(const FUserItem Item)
 	if (ConsumableItemInfo.Id != -1)
 	{
 		AddConsumableItem(Item);
+		SendChangedInventoryInformationToClients();
 		return;
 	}
 
@@ -41,6 +44,7 @@ void UInventory::AddItem(const FUserItem Item)
 	if (CharacterItemInfo.Id != -1)
 	{
 		AddCharacter(Item);
+		SendChangedInventoryInformationToClients();
 		return;
 	}
 }
@@ -90,4 +94,24 @@ void UInventory::AddCharacter(const FUserItem Item)
 	NewUserItem.ItemInfo = ItemInfo;
 	Characters.Add(NewUserItem);
 
+}
+
+void UInventory::SendChangedInventoryInformationToClients()
+{
+	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	if (!IsValid(LocalClientPlayerController))
+	{
+		return;
+	}
+
+	if (InventoryWidgetController == nullptr)
+	{
+		InventoryWidgetController = NewObject<UInventoryWidgetController>(this, UInventoryWidgetController::StaticClass());
+	}
+	LocalClientPlayerController->SetInventoryWidgetController(InventoryWidgetController);
+
+	FInventoryWidgetControllerParams Params;
+	Params.Characters = Characters;
+	Params.ConsumableItems = ConsumableItems;
+	InventoryWidgetController->SetWidgetControllerParams(Params);
 }

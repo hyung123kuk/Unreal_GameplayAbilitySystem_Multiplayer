@@ -14,6 +14,7 @@ class UUserInfoWidgetController;
 class UChattingWidgetController;
 class UInviteRoomWidgetController;
 class UStoreWidgetController;
+class UInventoryWidgetController;
 class ARoom;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
@@ -75,6 +76,7 @@ public:
 	void MakeLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	void RemoveLobbyRoomWidgetController(ULobbyRoomInfoWidgetController* RoomInfoController);
 	void SetStoreWidgetController(UStoreWidgetController* StoreInfoController);
+	void SetInventoryWidgetController(UInventoryWidgetController* InventoryInfoController);
 	//** Lobby UI End*/
 
 	//** Popup Room UI */
@@ -172,6 +174,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStoreWidgetController> StoreInfoWidgetController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInventoryWidgetController> InventoryWidgetController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UChattingWidgetController> ChattingWidgetControllerClass;

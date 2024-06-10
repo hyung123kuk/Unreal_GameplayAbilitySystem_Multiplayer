@@ -46,5 +46,5 @@ UInventory* UHKGameInstance::GetInventory()
         Inventory = NewObject<UInventory>(this, InventoryClass);
     }
 
-    return Inventory;
+    return Inventory; 
 }
