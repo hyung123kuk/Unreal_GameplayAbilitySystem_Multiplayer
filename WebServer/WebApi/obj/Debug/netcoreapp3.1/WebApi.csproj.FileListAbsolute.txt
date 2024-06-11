@@ -1,0 +1,266 @@
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\SharedData.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.csprojAssemblyReference.cache
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfoInputs.cache
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfo.cs
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.RazorTargetAssemblyInfo.cache
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\appsettings.Development.json
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\appsettings.json
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.exe
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.deps.json
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.json
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.dev.json
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.pdb
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.HashCode.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\SharedData.pdb
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CopyComplete
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.Manifest.cache
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.xml
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.pdb
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.genruntimeconfig.cache
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Runtime.Caching.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CoreCompileInputs.cache
+C:\Users\rooki\source\repos\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\appsettings.Development.json
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\appsettings.json
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.exe
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.deps.json
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.json
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.dev.json
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\WebApi.pdb
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.HashCode.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Runtime.Caching.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\SharedData.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\bin\Debug\netcoreapp3.1\SharedData.pdb
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.csprojAssemblyReference.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfoInputs.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfo.cs
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CoreCompileInputs.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.RazorTargetAssemblyInfo.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CopyComplete
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.Manifest.cache
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.xml
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.dll
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.pdb
+C:\Users\rooki\OneDrive\바탕 화면\RankingApp\WebApi\obj\Debug\netcoreapp3.1\WebApi.genruntimeconfig.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\appsettings.Development.json
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\appsettings.json
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.StaticWebAssets.xml
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.exe
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.deps.json
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.json
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.dev.json
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.pdb
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Google.Protobuf.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.HashCode.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\MySql.Data.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Zstandard.Net.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\MySql.Data.EntityFrameworkCore.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Renci.SshNet.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\SshNet.Security.Cryptography.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Runtime.Caching.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\SharedData.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\SharedData.pdb
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.AssemblyReference.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfoInputs.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfo.cs
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CoreCompileInputs.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.Manifest.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.Pack.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.build.WebApi.props
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.RazorTargetAssemblyInfo.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CopyComplete
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.pdb
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.genruntimeconfig.cache
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\MySqlConnector.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Pomelo.EntityFrameworkCore.MySql.dll
+D:\Contents\UnrealPortfolio2\WebServer\WebApi\bin\Debug\netcoreapp3.1\Pomelo.JsonObject.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\appsettings.Development.json
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.StaticWebAssets.xml
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\appsettings.json
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.exe
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.deps.json
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.json
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.runtimeconfig.dev.json
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\WebApi.pdb
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Google.Protobuf.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Bcl.HashCode.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\MySql.Data.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Zstandard.Net.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\MySql.Data.EntityFrameworkCore.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\MySqlConnector.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Pomelo.EntityFrameworkCore.MySql.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Pomelo.JsonObject.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\Renci.SshNet.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\SshNet.Security.Cryptography.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Runtime.Caching.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\Microsoft.Data.SqlClient.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\SharedData.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\bin\Debug\netcoreapp3.1\SharedData.pdb
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.AssemblyReference.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfoInputs.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.AssemblyInfo.cs
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CoreCompileInputs.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.Manifest.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\WebApi.StaticWebAssets.Pack.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.build.WebApi.props
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\staticwebassets\msbuild.buildTransitive.WebApi.props
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.RazorTargetAssemblyInfo.cache
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.csproj.CopyComplete
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.dll
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.pdb
+D:\Contents\UnrealPortfolio2\UnrealPortfolio\WebServer\WebApi\obj\Debug\netcoreapp3.1\WebApi.genruntimeconfig.cache
