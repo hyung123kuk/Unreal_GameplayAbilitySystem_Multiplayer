@@ -160,4 +160,9 @@ int UHKBlueprintFunctionLibrary::GetMaxChattingLen()
     return MaxChattingLen;
 }
 
+bool UHKBlueprintFunctionLibrary::IsWebLoginServer()
+{
+    return bWebLoginServer;
+}
+
 #pragma endregion

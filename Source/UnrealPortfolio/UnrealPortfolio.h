@@ -7,12 +7,15 @@
 #define DatabaseInfoFilePath TEXT("D:\\Contents\\UnrealPortfolio2\\DataBaseAccountInformation.json")
 #define DefaultItemsImagePath TEXT("/Game/Assets/ItemImages/")
 
+#define WebAPIServerURL TEXT("https://localhost:5001/api/Login")
 
 DECLARE_LOG_CATEGORY_EXTERN(ServerLog, Log, All);
 
 //
 // System Variable
 //
+
+static const bool bWebLoginServer = true;
 
 //* Account */
 static const int MaxIDLen = 12;

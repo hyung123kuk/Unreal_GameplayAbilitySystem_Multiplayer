@@ -51,6 +51,8 @@ public:
 	static int GetMaxUserIntroductionLen();
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
 	static int GetMaxChattingLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static bool IsWebLoginServer();
 	//** SystemVariable End */
 
 };

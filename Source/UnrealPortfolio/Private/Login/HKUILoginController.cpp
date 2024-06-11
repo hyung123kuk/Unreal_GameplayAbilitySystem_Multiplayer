@@ -5,6 +5,55 @@
 #include "Net/UnrealNetwork.h"
 #include "Login/HKLoginGameMode.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Login/LoginGameModeConnectedWebAPI.h"
+
+void AHKUILoginController::CheckIDForSignUp(const FString& ID)
+{
+	if (bWebLoginServer)
+	{
+		ALoginGameModeConnectedWebAPI* GameMode = GetWorld()->GetAuthGameMode<ALoginGameModeConnectedWebAPI>();
+		if (GameMode)
+		{
+			GameMode->CheckAccountID(ID);
+		}
+	}
+	else
+	{
+		CheckIDForSignUp_Server(ID);
+	}
+}
+
+void AHKUILoginController::SignUp(const FString& ID, const FString& Password, const FString& PasswordConfirm)
+{
+	if (bWebLoginServer)
+	{
+		ALoginGameModeConnectedWebAPI* GameMode = GetWorld()->GetAuthGameMode<ALoginGameModeConnectedWebAPI>();
+		if (GameMode)
+		{
+			GameMode->CreateAccount(ID,Password);
+		}
+	}
+	else
+	{
+		SignUp_Server(ID, Password, PasswordConfirm);
+	}
+}
+
+void AHKUILoginController::AttempLogin(const FString& ID, const FString& Password)
+{
+	if (bWebLoginServer)
+	{
+		ALoginGameModeConnectedWebAPI* GameMode = GetWorld()->GetAuthGameMode<ALoginGameModeConnectedWebAPI>();
+		if (GameMode)
+		{
+			GameMode->LoginAccount(ID,Password);
+		}
+	}
+	else
+	{
+		AttempLogin_Server(ID,Password);
+	}
+}
 
 
 void AHKUILoginController::CheckIDForSignUp_Server_Implementation(const FString& ID)
@@ -59,6 +108,7 @@ void AHKUILoginController::AttempLogin_Server_Implementation(const FString& ID, 
 	SendServerMessage_Client(Message, EServerToClientMessageType::Login, !bSuccess, bSuccess);
 }
 
+
 void AHKUILoginController::ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage, bool Success)
 {
 	Super::ReceiveServerMessage(Message, MessageType, PopupMessage, Success);
@@ -66,6 +116,11 @@ void AHKUILoginController::ReceiveServerMessage(const FString& Message, EServerT
 	if (MessageType == EServerToClientMessageType::CheckID)
 	{
 		CheckIDSuccessOrNotDelegate.Broadcast(Success);
+	}
+
+	if (MessageType == EServerToClientMessageType::SignUp)
+	{
+		SignUpSuccessOrNotDelegate.Broadcast(Success);
 	}
 
 	if (MessageType == EServerToClientMessageType::Login)
