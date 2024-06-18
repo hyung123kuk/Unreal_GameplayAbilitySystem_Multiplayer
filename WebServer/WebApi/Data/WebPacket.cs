@@ -45,7 +45,7 @@ public class ServerInfo
 { 
     public string Name { get; set; }
     public string Ip { get;set; }
-    public int CrowdedLevel { get; set; }
+    public uint CrowdedLevel { get; set; }
 }
 
 

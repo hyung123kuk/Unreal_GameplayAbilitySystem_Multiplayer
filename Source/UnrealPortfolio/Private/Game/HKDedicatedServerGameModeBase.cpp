@@ -42,6 +42,7 @@ void AHKDedicatedServerGameModeBase::ImportMySQLAccountInformationFromJson()
 	}
 
 	UserData = UHKDatabaseFunctionLibrary::AttemptToConnectDataBase(DatabaseHost, DatabaseUserName, DatabaseUserPassword, DatabaseName);
+	UserData->GameModeBase = this;
 }
 
 bool AHKDedicatedServerGameModeBase::AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage)

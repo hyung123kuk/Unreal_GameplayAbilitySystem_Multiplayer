@@ -16,6 +16,7 @@ class UNREALPORTFOLIO_API AHKLoginGameMode : public AHKDedicatedServerGameModeBa
 	GENERATED_BODY()
 	
 public:
+
 	/** Sign Up Dedicated Server*/
 	bool CheckIDForSignUp(const FString& ID, FString& ErrorMessage);
 

@@ -6,6 +6,7 @@
 #include "Login/HKLoginGameMode.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
 #include "Login/LoginGameModeConnectedWebAPI.h"
+#include "Blueprint/UserWidget.h"
 
 void AHKUILoginController::CheckIDForSignUp(const FString& ID)
 {

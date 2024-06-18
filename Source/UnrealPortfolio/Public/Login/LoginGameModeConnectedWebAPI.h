@@ -41,8 +41,10 @@ class UNREALPORTFOLIO_API ALoginGameModeConnectedWebAPI : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FServerInfoData> ServerList;
 
+	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage);
 
 	void CheckAccountID(const FString& Id);
 	void ResponseOfCheckAccountID(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);

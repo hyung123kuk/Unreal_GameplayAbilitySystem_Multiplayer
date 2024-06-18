@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharedData.UserData
+namespace WebApi.Models
 {
     public partial class MemberItem
     {

@@ -5,6 +5,7 @@
 #include "HKBlueprintFunctionLibrary.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
 
+
 bool AHKLoginGameMode::CheckIDForSignUp(const FString& ID, FString& ErrorMessage)
 {
 	UE_LOG(ServerLog, Log, TEXT("유저가 아이디 확인을(%s) 시도합니다 "), *ID);

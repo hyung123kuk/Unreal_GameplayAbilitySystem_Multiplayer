@@ -1,5 +1,0 @@
-D:\Contents\UnrealPortfolio2\WebServer\SharedData\obj\Debug\netcoreapp3.1\DatabaseData.csproj.AssemblyReference.cache
-D:\Contents\UnrealPortfolio2\WebServer\SharedData\obj\Debug\netcoreapp3.1\DatabaseData.GeneratedMSBuildEditorConfig.editorconfig
-D:\Contents\UnrealPortfolio2\WebServer\SharedData\obj\Debug\netcoreapp3.1\DatabaseData.AssemblyInfoInputs.cache
-D:\Contents\UnrealPortfolio2\WebServer\SharedData\obj\Debug\netcoreapp3.1\DatabaseData.AssemblyInfo.cs
-D:\Contents\UnrealPortfolio2\WebServer\SharedData\obj\Debug\netcoreapp3.1\DatabaseData.csproj.CoreCompileInputs.cache

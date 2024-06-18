@@ -19,6 +19,7 @@ class UNREALPORTFOLIO_API AHKUILoginController : public AHKUIPlayerControllerBas
 	friend class ALoginGameModeConnectedWebAPI;
 	
 public:
+	//** To Web Server */
 	UFUNCTION(BlueprintCallable)
 	void CheckIDForSignUp(const FString& ID);
 
@@ -28,6 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttempLogin(const FString& ID, const FString& Password);
 
+	void CreateAndShowServerListWidget();
+	//** To Web Server End*/
+	
 	//** To Dedicated Server */
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void CheckIDForSignUp_Server(const FString& ID);
@@ -43,6 +47,7 @@ protected:
 	virtual void ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage = false, bool Success = false) override;
 
 public:
+
 	UPROPERTY(BlueprintAssignable, Category = "SuccessOrNot||CheckID")
 	FMessageSuccessOrNotDelegate CheckIDSuccessOrNotDelegate;
 

@@ -8,4 +8,9 @@ static public class SystemValue
     public static int MinIDLen = 6;
     public static int MinPasswordLen = 8;
     //* Account End */
+
+    //* Lobby */
+    public static int LobbyUserMaxCount = 20;
+    //* Lobby End*/
+
 }

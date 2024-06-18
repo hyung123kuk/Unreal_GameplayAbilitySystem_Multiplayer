@@ -145,6 +145,11 @@ int UHKBlueprintFunctionLibrary::GetMaxRoomNameLen()
     return MaxRoomNameLen;
 }
 
+int UHKBlueprintFunctionLibrary::GetMaxLobbyUserCount()
+{
+    return MaxLobbyUserCount;
+}
+
 int UHKBlueprintFunctionLibrary::GetMaxRoomPasswordLen()
 {
     return MaxRoomPasswordLen;

@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+ï»¿// Copyright Druid Mechanics
 
 #include "Login/LoginGameModeConnectedWebAPI.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
@@ -37,7 +37,7 @@ void ALoginGameModeConnectedWebAPI::ResponseOfCheckAccountID(FHttpRequestPtr Req
 	}
 	else
 	{
-		Message = TEXT("¼­¹ö¿Í ¿¬°áÀÌ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+		Message = TEXT("ì„œë²„ì™€ ì—°ê²°ì´ ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 	}
 
 
@@ -72,7 +72,7 @@ void ALoginGameModeConnectedWebAPI::ResponseOfCreateAccount(FHttpRequestPtr Requ
 	}
 	else
 	{
-		Message = TEXT("¼­¹ö¿Í ¿¬°áÀÌ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+		Message = TEXT("ì„œë²„ì™€ ì—°ê²°ì´ ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 	}
 
 	LoginPlayerController->SendServerMessage_Client(Message, EServerToClientMessageType::SignUp, true, CreateOK);
@@ -94,7 +94,7 @@ void ALoginGameModeConnectedWebAPI::ResponseOfLoginAccount(FHttpRequestPtr Reque
 {
 	bool LoginOK = false;
 	FString Message;
-	TArray<FServerInfoData> ServerList;
+	ServerList.Empty();
 	if (bConnectedSuccessfully)
 	{
 		TSharedRef<TJsonReader<TCHAR>> jsonReader = TJsonReaderFactory<TCHAR>::Create(Response->GetContentAsString());
@@ -104,8 +104,12 @@ void ALoginGameModeConnectedWebAPI::ResponseOfLoginAccount(FHttpRequestPtr Reque
 		jsonObj->TryGetBoolField(TEXT("LoginOK"), LoginOK);
 		jsonObj->TryGetStringField(TEXT("Message"), Message);
 
-		const TArray<TSharedPtr<FJsonValue>>* ServerListJson;
-		jsonObj->TryGetArrayField(TEXT("ServerList"), ServerListJson);
+		const TArray<TSharedPtr<FJsonValue>>* ServerListJson;	
+		if (!jsonObj->TryGetArrayField(TEXT("ServerList"), ServerListJson))
+		{
+			return;
+		}
+
 		for (auto Server : *ServerListJson)
 		{
 			FString Name;
@@ -126,7 +130,7 @@ void ALoginGameModeConnectedWebAPI::ResponseOfLoginAccount(FHttpRequestPtr Reque
 	}
 	else
 	{
-		Message = TEXT("¼­¹ö¿Í ¿¬°áÀÌ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+		Message = TEXT("ì„œë²„ì™€ ì—°ê²°ì´ ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 	}
 
 	LoginPlayerController->SendServerMessage_Client(Message, EServerToClientMessageType::Login, true, LoginOK);

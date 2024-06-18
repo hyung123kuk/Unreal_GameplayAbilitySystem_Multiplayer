@@ -34,7 +34,7 @@ bool UHKDatabaseFunctionLibrary::NotifyOpenServer(UMySQLConnection* Database, co
 
 bool UHKDatabaseFunctionLibrary::NotifyUserCount(UMySQLConnection* Database, const FString& ServerIP, int CrowedLevel)
 {
-	FString QueryString = FString::Printf(TEXT("UPDATE `userdata`.`server_list` SET `crowdedlevel` = %d WHERE `ip` = '%s';"), CrowedLevel, *ServerIP);
+	FString QueryString = FString::Printf(TEXT("UPDATE `userdata`.`server_list` SET `crowded_level` = %d WHERE `ip` = '%s';"), CrowedLevel, *ServerIP);
 	FMySQLConnectoreQueryResult QueryResult = Query(Database, QueryString, true);
 	return true;
 }

@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Ocsp;
-using SharedData.UserData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using WebApi.Data;
+using WebApi.Models;
 
 namespace WebApi.Controllers
 {
@@ -16,11 +17,11 @@ namespace WebApi.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        ApplicationDbContext _context;
+        ApplicationDbContext _database;
 
         public LoginController(ApplicationDbContext context)
         {
-            _context = context;
+            _database = context;
         }
 
         
@@ -48,7 +49,7 @@ namespace WebApi.Controllers
                 return res;
             }
 
-            Member member = _context.member
+            Member member = _database.member
               .AsNoTracking()
               .Where(a => a.Id == req.CheckAccountName)
               .FirstOrDefault();
@@ -89,14 +90,14 @@ namespace WebApi.Controllers
             }
 
             string SHA256Password = SHA256Hash(req.AccountPassword);
-            _context.member.Add(new Member
+            _database.member.Add(new Member
             {
                 Id = req.AccountName,
                 Password = SHA256Password,
                 CreateTime = System.DateTime.Now,
             });
 
-            bool success = _context.SaveChangesEx();
+            bool success = _database.SaveChangesEx();
             res.CreateOK = success;
             if(success == false)
             {
@@ -121,7 +122,7 @@ namespace WebApi.Controllers
             Console.WriteLine("유저가 아이디(" + req.AccountName + ")로 로그인을 시도합니다.");
             LoginAccountPacketRes res = new LoginAccountPacketRes();
 
-            Member member = _context.member
+            Member member = _database.member
                 .AsNoTracking()
                 .Where(a => a.Id == req.AccountName)
                 .FirstOrDefault();
@@ -141,14 +142,24 @@ namespace WebApi.Controllers
                 Console.WriteLine("유저("+ req.AccountName +")는 비밀번호가 일치하지 않아 로그인에 실패합니다.");
             }
 
-            res.LoginOK = true;
-            res.ServerList = new List<ServerInfo>()
-            {
-                new ServerInfo {Name = "진짜 서버", Ip = "127.0.0.1", CrowdedLevel = 0 },
-                new ServerInfo {Name = "진짜 서버2", Ip = "127.0.0.1", CrowdedLevel = 3 }
-            };
 
-            Console.WriteLine("유저(" + req.AccountName + ")가 로그인에 성공합니다..");
+            res.LoginOK = true;
+            List<ServerList> operationServerList = _database.server_list
+                                                     .AsNoTracking()
+                                                     .Where(a => a.IsOperation == 1)
+                                                     .ToList();
+
+            res.ServerList = new List<ServerInfo>();
+            foreach (var operationServer in operationServerList)
+            {
+                ServerInfo serverInfo = new ServerInfo();
+                serverInfo.Name = operationServer.Name;
+                serverInfo.Ip = operationServer.Ip;
+                serverInfo.CrowdedLevel = operationServer.CrowdedLevel;
+                res.ServerList.Add(serverInfo);
+            }
+
+            Console.WriteLine("유저(" + req.AccountName + ")가 로그인에 성공합니다.");
             return res;
         }
 

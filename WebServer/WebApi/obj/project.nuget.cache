@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "QG71hqQLTImvIsgGEIlzYWDwPHf6za8dkMwkpMPqfmSGfADj8EepemCEYU2Lvn78R8rExs3PFmVxYkkFEQ92Rw==",
+  "dgSpecHash": "m/j7IxPCIEn21tid45fs7BSE0UmJYJ/rKTw5VX9mkwIK2pYnpUJTs9dL4gxdL+Kdt58rA2pcmlQPv1inenHK3Q==",
   "success": true,
   "projectFilePath": "D:\\Contents\\UnrealPortfolio2\\UnrealPortfolio\\WebServer\\WebApi\\WebApi.csproj",
   "expectedPackageFiles": [
@@ -17,6 +17,7 @@
     "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\3.1.5\\microsoft.entityframeworkcore.analyzers.3.1.5.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore.design\\3.1.5\\microsoft.entityframeworkcore.design.3.1.5.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\3.1.5\\microsoft.entityframeworkcore.relational.3.1.5.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\3.0.0\\microsoft.entityframeworkcore.tools.3.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\3.1.5\\microsoft.extensions.caching.abstractions.3.1.5.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.caching.memory\\3.1.5\\microsoft.extensions.caching.memory.3.1.5.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.configuration\\3.1.5\\microsoft.extensions.configuration.3.1.5.nupkg.sha512",

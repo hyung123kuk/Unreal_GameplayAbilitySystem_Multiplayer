@@ -235,6 +235,16 @@ void AHKUILobbyPlayerController::RemoveLobbyRoomWidgetController(ULobbyRoomInfoW
     RemoveRoomDelegate.Broadcast(RoomInfoController);
 }
 
+void AHKUILobbyPlayerController::EnterSameRoomUserWidgetController(URoomUserInfoWidgetControlle* EnterUserInfoController)
+{
+    EnterRoomNewUserDelegate.Broadcast(EnterUserInfoController);
+}
+
+void AHKUILobbyPlayerController::ExitGameRoomUserWidgetController(URoomUserInfoWidgetControlle* ExitUserInfoController)
+{
+    ExitRoomUserDelegate.Broadcast(ExitUserInfoController);
+}
+
 void AHKUILobbyPlayerController::SetStoreWidgetController(UStoreWidgetController* StoreInfoController)
 {
     if (StoreInfoWidgetController == nullptr)
@@ -262,15 +272,7 @@ void AHKUILobbyPlayerController::CreateAndShowRoomWidget()
         UIPopupRoomInstance->AddToViewport();
 }
 
-void AHKUILobbyPlayerController::EnterSameRoomUserWidgetController(URoomUserInfoWidgetControlle* EnterUserInfoController)
-{
-    EnterRoomNewUserDelegate.Broadcast(EnterUserInfoController);
-}
 
-void AHKUILobbyPlayerController::ExitGameRoomUserWidgetController(URoomUserInfoWidgetControlle* ExitUserInfoController)
-{
-    ExitRoomUserDelegate.Broadcast(ExitUserInfoController);
-}
 
 void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage, bool Success)
 {

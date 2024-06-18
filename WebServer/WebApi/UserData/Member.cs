@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharedData.UserData
+namespace WebApi.Models
 {
     public partial class Member
     {
@@ -15,9 +15,9 @@ namespace SharedData.UserData
         public string Id { get; set; }
         public string Password { get; set; }
         public DateTime CreateTime { get; set; }
-        public string Introduction { get; set; } = string.Empty;
-        public uint Gold { get; set; } = 0;
-        public uint Exp { get; set; } = 0;
+        public string Introduction { get; set; }
+        public uint Gold { get; set; }
+        public uint Exp { get; set; }
 
         public virtual ICollection<ChattingLog> ChattingLog { get; set; }
         public virtual ICollection<MemberItem> MemberItem { get; set; }

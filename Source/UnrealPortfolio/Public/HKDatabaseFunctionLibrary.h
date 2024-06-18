@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "HKDatabaseFunctionLibrary.generated.h"
 
+
 class UMySQLConnection;
 class AHKLobbyGameMode;
 class AHKLoginGameMode;
@@ -27,6 +28,11 @@ class UNREALPORTFOLIO_API UHKDatabaseFunctionLibrary : public UBlueprintFunction
 
 protected:
 
+	/** Server Interaction to WebServer */
+	static bool NotifyOpenServer(UMySQLConnection* Database, const FString& ServerIP, FString& ServerNameRef);
+	static bool NotifyUserCount(UMySQLConnection* Database, const FString& ServerIP, int CrowedLevel);
+	/** Server Interaction to WebServer End */
+
 	/** Login */
 	static UMySQLConnection* AttemptToConnectDataBase(const FString& Host, const FString& UserName, const FString& UserPassword,const FString& DatabaseName);
 	static bool CreateUserID(UMySQLConnection* Database, const FString& ID, const FString& Password);
@@ -47,7 +53,7 @@ protected:
 	/** Lobby End*/
 
 private:
-	static FMySQLConnectoreQueryResult Query(UMySQLConnection* Database,const FString& Query);
+	static FMySQLConnectoreQueryResult Query(UMySQLConnection* Database,const FString& Query,bool PassNullMessageLog = false);
 	
 	//쿼리 인젝션 가능성이 있는 문자 지워주는 함수
 	static void RemovePossibilityOfQueryInjection(FString& Input);
@@ -55,5 +61,6 @@ private:
 	//간단한 쿼리 인젝션 예방 함수
 	static bool CheckThePossibilityOfQueryInjection(const FString& Input);
 	static bool CheckThePossibilityOfQueryInjection(const FString& Input, FString& ContainedReservedWord);
+
 
 };

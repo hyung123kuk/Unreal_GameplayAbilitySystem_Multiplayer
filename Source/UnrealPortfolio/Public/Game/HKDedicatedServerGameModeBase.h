@@ -20,12 +20,9 @@ public:
 	virtual void StartPlay();
 	virtual bool AttemptedToLogin(const FString& ID, const FString& Password, FString& ErrorMessage);
 	
-protected:
 	/** Database */
 	void ImportMySQLAccountInformationFromJson();
 	/** Database End */
-
-
 protected:
 
 	/** Database */

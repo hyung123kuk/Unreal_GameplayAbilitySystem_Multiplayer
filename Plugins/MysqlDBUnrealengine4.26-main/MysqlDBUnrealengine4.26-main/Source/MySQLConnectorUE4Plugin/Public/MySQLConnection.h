@@ -4,6 +4,8 @@
 
 #include "MySQLConnection.generated.h"
 
+class AHKDedicatedServerGameModeBase;
+
 /**
 * SQLite main database class.
 */
@@ -13,7 +15,7 @@ class MYSQLCONNECTORUE4PLUGIN_API UMySQLConnection : public UObject
 	GENERATED_UCLASS_BODY()    
 
 public:
-
+	AHKDedicatedServerGameModeBase* GameModeBase;
     MYSQL* globalCon = nullptr;
    
     UFUNCTION(BlueprintCallable, Category = "MySQLConnector|Connection")

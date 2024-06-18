@@ -18,11 +18,24 @@ void AHKLobbyGameMode::StartPlay()
 {
 	Super::StartPlay();
 	InitializeStoreItemFromDatabase();
+	NotifyOpenServerToLoginServer();
 }
 
-void AHKLobbyGameMode::Tick(float DeltaSeconds)
+void AHKLobbyGameMode::NotifyOpenServerToLoginServer()
 {
+	FString localAddr = ToCStr(GetNetDriver()->GetLocalAddr()->ToString(true));
+	UE_LOG(ServerLog, Warning, TEXT("GameMode RemoteAddress : %s"), *localAddr);
+	bool bNotifyOpenServer = UHKDatabaseFunctionLibrary::NotifyOpenServer(UserData, localAddr, ServerName);
 
+	// 데이터 베이스에 서버가 오픈됐음을 알리지 못함
+	checkf(bNotifyOpenServer, TEXT("Failure to notify the database that the server is open"));
+}
+
+void AHKLobbyGameMode::NotifyUserCountToDataBase()
+{
+	UE_LOG(ServerLog, Warning, TEXT("NotifyUserCountToDataBase : %d"), AllPlayers.Num());
+	FString localAddr = ToCStr(GetNetDriver()->GetLocalAddr()->ToString(true));
+	UHKDatabaseFunctionLibrary::NotifyUserCount(UserData, localAddr, AllPlayers.Num());
 }
 
 void AHKLobbyGameMode::InitializeStoreItemFromDatabase()
@@ -91,6 +104,7 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 	AllPlayers.Add(Id, NewPlayerState);
 	LobbyPlayers.Add(NewPlayerState);
 
+	NotifyUserCountToDataBase();
 
 	return NewPlayerController;
 }
@@ -158,7 +172,7 @@ void AHKLobbyGameMode::Logout(AController* Exiting)
 	}
 	AllPlayers.Remove(PlayerID);
 	LobbyPlayers.Remove(ExitPlayerState);
-
+	NotifyUserCountToDataBase();
 	Super::Logout(Exiting);
 }
 
@@ -481,11 +495,6 @@ bool AHKLobbyGameMode::TryToPurchaseItem(APlayerController& Player, int ItemId, 
 		UE_LOG(ServerLog, Warning, TEXT("플레이어가(%s) 아이템 구매에 실패합니다."), *PlayerId);
 		Message = TEXT("아이템을 구매할 돈을 가지고 있지 않습니다.");
 		return false;
-	}
-
-	if (!UserData->MySQLCheckConnection())
-	{
-		ImportMySQLAccountInformationFromJson();
 	}
 
 	LobbyPlayerCotroller->NotifyPurchaseItemMessageToClient(ItemId,1,LeftGold);

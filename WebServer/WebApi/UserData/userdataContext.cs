@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace SharedData.UserData
+namespace WebApi.Models
 {
     public partial class userdataContext : DbContext
     {
@@ -18,6 +18,7 @@ namespace SharedData.UserData
         public virtual DbSet<ChattingLog> ChattingLog { get; set; }
         public virtual DbSet<Member> Member { get; set; }
         public virtual DbSet<MemberItem> MemberItem { get; set; }
+        public virtual DbSet<ServerList> ServerList { get; set; }
         public virtual DbSet<StoreItem> StoreItem { get; set; }
         public virtual DbSet<StorePurchaseLog> StorePurchaseLog { get; set; }
 
@@ -107,7 +108,8 @@ namespace SharedData.UserData
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasColumnName("password")
-                    .HasColumnType("char(224)")
+                    .HasColumnType("varchar(256)")
+                    .HasDefaultValueSql("'0'")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
             });
@@ -153,6 +155,34 @@ namespace SharedData.UserData
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_memberitem_member");
+            });
+
+            modelBuilder.Entity<ServerList>(entity =>
+            {
+                entity.HasKey(e => e.Ip)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("server_list");
+
+                entity.Property(e => e.Ip)
+                    .HasColumnName("ip")
+                    .HasColumnType("char(25)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.CrowdedLevel)
+                    .HasColumnName("crowded_level")
+                    .HasColumnType("int(1) unsigned");
+
+                entity.Property(e => e.IsOperation)
+                    .HasColumnName("is_operation")
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("char(20)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
             });
 
             modelBuilder.Entity<StoreItem>(entity =>

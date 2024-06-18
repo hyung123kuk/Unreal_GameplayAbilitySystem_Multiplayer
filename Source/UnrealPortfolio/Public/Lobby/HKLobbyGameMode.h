@@ -12,6 +12,7 @@ class ARoom;
 class AStore;
 
 
+
 /**
  * 
  */
@@ -20,11 +21,11 @@ class UNREALPORTFOLIO_API AHKLobbyGameMode : public AHKDedicatedServerGameModeBa
 {
 	GENERATED_BODY()
 	
-	virtual void StartPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
-
 private:
 	/** Init */
+	virtual void StartPlay() override;
+	void NotifyOpenServerToLoginServer();
+	void NotifyUserCountToDataBase();
 	void InitializeStoreItemFromDatabase();
 	/** Init End*/
 
@@ -61,14 +62,11 @@ private:
 	void DestroyRoom(const FString& RoomName);
 	/** Room End */
 
-
-
 private:
 	FString GetPlayerIDWithController(const APlayerController& PlayerController);
 	ARoom* FindEnteredRoomWithPlayerState(AHKLobbyPlayerState* PlayerState);
 	ARoom* FindRoom(const FString& RoomName, FString& Message);
 	AHKLobbyPlayerState* FindPlayerState(const FString& PlayerId, FString& Message);
-
 	
 private:
 	UPROPERTY()
@@ -83,6 +81,10 @@ private:
 	UPROPERTY()
 	TObjectPtr<AStore> Store;
 
+	UPROPERTY()
+	FString ServerName;
+
 	int ID;
+
 };
 

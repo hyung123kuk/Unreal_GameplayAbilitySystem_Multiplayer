@@ -6,7 +6,6 @@
 
 #define DatabaseInfoFilePath TEXT("D:\\Contents\\UnrealPortfolio2\\DataBaseAccountInformation.json")
 #define DefaultItemsImagePath TEXT("/Game/Assets/ItemImages/")
-
 #define WebAPIServerURL TEXT("https://localhost:5001/api/Login")
 
 DECLARE_LOG_CATEGORY_EXTERN(ServerLog, Log, All);
@@ -22,6 +21,10 @@ static const int MaxIDLen = 12;
 static const int MinIDLen = 6;
 static const int MinPasswordLen = 8;
 //* Account End */
+
+//* Lobby */
+static const int MaxLobbyUserCount = 20;
+//* Lobby End*/
 
 //* Room */
 static const int MaxRoomNameLen = 12;

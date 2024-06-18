@@ -6,8 +6,6 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "HKBlueprintFunctionLibrary.generated.h"
 
-class UInventory;
-
 /**
  * 
  */
@@ -45,6 +43,8 @@ public:
 	static int GetMinPasswordLen();
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
 	static int GetMaxRoomNameLen();
+	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
+	static int GetMaxLobbyUserCount();
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
 	static int GetMaxRoomPasswordLen();
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")
