@@ -115,9 +115,9 @@ void ALoginGameModeConnectedWebAPI::ResponseOfLoginAccount(FHttpRequestPtr Reque
 			FString Name;
 			FString Ip;
 			int CrowdedLevel;
-
 			Server->AsObject()->TryGetStringField(TEXT("Name"), Name);
 			Server->AsObject()->TryGetStringField(TEXT("Ip"), Ip);
+			Ip = Ip.Replace(TEXT("0.0.0.0"), TEXT("127.0.0.1"));
 			Server->AsObject()->TryGetNumberField(TEXT("CrowdedLevel"), CrowdedLevel);
 
 			FServerInfoData ServerInfo;
@@ -133,7 +133,7 @@ void ALoginGameModeConnectedWebAPI::ResponseOfLoginAccount(FHttpRequestPtr Reque
 		Message = TEXT("서버와 연결이 되지 않았습니다.");
 	}
 
-	LoginPlayerController->SendServerMessage_Client(Message, EServerToClientMessageType::Login, true, LoginOK);
+	LoginPlayerController->SendServerMessage_Client(Message, EServerToClientMessageType::Login, false, LoginOK);
 }
 
 void ALoginGameModeConnectedWebAPI::Post(FHttpRequestRef& Request, TSharedRef<FJsonObject>& RequestObj, FString URL)

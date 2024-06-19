@@ -17,6 +17,13 @@
 void AHKLobbyGameMode::StartPlay()
 {
 	Super::StartPlay();
+
+	//TEST CODE
+	if (GetNetMode() == NM_Standalone)
+	{
+		return;
+	}
+
 	InitializeStoreItemFromDatabase();
 	NotifyOpenServerToLoginServer();
 }
