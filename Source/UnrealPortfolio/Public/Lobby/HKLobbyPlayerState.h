@@ -47,6 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const FString& GetListenServerIP() const { return ListenServerIP; }
 	/** Match Making End */
+	
 
 	void GameStart();
 

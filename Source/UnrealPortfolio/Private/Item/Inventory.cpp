@@ -5,6 +5,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/WidgetController/InventoryWidgetController.h"
 
+
+void UInventory::ReSettingItems(const TArray<int> Ids, const TArray<int> Count)
+{
+	ConsumableItems.Empty();
+	Characters.Empty();
+	AddItemsToArray(Ids, Count);
+}
+
 void UInventory::AddItemsToArray(const TArray<FUserItem> Items)
 {
 	for (FUserItem Item : Items)

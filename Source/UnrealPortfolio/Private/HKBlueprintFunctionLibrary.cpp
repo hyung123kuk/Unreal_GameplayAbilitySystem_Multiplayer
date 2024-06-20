@@ -116,12 +116,6 @@ FString UHKBlueprintFunctionLibrary::CheckStringLimitLen(const FString& InputStr
     return InputString;
 }
 
-UInventory* UHKBlueprintFunctionLibrary::GetInventory(const UObject* WorldContextObject)
-{
-    UHKGameInstance* GameInstance = Cast<UHKGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
-
-    return GameInstance->GetInventory();
-}
 
 #pragma region 시스템 변수
 

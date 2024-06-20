@@ -24,10 +24,6 @@ public:
 	bool GetNetworkLevelChangeErrorMessage(FString& ErrorMessage);
 	// ~ Network Message
 
-	//Inventroy
-	UInventory* GetInventory();
-	//~Inventroy
-
 private:
 	bool OccurredLevelChangeError;
 	FString LevelChangeErrorMessage;

@@ -30,9 +30,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|CheckStringLen")
 	static FString CheckStringLimitLen(const FString& InputString , int LimitLen);
 
-	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|Inventory")
-	static UInventory* GetInventory(const UObject* WorldContextObject);
-
 public:
 	//** SystemVariable */
 	UFUNCTION(BlueprintCallable, Category = "UHKBlueprintFunctionLibrary|SystemVariable")

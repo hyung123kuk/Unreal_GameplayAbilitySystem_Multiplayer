@@ -9,7 +9,6 @@
 
 class UInventoryWidgetController;
 
-
 USTRUCT(BlueprintType)
 struct FUserItem
 {
@@ -34,12 +33,15 @@ class UNREALPORTFOLIO_API UInventory : public UObject
 	GENERATED_BODY()
 	
 public:
+	void ReSettingItems(const TArray<int> Ids, const TArray<int> Count);
+
 	void AddItemsToArray(const TArray<FUserItem> Items);
 	void AddItemsToArray(const TArray<int> Ids, const TArray<int> Count);
 
 	void AddItem(const int Id, const int Count);
 	void AddItem(const FUserItem Item);
 	
+
 private:
 	void AddConsumableItem(const FUserItem Item);
 	void AddCharacter(const FUserItem Item);

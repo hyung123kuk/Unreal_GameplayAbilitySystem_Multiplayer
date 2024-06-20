@@ -13,15 +13,6 @@
 #include "Item/Inventory.h"
 #include "HKBlueprintFunctionLibrary.h"
 
-void AHKUILobbyPlayerController::NotifyUserItemsMessageToClient_Implementation(const TArray<int>& Ids, const TArray<int>& Count)
-{
-    UInventory* Inventory = UHKBlueprintFunctionLibrary::GetInventory(this);
-    if (Inventory != nullptr)
-    {
-        Inventory->AddItemsToArray(Ids, Count);
-    }
-}
-
 void AHKUILobbyPlayerController::TryToMakeRoomToServer_Implementation(const FString& RoomName, const FString& RoomPassword, int MaxPlayers)
 {
     AHKLobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<AHKLobbyGameMode>();
@@ -204,12 +195,6 @@ void AHKUILobbyPlayerController::NotifyInviteRoomMessageToClient_Implementation(
     RecieveInviteMessageDelegate.Broadcast(InviteMessageWidgetController);
 }
 
-void AHKUILobbyPlayerController::NotifyPurchaseItemMessageToClient_Implementation(const int ItemId, const int ItemCount, const int LeftGold)
-{
-    SetGold_Implementation(LeftGold);
-    UHKBlueprintFunctionLibrary::GetInventory(this)->AddItem(ItemId,ItemCount);
-}
-
 void AHKUILobbyPlayerController::SetMyUserInfoWidgetController(UUserInfoWidgetController* UserInfoWidgetController)
 {
     MyUserInfoDelegate.Broadcast(UserInfoWidgetController);
@@ -328,11 +313,22 @@ void AHKUILobbyPlayerController::ReceiveServerMessage(const FString& Message, ES
     //** Room Notify End*/
 }
 
-
-void AHKUILobbyPlayerController::SetGold_Implementation(int SetPlayerGold)
+void AHKUILobbyPlayerController::OnRep_ItemInfo()
 {
-    PlayerGold = SetPlayerGold;
-    ChangeGoldDelegate.Broadcast(PlayerGold);
+    if (Inventory == nullptr)
+    {
+        Inventory = NewObject<UInventory>(this, InventoryClass);
+    }
+
+    Inventory->ReSettingItems(ItemInfo.ItemIds,ItemInfo.ItemCounts);
+    ChangeGoldDelegate.Broadcast(ItemInfo.PlayerGold);
 }
 
+void AHKUILobbyPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+    /** Lobby */
+    DOREPLIFETIME(ThisClass, ItemInfo);
+
+}

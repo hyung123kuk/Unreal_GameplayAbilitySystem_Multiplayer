@@ -38,13 +38,3 @@ bool UHKGameInstance::GetNetworkLevelChangeErrorMessage(FString& ErrorMessage)
 
     return false;
 }
-
-UInventory* UHKGameInstance::GetInventory()
-{
-    if (Inventory == nullptr)
-    {
-        Inventory = NewObject<UInventory>(this, InventoryClass);
-    }
-
-    return Inventory; 
-}

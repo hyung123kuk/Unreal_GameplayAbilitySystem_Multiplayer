@@ -16,6 +16,7 @@ class UInviteRoomWidgetController;
 class UStoreWidgetController;
 class UInventoryWidgetController;
 class ARoom;
+class UInventory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLobbyRoomInfoDelegate, ULobbyRoomInfoWidgetController*, RoomController);
@@ -26,16 +27,31 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInviteMessageDelegate, UInviteRoomW
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeGoldValueDelegate, int, Gold);
 
 
+
+USTRUCT()
+struct FUserItemInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString UserID;
+
+	UPROPERTY()
+	int PlayerGold;
+
+	UPROPERTY()
+	TArray<int> ItemIds;
+
+	UPROPERTY()
+	TArray<int> ItemCounts;
+};
+
 UCLASS()
 class UNREALPORTFOLIO_API AHKUILobbyPlayerController : public AHKUIPlayerControllerBase
 {
 	GENERATED_BODY()
 	
 public:
-	//** Init Info */
-	UFUNCTION(Client, Reliable)
-	void NotifyUserItemsMessageToClient(const TArray<int>& Ids,const TArray<int>& Count);
-	//** Init Info End*/
 
 	//** From Client */
 	UFUNCTION(BlueprintCallable, Server, Reliable)
@@ -65,8 +81,6 @@ public:
 	void NotifyReceiveChattingMessageToClient(const FString& SendUserName, const FString& ChattingMessage);
 	UFUNCTION(Client, Reliable)
 	void NotifyInviteRoomMessageToClient(const FString& SendUserName,const FString& InvitedRoom,const FString& RoomPassword);
-	UFUNCTION(Client, Reliable)
-	void NotifyPurchaseItemMessageToClient(const int ItemId, const int ItemCount, const int LeftGold);
 	//** From Server End*/
 
 	//** Lobby UI */
@@ -185,18 +199,25 @@ protected:
 	TSubclassOf<UInviteRoomWidgetController> InviteWidgetControllerClass;
 
 public:
-	UFUNCTION(Client, Reliable)
-	void SetGold(int SetPlayerGold);
-	
 	UFUNCTION(BlueprintCallable)
-	int GetGold() { return PlayerGold; }
+	int GetGold() { return ItemInfo.PlayerGold; }
+
+	UFUNCTION()
+	void OnRep_ItemInfo();
+
+	UPROPERTY(ReplicatedUsing = OnRep_ItemInfo)
+	FUserItemInfo ItemInfo;
 
 	UPROPERTY(BlueprintAssignable, Category = "PlayerInfo")
 	FChangeGoldValueDelegate ChangeGoldDelegate;
 
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UInventory> InventoryClass;
 
-private:
-	int PlayerGold;
+	UPROPERTY()
+	TObjectPtr<UInventory> Inventory;
 
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

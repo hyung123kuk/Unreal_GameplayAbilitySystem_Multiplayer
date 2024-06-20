@@ -111,6 +111,7 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 	AllPlayers.Add(Id, NewPlayerState);
 	LobbyPlayers.Add(NewPlayerState);
 
+
 	NotifyUserCountToDataBase();
 
 	return NewPlayerController;
@@ -142,13 +143,17 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 
 	//PostLogin에서 Client에 PlayerController가 만들어짐이 확인 되어 _Implementation ToClient 실행 가능 
 	AHKUILobbyPlayerController* LobbyPlayerController = Cast<AHKUILobbyPlayerController>(NewPlayer);
-	LobbyPlayerController->SetGold(UserGold);
+	
+	FUserItemInfo UserItemInfo;
+	UserItemInfo.PlayerGold = UserGold;
 	TArray<int> ItemIds;
 	TArray<int> ItemCounts;
 	if (UHKDatabaseFunctionLibrary::GetUserItemsInformation(UserData, Id, ItemIds, ItemCounts))
 	{
-		LobbyPlayerController->NotifyUserItemsMessageToClient(ItemIds, ItemCounts);
+		UserItemInfo.ItemIds = ItemIds;
+		UserItemInfo.ItemCounts = ItemCounts;
 	}
+	LobbyPlayerController->ItemInfo = UserItemInfo;
 
 	FString PlayerIP = *NewPlayerState->GetNetConnection()->LowLevelGetRemoteAddress(true);
 	UE_LOG(ServerLog, Warning, TEXT("입장한 유저(%s)의 IP 주소 : %s"), *Id, *PlayerIP);
@@ -504,8 +509,22 @@ bool AHKLobbyGameMode::TryToPurchaseItem(APlayerController& Player, int ItemId, 
 		return false;
 	}
 
-	LobbyPlayerCotroller->NotifyPurchaseItemMessageToClient(ItemId,1,LeftGold);
+	FUserItemInfo NewUserItemInfo = LobbyPlayerCotroller->ItemInfo;
+	NewUserItemInfo.PlayerGold = LeftGold;
+	
 
+	int itemIndex = -1;
+	if (NewUserItemInfo.ItemIds.Find(ItemId, itemIndex))
+	{
+		NewUserItemInfo.ItemCounts[itemIndex]++;
+	}
+	else
+	{
+		NewUserItemInfo.ItemIds.Add(ItemId);
+		NewUserItemInfo.ItemCounts.Add(1);
+	}
+
+	LobbyPlayerCotroller->ItemInfo = NewUserItemInfo;
 	return true;
 }
 
