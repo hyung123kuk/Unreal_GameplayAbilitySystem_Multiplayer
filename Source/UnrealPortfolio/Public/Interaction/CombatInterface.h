@@ -7,6 +7,26 @@
 #include "GameplayTagContainer.h"
 #include "CombatInterface.generated.h"
 
+class UAnimMontage;
+
+USTRUCT(BlueprintType)
+struct FTaggedMontage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* Montage = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag MontageTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag SocketTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USoundBase* ImpactSound = nullptr;
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCombatInterface : public UInterface

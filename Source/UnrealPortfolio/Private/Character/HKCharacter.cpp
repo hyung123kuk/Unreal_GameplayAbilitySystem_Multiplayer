@@ -6,6 +6,8 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "Player/HKPlayerState.h"
 #include "AbilitySystemComponent.h"
+#include "UI/HUD/HKHUD.h"
+#include "Player/HKPlayerController.h"
 
 AHKCharacter::AHKCharacter()
 {
@@ -42,6 +44,12 @@ void AHKCharacter::InitAbilityActorInfo()
 	AttributeSet = HKPlayerState->GetAttributeSet();
 
 	//TODO : HUD
-
+	if (AHKPlayerController* HKPlayerController = Cast<AHKPlayerController>(GetController()))
+	{
+		if (AHKHUD* PlayerHUD = Cast<AHKHUD>(HKPlayerController->GetHUD()))
+		{
+			PlayerHUD->InitOverlay(HKPlayerController, HKPlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 	InitializeDefaultAttributes();
 }

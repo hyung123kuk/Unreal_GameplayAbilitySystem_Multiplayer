@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Lobby/HKUILobbyPlayerController.h"
 #include "HKGameInstance.generated.h"
 
 class UInventory;
+
 
 /**
  * 
@@ -24,14 +26,18 @@ public:
 	bool GetNetworkLevelChangeErrorMessage(FString& ErrorMessage);
 	// ~ Network Message
 
+	// Store InGame Player Info Before Start Game
+	void StoreInGamePlayerInfoBeforeGameStart(TArray<FInGamePlayerInfo> InGamePlayerInfoParams);
+	const TArray<FInGamePlayerInfo>& GetPlayersInfo() const { return InGamePlayersInfo; } 
+	FInGamePlayerInfo GetPlayerInfoWithID(FString ID);
+	// ~ Store InGame Player Info Before Start Game End
+
 private:
 	bool OccurredLevelChangeError;
 	FString LevelChangeErrorMessage;
-
-	//서버가 변경되도 인벤토리가 유지되어야 하므로 Instance에 놓는다.
-	UPROPERTY(EditAnywhere, Category = "Inventory")
-	TSubclassOf<UInventory> InventoryClass;
-
+	
+	//리슨서버에 들어가기전 임시로 저장해 놓는다.
 	UPROPERTY()
-	TObjectPtr<UInventory> Inventory;
+	TArray<FInGamePlayerInfo> InGamePlayersInfo;
+
 };

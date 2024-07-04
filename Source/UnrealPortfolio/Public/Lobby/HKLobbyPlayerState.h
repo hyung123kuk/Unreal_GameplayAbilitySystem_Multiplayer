@@ -30,7 +30,6 @@ public:
 	void SetIsRoomAdmin(bool bIsRoomAdmin) { IsRoomAdmin = bIsRoomAdmin; }
 	void SetIntroduction(FString NewIntroduction) { Introduction = NewIntroduction; }
 	void SetExp (int SetExp) { PlayerExp = SetExp; }
-	void SetListenServerIP(FString ServerIP) { ListenServerIP = ServerIP; }
 	void SetIsReady(bool bIsReady) { IsReady = bIsReady; }
 	/** Only Server Func End*/
 
@@ -42,14 +41,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetIsRoomAdmin() const { return IsRoomAdmin; }
 	/** Room Info Get End*/
-
-	/** Match Making */
-	UFUNCTION(BlueprintCallable)
-	const FString& GetListenServerIP() const { return ListenServerIP; }
-	/** Match Making End */
-	
-
-	void GameStart();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -83,8 +74,6 @@ private:
 	void OnRep_IsReady();
 	UFUNCTION()
 	void OnRep_SelectCharacter();
-	UFUNCTION()
-	void OnRep_ListenServerIP();
 	/** Room End*/
 
 private:
@@ -111,9 +100,6 @@ private:
 	/** Room */
 	UPROPERTY(ReplicatedUsing = OnRep_GameRoom)
 	ARoom* EnteredGameRoom;
-
-	UPROPERTY(ReplicatedUsing = OnRep_ListenServerIP)
-	FString ListenServerIP;
 	
 	UPROPERTY(ReplicatedUsing = OnRep_RoomAdmin)
 	bool IsRoomAdmin;

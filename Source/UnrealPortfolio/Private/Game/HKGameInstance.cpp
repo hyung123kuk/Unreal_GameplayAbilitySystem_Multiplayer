@@ -38,3 +38,21 @@ bool UHKGameInstance::GetNetworkLevelChangeErrorMessage(FString& ErrorMessage)
 
     return false;
 }
+
+void UHKGameInstance::StoreInGamePlayerInfoBeforeGameStart(TArray<FInGamePlayerInfo> InGamePlayerInfoParams)
+{
+    InGamePlayersInfo = InGamePlayerInfoParams;
+}
+
+FInGamePlayerInfo UHKGameInstance::GetPlayerInfoWithID(FString ID)
+{
+    for (auto& PlayerInfo : InGamePlayersInfo)
+    {
+        if (PlayerInfo.UserID == ID)
+        {
+            return PlayerInfo;
+        }
+    }
+
+    return FInGamePlayerInfo();
+}

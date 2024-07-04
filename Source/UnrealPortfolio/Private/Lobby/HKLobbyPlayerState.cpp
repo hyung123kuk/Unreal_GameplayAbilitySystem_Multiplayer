@@ -190,16 +190,6 @@ void AHKLobbyPlayerState::OnRep_GameRoom()
 	SendChangePlayerInformationToLocalClient();
 }
 
-void AHKLobbyPlayerState::OnRep_ListenServerIP()
-{
-	if (!IsValid(GetPlayerController()))
-	{
-		return;
-	}
-
-	GameStart();
-}
-
 void AHKLobbyPlayerState::SendChangedRoomInformationToLocalClientInSameRoom()
 {
 	//방이 있고, 로컬 플레이어와 같은 방에 있다면
@@ -210,28 +200,6 @@ void AHKLobbyPlayerState::SendChangedRoomInformationToLocalClientInSameRoom()
 	}
 }
 
-void AHKLobbyPlayerState::GameStart()
-{
-	if (IsRoomAdmin)
-	{
-		//방장 플레이어
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			UGameplayStatics::OpenLevel(GetWorld(), FName(*FString("Game")), true, "listen");
-		}
-		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=Game?Host=true")));	
-	}
-	else
-	{
-		APlayerController* PlayerController = GetPlayerController();
-		if (PlayerController)
-		{
-			PlayerController->ClientTravel("127.0.0.1:7777", ETravelType::TRAVEL_Absolute);
-		}
-		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=192.168.0.101")));//, *ListenServerIP,*GetPlayerName()));
-	}
-}
 
 void AHKLobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -244,7 +212,6 @@ void AHKLobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	/** Lobby End*/
 
 	/** Room */
-	DOREPLIFETIME(ThisClass, ListenServerIP);
 	DOREPLIFETIME(ThisClass, IsRoomAdmin);
 	DOREPLIFETIME(ThisClass, IsReady);
 	DOREPLIFETIME(ThisClass, EnteredGameRoom);

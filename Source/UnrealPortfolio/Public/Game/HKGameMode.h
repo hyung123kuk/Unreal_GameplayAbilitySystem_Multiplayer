@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "HKGameModeBase.generated.h"
+#include "HKGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALPORTFOLIO_API AHKGameModeBase : public AGameModeBase
+class UNREALPORTFOLIO_API AHKGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	

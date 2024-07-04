@@ -27,9 +27,20 @@ public:
 	virtual void Die() override;
 	/**Combat Interface End*/
 
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontage;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	USoundBase* DeathSound;
+
+	bool bDead = false;
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;

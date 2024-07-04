@@ -7,18 +7,18 @@
 
 bool UHKAbilitySystemLibrary::IsMiss(const FGameplayEffectContextHandle& EffectContextHandle)
 {
-	if (const FHKGameplayEffectContext* AuraEffectContext = static_cast<const FHKGameplayEffectContext*>(EffectContextHandle.Get()))
+	if (const FHKGameplayEffectContext* HKEffectContext = static_cast<const FHKGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->IsMiss();
+		return HKEffectContext->IsMiss();
 	}
 	return false;
 }
 
 bool UHKAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
-	if (const FHKGameplayEffectContext* AuraEffectContext = static_cast<const FHKGameplayEffectContext*>(EffectContextHandle.Get()))
+	if (const FHKGameplayEffectContext* HKEffectContext = static_cast<const FHKGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->IsCriticalHit();
+		return HKEffectContext->IsCriticalHit();
 	}
 	return false;
 }

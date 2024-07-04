@@ -17,6 +17,7 @@ class UStoreWidgetController;
 class UInventoryWidgetController;
 class ARoom;
 class UInventory;
+struct FInGamePlayerInfo;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoomUserControllerDelegate, URoomUserInfoWidgetControlle*, UserController);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLobbyRoomInfoDelegate, ULobbyRoomInfoWidgetController*, RoomController);
@@ -25,7 +26,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChattingMessageDelegate, UChattingW
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInviteMessageDelegate, UInviteRoomWidgetController*, InviteMessageController);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeGoldValueDelegate, int, Gold);
-
 
 
 USTRUCT()
@@ -45,6 +45,26 @@ struct FUserItemInfo
 	UPROPERTY()
 	TArray<int> ItemCounts;
 };
+
+//게임 시작하기 전 같은 방에 있는 플레이어 정보를 담기위한 구조체
+USTRUCT()
+struct FInGamePlayerInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int UserOrder;
+
+	UPROPERTY()
+	FString UserID;
+
+	UPROPERTY()
+	FString UserIP;
+
+	UPROPERTY()
+	FUserItemInfo UserItemInfo;
+};
+
 
 UCLASS()
 class UNREALPORTFOLIO_API AHKUILobbyPlayerController : public AHKUIPlayerControllerBase
@@ -98,6 +118,12 @@ public:
 	void EnterSameRoomUserWidgetController(URoomUserInfoWidgetControlle* EnterUserInfoController);
 	void ExitGameRoomUserWidgetController(URoomUserInfoWidgetControlle* ExitUserInfoController);
 	//** Popup Room UI End*/
+
+	/** Game Start Logic */
+	UFUNCTION(Client, Reliable)
+	void StoreInGamePlayerInfoAndGameStart(const TArray<FInGamePlayerInfo>& InGamePlayersInfo, const FString& AdminIP);
+	/** Game Start Logic End*/
+
 
 protected:
 	virtual void ReceiveServerMessage(const FString& Message, EServerToClientMessageType MessageType, bool PopupMessage = false, bool Success = false) override;

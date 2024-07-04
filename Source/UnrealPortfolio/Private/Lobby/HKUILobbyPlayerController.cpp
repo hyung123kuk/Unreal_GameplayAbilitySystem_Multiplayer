@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Item/Inventory.h"
 #include "HKBlueprintFunctionLibrary.h"
+#include "Game/HKGameInstance.h"
 
 void AHKUILobbyPlayerController::TryToMakeRoomToServer_Implementation(const FString& RoomName, const FString& RoomPassword, int MaxPlayers)
 {
@@ -228,6 +229,29 @@ void AHKUILobbyPlayerController::EnterSameRoomUserWidgetController(URoomUserInfo
 void AHKUILobbyPlayerController::ExitGameRoomUserWidgetController(URoomUserInfoWidgetControlle* ExitUserInfoController)
 {
     ExitRoomUserDelegate.Broadcast(ExitUserInfoController);
+}
+
+void AHKUILobbyPlayerController::StoreInGamePlayerInfoAndGameStart_Implementation(const TArray<FInGamePlayerInfo>& InGamePlayersInfo, const FString& AdminIP)
+{
+    UHKGameInstance* GameInstance = Cast<UHKGameInstance>(GetGameInstance());
+    GameInstance->StoreInGamePlayerInfoBeforeGameStart(InGamePlayersInfo);
+
+    AHKLobbyPlayerState* LobbyPlayerState = Cast<AHKLobbyPlayerState>(PlayerState);
+    if (LobbyPlayerState->GetIsRoomAdmin())
+    {
+        //방장 플레이어
+        UWorld* World = GetWorld();
+        if (World)
+        {
+            UGameplayStatics::OpenLevel(GetWorld(), FName(*FString("Game")), true, "listen");
+        }
+        //UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=Game?Host=true")));	
+    }
+    else
+    {
+        ClientTravel(AdminIP, ETravelType::TRAVEL_Absolute);
+        //UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=192.168.0.101")));//, *ListenServerIP,*GetPlayerName()));
+    }
 }
 
 void AHKUILobbyPlayerController::SetStoreWidgetController(UStoreWidgetController* StoreInfoController)

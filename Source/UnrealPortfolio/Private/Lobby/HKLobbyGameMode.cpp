@@ -31,7 +31,7 @@ void AHKLobbyGameMode::StartPlay()
 void AHKLobbyGameMode::NotifyOpenServerToLoginServer()
 {
 	FString localAddr = ToCStr(GetNetDriver()->GetLocalAddr()->ToString(true));
-	UE_LOG(ServerLog, Warning, TEXT("GameMode RemoteAddress : %s"), *localAddr);
+	UE_LOG(ServerLog, Warning, TEXT("GameMode localAddr : %s"), *localAddr);
 	bool bNotifyOpenServer = UHKDatabaseFunctionLibrary::NotifyOpenServer(UserData, localAddr, ServerName);
 
 	// 데이터 베이스에 서버가 오픈됐음을 알리지 못함
@@ -145,6 +145,7 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	AHKUILobbyPlayerController* LobbyPlayerController = Cast<AHKUILobbyPlayerController>(NewPlayer);
 	
 	FUserItemInfo UserItemInfo;
+	UserItemInfo.UserID = Id;
 	UserItemInfo.PlayerGold = UserGold;
 	TArray<int> ItemIds;
 	TArray<int> ItemCounts;
@@ -531,18 +532,42 @@ bool AHKLobbyGameMode::TryToPurchaseItem(APlayerController& Player, int ItemId, 
 void AHKLobbyGameMode::GameStart(const ARoom* Room)
 {
 	const AHKLobbyPlayerState* AdminPlayer = Room->GetAdminPlayer();
-	const TArray<TObjectPtr<AHKLobbyPlayerState>> JoinPlayers = Room->GetJoinPlayers();
-	FString AdminPlayerIP = *AdminPlayer->GetNetConnection()->LowLevelGetRemoteAddress(false);
+	FString AdminPlayerIP = GettingListenServerIPLogic(AdminPlayer);
 
 	UE_LOG(ServerLog, Warning, TEXT("------------------------GameStart------------------------\n"));
 
+	const TArray<TObjectPtr<AHKLobbyPlayerState>> JoinPlayers = Room->GetJoinPlayers();
+	TArray<FInGamePlayerInfo> InGamePlayersInfo;
+	int i = 0;
 	for (AHKLobbyPlayerState* Player : JoinPlayers)
 	{
-		Player->SetListenServerIP(AdminPlayerIP);
+		AHKUILobbyPlayerController* PlayerController = Cast<AHKUILobbyPlayerController>(Player->GetPlayerController());
+		FInGamePlayerInfo PlayerInfo;
+		PlayerInfo.UserID = Player->GetPlayerName();
+		PlayerInfo.UserIP = Player->GetNetConnection()->LowLevelGetRemoteAddress(false);
+		PlayerInfo.UserItemInfo = PlayerController->ItemInfo;
+		PlayerInfo.UserOrder = i++;
+		InGamePlayersInfo.Add(PlayerInfo);
 		UE_LOG(ServerLog, Log, TEXT("Player ID : %s"), *Player->GetPlayerName());
 	}
 
+	for (AHKLobbyPlayerState* Player : JoinPlayers)
+	{
+		AHKUILobbyPlayerController* PlayerController = Cast<AHKUILobbyPlayerController>(Player->GetPlayerController());
+		PlayerController->StoreInGamePlayerInfoAndGameStart(InGamePlayersInfo, AdminPlayerIP);
+	}
+
 	UE_LOG(ServerLog, Warning, TEXT("------------------------GameStart------------------------\n"));
+}
+
+FString AHKLobbyGameMode::GettingListenServerIPLogic(const AHKLobbyPlayerState* RoomAdmin)
+{
+	//Network IP
+	//FString AdminPlayerIP = *RoomAdmin->GetNetConnection()->LowLevelGetRemoteAddress(false);
+
+	//LocalTest
+	FString AdminPlayerIP = TEXT("127.0.0.1:7777");
+	return AdminPlayerIP;
 }
 
 void AHKLobbyGameMode::DestroyRoom(const FString& RoomName)

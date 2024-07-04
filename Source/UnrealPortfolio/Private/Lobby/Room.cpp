@@ -104,7 +104,6 @@ bool ARoom::ExitPlayer(AHKLobbyPlayerState* ExitPlayer, FString& Message)
 
 	JoinPlayers.Remove(ExitPlayer);
 	ExitPlayer->SetIsReady(false);
-	ExitPlayer->SetListenServerIP(TEXT(""));
 	ExitPlayer->SetEnteredRoom(nullptr);
 	UE_LOG(ServerLog, Warning, TEXT("유저(%s)가 방(%s)을 나갔습니다."), *ExitPlayer->GetPlayerName(), *Name);
 

@@ -52,6 +52,7 @@ public:
 private:
 	/** Match Making */
 	void GameStart(const ARoom* Room);
+	FString GettingListenServerIPLogic(const AHKLobbyPlayerState* RoomAdmin);
 	/** Match Making End */
 
 private:
