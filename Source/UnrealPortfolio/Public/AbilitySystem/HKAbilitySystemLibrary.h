@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Character/CharacterClassInfo.h"
 #include "HKAbilitySystemLibrary.generated.h"
 
 
@@ -16,6 +17,16 @@ class UNREALPORTFOLIO_API UHKAbilitySystemLibrary : public UBlueprintFunctionLib
 	GENERATED_BODY()
 	
 public:
+
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|CharacterClassDefaults")
+	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|CharacterClassDefaults")
+	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
+
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|CharacterClassDefaults")
+	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
+
 	
 	UFUNCTION(BlueprintPure, Category = "HKAbilitySystemLibrary|GameplayEffects")
 	static bool IsMiss(const FGameplayEffectContextHandle& EffectContextHandle);

@@ -12,9 +12,13 @@ class UGameplayAbility;
 UENUM(BlueprintType)
 enum class ECharacterClass : uint8
 {
-	Warrior,
-	Archer,
-	Wizard
+	P_Warrior,
+	P_Archer,
+	P_Wizard,
+	E_Mouse,
+	E_Doozy,
+	E_Boss,
+	None
 };
 
 USTRUCT(BlueprintType)
@@ -48,9 +52,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Common Class Defaults")
 	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Common Class Defaults|Damage")
-	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
 
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
 
