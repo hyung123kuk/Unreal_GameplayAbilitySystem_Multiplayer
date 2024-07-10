@@ -77,6 +77,19 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Maximum amount of Mana obtainable")
 	);
 
+	GameplayTags.Team_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Team.1"),
+		FString("Team 1")
+	);
+	GameplayTags.Team_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Team.2"),
+		FString("Team 2")
+	);
+	GameplayTags.Team_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Team.3"),
+		FString("Team 3")
+	);
+
 	//
 	//Input Tags;
 	//
@@ -139,24 +152,14 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 	// Combat Sockets
 	//
 
+	GameplayTags.CombatSocket_Character = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Character"),
+		FString("Character Mesh")
+	);
+
 	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("CombatSocket.Weapon"),
 		FString("Weapon")
-	);
-
-	GameplayTags.CombatSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("CombatSocket.RightHand"),
-		FString("Right Hand")
-	);
-
-	GameplayTags.CombatSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("CombatSocket.LeftHand"),
-		FString("Left Hand")
-	);
-
-	GameplayTags.CombatSocket_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("CombatSocket.Tail"),
-		FString("Tail")
 	);
 
 	//
@@ -183,4 +186,22 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Attack 4")
 	);
 
+	//
+	// Attack Type
+	//
+
+	GameplayTags.AttackType_Melee = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AttackType.Melee"),
+		FString("Melee Attack")
+	);
+
+	GameplayTags.AttackType_Projectile = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AttackType.Projectile"),
+		FString("Projectile Attack")
+	);
+
+	GameplayTags.AttackType_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AttackType.Cast"),
+		FString("Cast Attack")
+	);
 }

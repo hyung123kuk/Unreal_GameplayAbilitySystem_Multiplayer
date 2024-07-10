@@ -27,6 +27,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
 
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|GameplayMechanics")
+	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
+
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|GameplayMechanics")
+	static void GetLiveOtherTeamActorsWithinRadius(const UObject* WorldContextObject, const FGameplayTag& TeamTag, TArray<AActor*>& OutOverlappingActors, float Radius, const FVector& SphereOrigin);
+
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|GameplayMechanics")
+	static void GetLiveOtherTeamActors(const UObject* WorldContextObject, const FGameplayTag& TeamTag, TArray<AActor*>& OutActors);
+
 	
 	UFUNCTION(BlueprintPure, Category = "HKAbilitySystemLibrary|GameplayEffects")
 	static bool IsMiss(const FGameplayEffectContextHandle& EffectContextHandle);

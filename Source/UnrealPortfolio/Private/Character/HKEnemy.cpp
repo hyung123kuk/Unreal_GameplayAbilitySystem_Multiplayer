@@ -12,6 +12,7 @@
 #include "UI/HKUserWidget.h"
 #include "Components/WidgetComponent.h"
 #include "HKGameplayTags.h"
+#include "UnrealPortfolio/UnrealPortfolio.h"
 
 AHKEnemy::AHKEnemy()
 {
@@ -35,6 +36,7 @@ AHKEnemy::AHKEnemy()
 void AHKEnemy::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	Team = FHKGameplayTags::Get().Team_2;
 
 	if (!HasAuthority()) return;
 	HKAIController = Cast<AHKAIController>(NewController);
@@ -47,13 +49,14 @@ void AHKEnemy::PossessedBy(AController* NewController)
 void AHKEnemy::HighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(true);
-	GetMesh()->SetCustomDepthStencilValue(250);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
 void AHKEnemy::UnHighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 }
+
 
 void AHKEnemy::Die()
 {

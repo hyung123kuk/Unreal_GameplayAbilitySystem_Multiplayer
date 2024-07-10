@@ -3,7 +3,7 @@
 
 #include "Player/HKPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "Interaction/EnemyInterface.h"
+#include "Interaction/MouseTargetActorInterface.h"
 #include "Input/HKInputComponent.h"
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
@@ -99,7 +99,7 @@ void AHKPlayerController::CursorTrace()
 		return;
 
 	LastActor = ThisActor;
-	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+	ThisActor = Cast<IMouseTargetActorInterface>(CursorHit.GetActor());
 
 	if (LastActor != ThisActor)
 	{

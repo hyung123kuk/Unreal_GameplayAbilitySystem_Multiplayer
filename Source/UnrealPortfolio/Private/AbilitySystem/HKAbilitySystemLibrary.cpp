@@ -2,12 +2,13 @@
 
 
 #include "AbilitySystem/HKAbilitySystemLibrary.h"
+#include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/HKPlayerState.h"
 #include "HKAbilityTypes.h"
 #include "Game/HKGameMode.h"
 #include "Interaction/CombatInterface.h"
-#include "Interaction/EnemyInterface.h"
+#include "Interaction/MouseTargetActorInterface.h"
 #include "AbilitySystemComponent.h"
 
 UCharacterClassInfo* UHKAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
@@ -59,6 +60,64 @@ void UHKAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldCo
 	VitalAttributesContextHandle.AddSourceObject(AvatarActor);
 	const FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttributes, Level, VitalAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
+}
+
+void UHKAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
+{
+	FCollisionQueryParams SphereParams;
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+
+	TArray<FOverlapResult> Overlaps;
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			ICombatInterface* CombatActor = Cast<ICombatInterface>(Overlap.GetActor());
+			if (CombatActor != nullptr && !CombatActor->IsDead())
+			{
+				OutOverlappingActors.AddUnique(Overlap.GetActor());
+			}
+		}
+	}
+}
+
+void UHKAbilitySystemLibrary::GetLiveOtherTeamActorsWithinRadius(const UObject* WorldContextObject,const FGameplayTag& TeamTag, TArray<AActor*>& OutOverlappingActors, float Radius, const FVector& SphereOrigin)
+{
+	FCollisionQueryParams SphereParams;
+
+	TArray<FOverlapResult> Overlaps;
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			ICombatInterface* CombatActor = Cast<ICombatInterface>(Overlap.GetActor());
+			if (CombatActor != nullptr && !CombatActor->IsDead() && CombatActor->GetTeam() != TeamTag)
+			{
+				OutOverlappingActors.AddUnique(Overlap.GetActor());
+			}
+		}
+	}
+}
+
+void UHKAbilitySystemLibrary::GetLiveOtherTeamActors(const UObject* WorldContextObject, const FGameplayTag& TeamTag, TArray<AActor*>& OutActors)
+{
+	QUICK_SCOPE_CYCLE_COUNTER(UGameplayStatics_GetAllActorsWithInterface);
+	OutActors.Reset();
+
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		for (FActorIterator It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+			ICombatInterface* CombatActor = Cast<ICombatInterface>(Actor);
+			if (CombatActor != nullptr && CombatActor->GetTeam() != TeamTag)
+			{
+				OutActors.Add(Actor);
+			}
+		}
+	}
 }
 
 bool UHKAbilitySystemLibrary::IsMiss(const FGameplayEffectContextHandle& EffectContextHandle)

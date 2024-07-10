@@ -24,6 +24,12 @@ struct FTaggedMontage
 	FGameplayTag SocketTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName SocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AttackType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USoundBase* ImpactSound = nullptr;
 };
 
@@ -43,5 +49,17 @@ class UNREALPORTFOLIO_API ICombatInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdateFacingTarget(const FVector& Target);
+
+
 	virtual void Die() = 0;
+	virtual bool IsDead() const = 0;
+	virtual const FGameplayTag& GetTeam() const = 0;
+
+	virtual void SetCombatTarget(AActor* InCombatTarget) = 0 ;
+	virtual AActor* GetCombatTarget() const = 0;
+
+	virtual TArray<FTaggedMontage> GetAttackMontages() = 0;
+	virtual FVector GetCombatSocketLocation(const FGameplayTag& MontageTag, const FName& SocketName) = 0;
 };

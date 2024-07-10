@@ -8,6 +8,7 @@
 #include "AbilitySystemComponent.h"
 #include "UI/HUD/HKHUD.h"
 #include "Player/HKPlayerController.h"
+#include "HKGameplayTags.h"
 
 AHKCharacter::AHKCharacter()
 {
@@ -24,6 +25,7 @@ AHKCharacter::AHKCharacter()
 void AHKCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	Team = FHKGameplayTags::Get().Team_1;
 	InitAbilityActorInfo();
 	AddCharacterAbilities();
 }

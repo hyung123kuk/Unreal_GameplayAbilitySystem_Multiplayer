@@ -5,9 +5,8 @@
 #include "CoreMinimal.h"
 #include "Character/HKCharacterBase.h"
 #include "Interaction/CombatInterface.h"
-#include "Interaction/EnemyInterface.h"
+#include "Interaction/MouseTargetActorInterface.h"
 #include "UI/WidgetController/InGame/OverlayWidgetController.h"
-#include "CharacterClassInfo.h"
 #include "HKEnemy.generated.h"
 
 class AHKAIController;
@@ -18,7 +17,7 @@ class UBehaviorTree;
  * 
  */
 UCLASS()
-class UNREALPORTFOLIO_API AHKEnemy : public AHKCharacterBase, public IEnemyInterface
+class UNREALPORTFOLIO_API AHKEnemy : public AHKCharacterBase, public IMouseTargetActorInterface
 {
 	GENERATED_BODY()
 	
@@ -29,6 +28,7 @@ public:
 	/** Enemy Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+
 	/**Enemy Interface End*/
 
 	/** Combat Interface */
@@ -52,18 +52,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
-	TObjectPtr<AActor> CombatTarget;
+
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
-	ECharacterClass CharacterClass = ECharacterClass::None;
-	
-	bool bMeleeAttack = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;

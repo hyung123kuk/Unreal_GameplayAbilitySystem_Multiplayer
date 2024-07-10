@@ -4,17 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlueprintBase.h"
-#include "BTService_FindNearestPlayer.generated.h"
+#include "BTService_FindNearestOtherTeamActor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALPORTFOLIO_API UBTService_FindNearestPlayer : public UBTService_BlueprintBase
+class UNREALPORTFOLIO_API UBTService_FindNearestOtherTeamActor : public UBTService
 {
 	GENERATED_BODY()
 	
 protected:
+
+	UBTService_FindNearestOtherTeamActor();
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 

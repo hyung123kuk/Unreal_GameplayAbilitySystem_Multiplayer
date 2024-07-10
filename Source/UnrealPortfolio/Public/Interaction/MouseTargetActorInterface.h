@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "EnemyInterface.generated.h"
+#include "MouseTargetActorInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UEnemyInterface : public UInterface
+class UMouseTargetActorInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,7 +16,7 @@ class UEnemyInterface : public UInterface
 /**
  * 
  */
-class UNREALPORTFOLIO_API IEnemyInterface
+class UNREALPORTFOLIO_API IMouseTargetActorInterface
 {
 	GENERATED_BODY()
 
@@ -24,4 +24,5 @@ class UNREALPORTFOLIO_API IEnemyInterface
 public:
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;
+
 };

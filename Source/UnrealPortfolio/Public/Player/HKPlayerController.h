@@ -10,7 +10,7 @@
 class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
-class IEnemyInterface;
+class IMouseTargetActorInterface;
 class USplineComponent;
 class UHKAbilitySystemComponent;
 class UHKInputConfig;
@@ -48,8 +48,8 @@ private:
 	void AutoRun();
 
 	void CursorTrace();
-	IEnemyInterface* LastActor;
-	IEnemyInterface* ThisActor;
+	IMouseTargetActorInterface* LastActor;
+	IMouseTargetActorInterface* ThisActor;
 	FHitResult CursorHit;
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);

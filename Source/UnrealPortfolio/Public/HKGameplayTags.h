@@ -31,6 +31,13 @@ public:
 	FGameplayTag Attribute_Secondary_MaxHealth;
 	FGameplayTag Attribute_Secondary_MaxMana;
 
+	FGameplayTag Team_1;
+	FGameplayTag Team_2;
+	FGameplayTag Team_3;
+
+	//
+	//Input Tags;
+	//
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
 	FGameplayTag InputTag_1;
@@ -42,15 +49,17 @@ public:
 
 	FGameplayTag Abilities_Attack;
 
+	FGameplayTag CombatSocket_Character;
 	FGameplayTag CombatSocket_Weapon;
-	FGameplayTag CombatSocket_RightHand;
-	FGameplayTag CombatSocket_LeftHand;
-	FGameplayTag CombatSocket_Tail;
 
 	FGameplayTag Montage_Attack_1;
 	FGameplayTag Montage_Attack_2;
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
+
+	FGameplayTag AttackType_Melee;
+	FGameplayTag AttackType_Projectile;
+	FGameplayTag AttackType_Cast;
 
 	FGameplayTag Effects_HitReact;
 

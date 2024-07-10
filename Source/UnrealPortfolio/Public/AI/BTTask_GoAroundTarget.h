@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlueprintBase.h"
-#include "BTTask_Attack.generated.h"
-
+#include "BTTask_GoAroundTarget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALPORTFOLIO_API UBTTask_Attack : public UBTTask_BlueprintBase
+class UNREALPORTFOLIO_API UBTTask_GoAroundTarget : public UBTTask_BlueprintBase
 {
 	GENERATED_BODY()
 	
@@ -19,6 +18,11 @@ protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	UPROPERTY(EditAnywhere)
-	FBlackboardKeySelector CombatTargetSelector;	
-	
+	FBlackboardKeySelector Target;
+
+	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector NewLocation;
+
+	UPROPERTY(EditAnywhere)
+	float Radius;
 };
