@@ -9,6 +9,8 @@
 #include "AbilitySystemComponent.h"
 #include "BlueprintGameplayTagLibrary.h"
 #include "HKGameplayTags.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -16,21 +18,24 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (Ret != EBTNodeResult::Type::Succeeded)
 		return Ret;
 
-	AActor* TargetActor = UBTFunctionLibrary::GetBlackboardValueAsActor(this, CombatTargetSelector);
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	UObject* Obj = BlackboardComp->GetValue<UBlackboardKeyType_Object>(CombatTargetSelector.SelectedKeyName);
+	AActor* TargetActor = Cast<AActor>(Obj);
 	if (!IsValid(TargetActor))
 	{
 		return EBTNodeResult::Type::Failed;
 	}
+	APawn* OwningPawn = OwnerComp.GetAIOwner()->GetPawn();
 
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(ActorOwner);
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OwningPawn);
+	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(FHKGameplayTags::Get().Abilities_Attack);
+	ASC->TryActivateAbilitiesByTag(TagContainer);
+
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(OwningPawn);
 	if (CombatInterface)
 	{
 		CombatInterface->SetCombatTarget(TargetActor);
 	}
-
-	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ActorOwner);
-	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(FHKGameplayTags::Get().Abilities_Attack);
-	ASC->TryActivateAbilitiesByTag(TagContainer);
 
 	return EBTNodeResult::Type::Succeeded;
 }

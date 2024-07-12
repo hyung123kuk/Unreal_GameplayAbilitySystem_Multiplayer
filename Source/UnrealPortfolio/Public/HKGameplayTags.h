@@ -63,7 +63,7 @@ public:
 
 	FGameplayTag Effects_HitReact;
 
-protected:
+	FGameplayTag GameplayCue_MeleeImpact;
 
 private:
 	static FHKGameplayTags GameplayTags;

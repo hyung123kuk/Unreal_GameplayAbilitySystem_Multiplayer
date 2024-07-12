@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/HKGameplayAbility.h"
 #include "Interaction/CombatInterface.h"
-#include "HKAttackAbility.generated.h"
+#include "HKCombatAbility.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALPORTFOLIO_API UHKAttackAbility : public UHKGameplayAbility
+class UNREALPORTFOLIO_API UHKCombatAbility : public UHKGameplayAbility
 {
 	GENERATED_BODY()
 	
@@ -23,20 +23,31 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+	bool IsSameTeam(const AActor* Actor,const AActor* Actor2);
 	bool PlayRandomAttackMontage(FGameplayTag AttackType);
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
 	void FacingTarget();
 	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, float Rate = 1.f, FName StartSection = NAME_None);
 
+	UFUNCTION()
 	virtual void OnCompleteMontage();
+	UFUNCTION()
 	virtual void OnCancelledMontage();
+	UFUNCTION()
 	virtual void OnInterruptedMontage();
+
 	virtual void OccurMontageEvent(const AActor* AvatarActor, const FVector& CombatSocketLocation);
+
 
 protected:
 	FTaggedMontage TaggedMontage;
+	FGameplayTag Team;
+	ICombatInterface* ActorCombatInterface;
 
 private:
+	UFUNCTION()
 	void OccurMontageEvent(FGameplayEventData Payload);
 };

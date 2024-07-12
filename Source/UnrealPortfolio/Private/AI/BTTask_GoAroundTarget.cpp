@@ -5,6 +5,9 @@
 #include "AIController.h"
 #include "BehaviorTree/BTFunctionLibrary.h"
 #include "NavigationSystem.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
 EBTNodeResult::Type UBTTask_GoAroundTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -12,7 +15,8 @@ EBTNodeResult::Type UBTTask_GoAroundTarget::ExecuteTask(UBehaviorTreeComponent& 
 	if (Ret != EBTNodeResult::Type::Succeeded)
 		return Ret;
 
-	AActor* TargetActor = UBTFunctionLibrary::GetBlackboardValueAsActor(this, Target);
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValue<UBlackboardKeyType_Object>(Target.SelectedKeyName));
 	if (!IsValid(TargetActor))
 	{
 		return EBTNodeResult::Type::Failed;
@@ -24,7 +28,7 @@ EBTNodeResult::Type UBTTask_GoAroundTarget::ExecuteTask(UBehaviorTreeComponent& 
 		return EBTNodeResult::Type::Failed;
 	}
 
-	UBTFunctionLibrary::SetBlackboardValueAsVector(this, NewLocation, RandomLocation);
+	BlackboardComp->SetValueAsVector(NewLocation.SelectedKeyName ,RandomLocation);
 
 	return EBTNodeResult::Type::Succeeded;
 }

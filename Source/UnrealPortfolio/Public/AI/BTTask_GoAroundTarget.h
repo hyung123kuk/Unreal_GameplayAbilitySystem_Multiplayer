@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/Tasks/BTTask_BlueprintBase.h"
+#include "BehaviorTree/BTTaskNode.h"
 #include "BTTask_GoAroundTarget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALPORTFOLIO_API UBTTask_GoAroundTarget : public UBTTask_BlueprintBase
+class UNREALPORTFOLIO_API UBTTask_GoAroundTarget : public UBTTaskNode
 {
 	GENERATED_BODY()
 	

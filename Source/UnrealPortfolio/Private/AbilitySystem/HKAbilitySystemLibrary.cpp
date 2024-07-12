@@ -120,6 +120,11 @@ void UHKAbilitySystemLibrary::GetLiveOtherTeamActors(const UObject* WorldContext
 	}
 }
 
+bool UHKAbilitySystemLibrary::IsSameTeam(const AActor* Actor, const AActor* Actor2)
+{
+	return Cast<ICombatInterface>(Actor)->GetTeam() == Cast<ICombatInterface>(Actor2)->GetTeam();
+}
+
 bool UHKAbilitySystemLibrary::IsMiss(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if (const FHKGameplayEffectContext* HKEffectContext = static_cast<const FHKGameplayEffectContext*>(EffectContextHandle.Get()))

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/Services/BTService_BlueprintBase.h"
+#include "BehaviorTree/BTService.h"
 #include "BTService_FindNearestOtherTeamActor.generated.h"
 
 /**

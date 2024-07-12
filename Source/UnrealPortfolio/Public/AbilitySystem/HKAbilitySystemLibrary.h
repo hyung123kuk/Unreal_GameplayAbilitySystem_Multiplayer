@@ -36,7 +36,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|GameplayMechanics")
 	static void GetLiveOtherTeamActors(const UObject* WorldContextObject, const FGameplayTag& TeamTag, TArray<AActor*>& OutActors);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|GameplayMechanics")
+	static bool IsSameTeam(const AActor* Actor, const AActor* Actor2);
+
+
 	UFUNCTION(BlueprintPure, Category = "HKAbilitySystemLibrary|GameplayEffects")
 	static bool IsMiss(const FGameplayEffectContextHandle& EffectContextHandle);
 

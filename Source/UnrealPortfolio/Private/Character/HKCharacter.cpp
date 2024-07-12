@@ -45,7 +45,6 @@ void AHKCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = HKPlayerState->GetAbilitySystemComponent();
 	AttributeSet = HKPlayerState->GetAttributeSet();
 
-	//TODO : HUD
 	if (AHKPlayerController* HKPlayerController = Cast<AHKPlayerController>(GetController()))
 	{
 		if (AHKHUD* PlayerHUD = Cast<AHKHUD>(HKPlayerController->GetHUD()))

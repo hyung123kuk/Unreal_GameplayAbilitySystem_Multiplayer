@@ -204,4 +204,14 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FName("AttackType.Cast"),
 		FString("Cast Attack")
 	);
+
+	//
+	// GameplayCue
+	//
+
+	GameplayTags.GameplayCue_MeleeImpact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.MeleeImpact"),
+		FString("MeleeImpact")
+	);
+
 }
