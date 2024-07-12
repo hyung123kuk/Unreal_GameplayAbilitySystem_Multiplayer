@@ -69,6 +69,7 @@ void UHKCombatAbility::FacingTarget()
 
 void UHKCombatAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, float Rate, FName StartSection)
 {
+	UE_LOG(LogTemp, Log, TEXT("PlayeMontage"));
 	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), MontageToPlay, Rate, StartSection);
 	PlayAttackTask->OnCompleted.AddDynamic(this, &UHKCombatAbility::OnCompleteMontage);
 	PlayAttackTask->OnCancelled.AddDynamic(this, &UHKCombatAbility::OnCancelledMontage);
