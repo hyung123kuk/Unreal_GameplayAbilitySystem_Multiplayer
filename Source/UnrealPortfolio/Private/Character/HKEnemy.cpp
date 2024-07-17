@@ -36,7 +36,7 @@ AHKEnemy::AHKEnemy()
 void AHKEnemy::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	Team = FHKGameplayTags::Get().Team_2;
+
 
 	if (!HasAuthority()) return;
 	HKAIController = Cast<AHKAIController>(NewController);
@@ -69,6 +69,7 @@ void AHKEnemy::Die()
 void AHKEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	Team = FHKGameplayTags::Get().Team_2;
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
 	if (HasAuthority())

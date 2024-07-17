@@ -30,7 +30,8 @@ protected:
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
 	void FacingTarget();
-	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, float Rate = 1.f, FName StartSection = NAME_None);
+
+	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent);
 
 	UFUNCTION()
 	virtual void OnCompleteMontage();
@@ -39,15 +40,15 @@ protected:
 	UFUNCTION()
 	virtual void OnInterruptedMontage();
 
-	virtual void OccurMontageEvent(const AActor* AvatarActor, const FVector& CombatSocketLocation);
-
+	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation);
 
 protected:
 	FTaggedMontage TaggedMontage;
 	FGameplayTag Team;
 	ICombatInterface* ActorCombatInterface;
 
+	AActor* Target;
 private:
 	UFUNCTION()
-	void OccurMontageEvent(FGameplayEventData Payload);
+	void OnOccurMontageEvent(FGameplayEventData Payload);
 };

@@ -17,6 +17,10 @@ void UHKMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 	{
 		MeleeAttack();
 	}
+	else
+	{
+		FindTargetDataUnderMouse();
+	}
 }
 
 void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
@@ -42,9 +46,7 @@ void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbility
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 		return;
 	}
-
-	ICombatInterface* AbilityActorCombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
-	AbilityActorCombatInterface->SetCombatTarget(HitActor);
+	ActorCombatInterface->SetCombatTarget(HitActor);
 
 	MeleeAttack();
 }
@@ -55,7 +57,7 @@ void UHKMeleeAttack::MeleeAttack()
 	PlayRandomAttackMontage(FHKGameplayTags::Get().AttackType_Melee);
 }
 
-void UHKMeleeAttack::OccurMontageEvent(const AActor* AvatarActor, const FVector& CombatSocketLocation)
+void UHKMeleeAttack::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)
 {
 	TArray<AActor*> OutOverlappingActors;
 

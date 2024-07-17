@@ -7,7 +7,6 @@
 void UHKGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	FindTargetDataUnderMouse();
 }
 
 bool UHKGameplayAbility::IsLocalPlayer()

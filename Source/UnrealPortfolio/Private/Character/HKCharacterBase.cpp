@@ -55,15 +55,15 @@ TArray<FTaggedMontage> AHKCharacterBase::GetAttackMontages()
 	return AttackMontage;
 }
 
-FVector AHKCharacterBase::GetCombatSocketLocation(const FGameplayTag& MontageTag, const FName& SocketName)
+FVector AHKCharacterBase::GetCombatSocketLocation(const FGameplayTag& SocketTag, const FName& SocketName)
 {
 	const FHKGameplayTags& GameplayTags = FHKGameplayTags::Get();
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Character))
+	if (SocketTag.MatchesTagExact(GameplayTags.CombatSocket_Character))
 	{
 		return GetMesh()->GetSocketLocation(SocketName);
 	}
 
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
+	if (SocketTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
 	{
 		return Weapon->GetSocketLocation(SocketName);
 	}

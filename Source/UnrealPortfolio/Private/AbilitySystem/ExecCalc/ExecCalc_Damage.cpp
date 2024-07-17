@@ -76,7 +76,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float TargetMissChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MissChanceDef, EvaluationParameters, TargetMissChance);
 	TargetMissChance = FMath::Max<float>(TargetMissChance, 0.f);
-
+	UE_LOG(LogTemp, Log, TEXT("Execute_Implementation"));
 	const bool bMiss = FMath::RandRange(1, 100) < TargetMissChance;
 	if (bMiss)
 	{

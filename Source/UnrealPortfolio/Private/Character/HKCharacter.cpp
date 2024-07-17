@@ -22,10 +22,15 @@ AHKCharacter::AHKCharacter()
 	bUseControllerRotationYaw = false;
 }
 
+void AHKCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	Team = FHKGameplayTags::Get().Team_1;
+}
+
 void AHKCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	Team = FHKGameplayTags::Get().Team_1;
 	InitAbilityActorInfo();
 	AddCharacterAbilities();
 }

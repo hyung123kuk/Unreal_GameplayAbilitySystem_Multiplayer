@@ -1,4 +1,4 @@
-// Copyright Druid Mechanics
+﻿// Copyright Druid Mechanics
 
 
 #include "AbilitySystem/Abilities/HKCombatAbility.h"
@@ -40,6 +40,7 @@ bool UHKCombatAbility::PlayRandomAttackMontage(FGameplayTag AttackType)
 	TaggedMontage = GetRandomTaggedMontageFromArray(TypeMontages);
 	if (TaggedMontage.Montage == nullptr)
 	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 		return false;
 	}
 
@@ -60,34 +61,41 @@ FTaggedMontage UHKCombatAbility::GetRandomTaggedMontageFromArray(const TArray<FT
 
 void UHKCombatAbility::FacingTarget()
 {
-	AActor* Target = ActorCombatInterface->GetCombatTarget();
+	Target = ActorCombatInterface->GetCombatTarget();
 	if (Target != nullptr)
 	{
 		ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), Target->GetActorLocation());
 	}
 }
 
-void UHKCombatAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, float Rate, FName StartSection)
+void UHKCombatAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent)
 {
-	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), MontageToPlay, Rate, StartSection);
+	UE_LOG(LogTemp, Log, TEXT("%s"), *MontageEvent.GetTagName().ToString());
+
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, MontageEvent);
+	WaitGameplayEventTask->EventReceived.AddDynamic(this, &UHKCombatAbility::OnOccurMontageEvent);
+
+	WaitGameplayEventTask->ReadyForActivation();
+	
+	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), MontageToPlay);
+
 	PlayAttackTask->OnCompleted.AddDynamic(this, &UHKCombatAbility::OnCompleteMontage);
 	PlayAttackTask->OnCancelled.AddDynamic(this, &UHKCombatAbility::OnCancelledMontage);
 	PlayAttackTask->OnInterrupted.AddDynamic(this, &UHKCombatAbility::OnInterruptedMontage);
+
 	PlayAttackTask->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, MontageEvent);
-	WaitGameplayEventTask->EventReceived.AddDynamic(this, &UHKCombatAbility::OccurMontageEvent);
-	WaitGameplayEventTask->ReadyForActivation();
 }
 
-void UHKCombatAbility::OccurMontageEvent(const AActor* AvatarActor, const FVector& CombatSocketLocation)
+void UHKCombatAbility::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)
 {
 }
 
-void UHKCombatAbility::OccurMontageEvent(FGameplayEventData Payload)
+void UHKCombatAbility::OnOccurMontageEvent(FGameplayEventData Payload)
 {
+	UE_LOG(LogTemp, Log, TEXT("OccurMontageEvent"));
 	const FVector CombatSocketLocation = ActorCombatInterface->GetCombatSocketLocation(TaggedMontage.SocketTag, TaggedMontage.SocketName);
-	OccurMontageEvent(GetAvatarActorFromActorInfo(), CombatSocketLocation);
+	OccurMontageEvent(Target, CombatSocketLocation);
 }
 
 void UHKCombatAbility::OnCompleteMontage()

@@ -30,7 +30,7 @@ public:
 	virtual void SetCombatTarget(AActor* InCombatTarget) override;
 	virtual AActor* GetCombatTarget() const override;
 	virtual TArray<FTaggedMontage> GetAttackMontages() override;
-	virtual FVector GetCombatSocketLocation(const FGameplayTag& MontageTag,const FName& SocketName);
+	virtual FVector GetCombatSocketLocation(const FGameplayTag& SocketTag,const FName& SocketName);
 	virtual const FGameplayTag& GetTeam() const;
 	/**Combat Interface End*/
 
@@ -66,6 +66,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	bool bMeleeAttack = true;
 
+	UPROPERTY(VisibleAnywhere)
 	FGameplayTag Team;
 
 protected:

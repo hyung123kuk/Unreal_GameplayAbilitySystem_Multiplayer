@@ -19,7 +19,7 @@ protected:
 	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
 	virtual void MeleeAttack();
 
-	virtual void OccurMontageEvent(const AActor* AvatarActor, const FVector& CombatSocketLocation) override;
+	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation) override;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
@@ -27,4 +27,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
 	float Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
+	bool DirectAttack;
 };

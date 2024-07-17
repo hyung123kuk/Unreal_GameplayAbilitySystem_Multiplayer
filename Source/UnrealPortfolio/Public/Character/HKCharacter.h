@@ -15,9 +15,11 @@ class UNREALPORTFOLIO_API AHKCharacter : public AHKCharacterBase
 	GENERATED_BODY()
 public:
 	AHKCharacter();
+	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
 private:
 	virtual void InitAbilityActorInfo() override;
+
 };
