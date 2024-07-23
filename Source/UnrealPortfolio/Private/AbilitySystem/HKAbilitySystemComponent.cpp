@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/HKGameplayAbility.h"
+#include "Interaction/AbilityInterface.h"
 
 void UHKAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -22,21 +23,32 @@ void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<U
 	}
 }
 
-void UHKAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
+bool UHKAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid()) return;
+	if (!InputTag.IsValid()) 
+		return false;
 
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
+			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(AbilitySpec.Ability);
+			if (AbilityInterface != nullptr)
+			{
+				if (!AbilityInterface->GetLocalPlayerCondition(this))
+					continue;
+			}
+
 			AbilitySpecInputPressed(AbilitySpec);
 			if (!AbilitySpec.IsActive())
 			{
-				TryActivateAbility(AbilitySpec.Handle);
+				if (TryActivateAbility(AbilitySpec.Handle))
+					return true;
 			}
 		}
 	}
+
+	return false;
 }
 
 void UHKAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
@@ -47,7 +59,10 @@ void UHKAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& Inpu
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			AbilitySpecInputReleased(AbilitySpec);
+			if (AbilitySpec.IsActive())
+			{
+				AbilitySpecInputReleased(AbilitySpec);
+			}
 		}
 	}
 }

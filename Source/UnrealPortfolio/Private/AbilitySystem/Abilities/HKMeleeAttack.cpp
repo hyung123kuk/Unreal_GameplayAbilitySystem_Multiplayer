@@ -37,6 +37,16 @@ void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbility
 	AActor* HitActor = HitResult.GetActor();
 	if (HitActor == nullptr || !HitActor->Implements<UCombatInterface>())
 	{
+		TArray<AActor*> TargetActors = UAbilitySystemBlueprintLibrary::GetActorsFromTargetData(TargetData, 1);
+		if (TargetActors.Num() > 0)
+		{
+			HitActor = TargetActors[0];
+		}
+	}
+
+
+	if (HitActor == nullptr || !HitActor->Implements<UCombatInterface>())
+	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 		return;
 	}
@@ -61,7 +71,7 @@ void UHKMeleeAttack::OccurMontageEvent(const AActor* TargetActor, const FVector&
 {
 	TArray<AActor*> OutOverlappingActors;
 
-	UHKAbilitySystemLibrary::GetLiveOtherTeamActorsWithinRadius(this, Team, OutOverlappingActors, AttackRange, CombatSocketLocation);
+	UHKAbilitySystemLibrary::GetLiveOtherTeamActorsWithinRadius(this, Team, OutOverlappingActors, CombatRange, CombatSocketLocation);
 
 	FGameplayCueParameters CueParam;
 	CueParam.Location = CombatSocketLocation;
@@ -76,11 +86,11 @@ void UHKMeleeAttack::OccurMontageEvent(const AActor* TargetActor, const FVector&
 	
 	if (OutOverlappingActors.Num() > 0)
 	{
-		DrawDebugSphere(GetWorld(), CombatSocketLocation, AttackRange, 16, FColor::Green,false , 1.5f);
+		DrawDebugSphere(GetWorld(), CombatSocketLocation, CombatRange, 16, FColor::Green,false , 1.5f);
 	}
 	else
 	{
-		DrawDebugSphere(GetWorld(), CombatSocketLocation, AttackRange, 16, FColor::Red, false, 1.5f);
+		DrawDebugSphere(GetWorld(), CombatSocketLocation, CombatRange, 16, FColor::Red, false, 1.5f);
 	}
 
 }

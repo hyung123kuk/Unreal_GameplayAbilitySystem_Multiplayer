@@ -25,6 +25,9 @@ class UNREALPORTFOLIO_API AHKPlayerController : public APlayerController
 	
 	AHKPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
+public:
+	AActor* GetLastTargetActor() { return ClickMouseTarget; }
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,6 +54,7 @@ private:
 	IMouseTargetActorInterface* LastActor;
 	IMouseTargetActorInterface* ThisActor;
 	FHitResult CursorHit;
+	AActor* ClickMouseTarget;
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);

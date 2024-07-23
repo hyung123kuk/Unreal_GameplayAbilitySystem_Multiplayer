@@ -4,9 +4,13 @@
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
 #include "AbilitySystemComponent.h"
 
-UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
+UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, TArray<AActor*> TargetActors)
 {
 	UTargetDataUnderMouse* MyObj = NewAbilityTask<UTargetDataUnderMouse>(OwningAbility);
+	for (AActor* TargetActor : TargetActors)
+	{
+		MyObj->TargetActor.Add(TargetActor);
+	}
 	return MyObj;
 }
 
@@ -45,8 +49,13 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	FGameplayAbilityTargetDataHandle DataHandle;
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
 	Data->HitResult = CursorHit;
-	DataHandle.Add(Data);
 
+	FGameplayAbilityTargetData_ActorArray* TargetDataActors = new FGameplayAbilityTargetData_ActorArray();
+	TargetDataActors->SetActors(TargetActor);
+
+	DataHandle.Add(Data);
+	DataHandle.Add(TargetDataActors);
+	
 	AbilitySystemComponent->ServerSetReplicatedTargetData(GetAbilitySpecHandle(),
 		GetActivationPredictionKey(),
 		DataHandle,

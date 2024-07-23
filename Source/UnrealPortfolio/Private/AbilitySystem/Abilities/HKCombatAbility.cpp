@@ -8,6 +8,12 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/HKAbilitySystemLibrary.h"
+#include "Player/HKPlayerController.h"
+#include "Interaction/MouseTargetActorInterface.h"
+#include "AbilitySystem/HKAbilitySystemComponent.h"
+#include "Character/HKCharacter.h"
+#include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
+
 
 void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage)
 {
@@ -16,11 +22,49 @@ void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage)
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
+bool UHKCombatAbility::GetLocalPlayerCondition(UHKAbilitySystemComponent* AbilitySystemComponent)
+{
+	if (bEndAbilityOutOfCombatRange)
+	{
+		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(AbilitySystemComponent->GetAvatarActor());
+		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetLocalViewingPlayerController());
+		AActor* ClickMouseTarget = PlayerController->GetLastTargetActor();
+		if (ClickMouseTarget == nullptr)
+		{
+			return false;
+		}
+
+		if (PlayerCharacter->GetDistanceTo(ClickMouseTarget) > CombatRange)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void UHKCombatAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	ActorCombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	Team = ActorCombatInterface->GetTeam();
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
+
+void UHKCombatAbility::FindTargetDataUnderMouse()
+{
+	if (IsLocalPlayer())
+	{
+		TArray<AActor*> TargetArray;
+		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(GetAvatarActorFromActorInfo());
+		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetController());
+		AActor* ClickMouseTarget = PlayerController->GetLastTargetActor();
+		TargetArray.Add(ClickMouseTarget);
+
+
+		UTargetDataUnderMouse* TargetDataUnderMouseTask = UTargetDataUnderMouse::CreateTargetDataUnderMouse(this, TargetArray);
+		TargetDataUnderMouseTask->ValidData.AddDynamic(this, &UHKCombatAbility::ActivateAbility_TargetDataUnderMouse);
+		TargetDataUnderMouseTask->ReadyForActivation();
+	}
 }
 
 bool UHKCombatAbility::IsSameTeam(const AActor* Actor,const AActor* Actor2)

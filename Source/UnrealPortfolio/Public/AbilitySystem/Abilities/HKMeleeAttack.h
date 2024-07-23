@@ -22,8 +22,6 @@ protected:
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation) override;
 	
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
-	float AttackRange;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
 	float Damage;

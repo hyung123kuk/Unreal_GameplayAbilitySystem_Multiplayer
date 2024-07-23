@@ -57,6 +57,11 @@ void AHKEnemy::UnHighlightActor()
 	GetMesh()->SetRenderCustomDepth(false);
 }
 
+AActor* AHKEnemy::GetTarget()
+{
+	return this;
+}
+
 
 void AHKEnemy::Die()
 {

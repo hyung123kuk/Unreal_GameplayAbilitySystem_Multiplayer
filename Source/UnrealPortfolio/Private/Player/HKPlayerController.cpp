@@ -104,7 +104,10 @@ void AHKPlayerController::CursorTrace()
 	if (LastActor != ThisActor)
 	{
 		if (LastActor) LastActor->UnHighlightActor();
-		if (ThisActor) ThisActor->HighlightActor();
+		if (ThisActor)
+		{
+			ThisActor->HighlightActor();
+		}
 	}
 }
 
@@ -113,6 +116,7 @@ void AHKPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	if (InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_LMB))
 	{
 		bTargeting = ThisActor ? true : false;
+		ClickMouseTarget = ThisActor ? ThisActor->GetTarget() : nullptr;
 		bAutoRunning = false;
 	}
 }
@@ -126,6 +130,8 @@ void AHKPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+
+	ClickMouseTarget = nullptr;
 
 	if (!bTargeting && !bShiftKeyDown)
 	{
@@ -162,18 +168,25 @@ void AHKPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 
 	if (bTargeting || bShiftKeyDown)
 	{
-		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+		if (GetASC() && GetASC()->AbilityInputTagHeld(InputTag))
+		{
+			return;
+		}
+
+		if(ThisActor != nullptr)
+			CachedDestination = ThisActor->GetTarget()->GetActorLocation();
 	}
 	else
 	{
-		FollowTime += GetWorld()->GetDeltaSeconds();
 		if (CursorHit.bBlockingHit) CachedDestination = CursorHit.ImpactPoint;
+	}
 
-		if (APawn* ControlledPawn = GetPawn())
-		{
-			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-			ControlledPawn->AddMovementInput(WorldDirection);
-		}
+	FollowTime += GetWorld()->GetDeltaSeconds();
+
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+		ControlledPawn->AddMovementInput(WorldDirection);
 	}
 }
 

@@ -23,7 +23,8 @@ void UHKGameplayAbility::FindTargetDataUnderMouse()
 {
 	if (IsLocalPlayer())
 	{
-		UTargetDataUnderMouse* TargetDataUnderMouseTask = UTargetDataUnderMouse::CreateTargetDataUnderMouse(this);
+		TArray<AActor*> TargetData;
+		UTargetDataUnderMouse* TargetDataUnderMouseTask = UTargetDataUnderMouse::CreateTargetDataUnderMouse(this, TargetData);
 		TargetDataUnderMouseTask->ValidData.AddDynamic(this, &UHKGameplayAbility::ActivateAbility_TargetDataUnderMouse);
 		TargetDataUnderMouseTask->ReadyForActivation();
 	}

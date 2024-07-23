@@ -22,7 +22,7 @@ protected:
 
 	bool IsLocalPlayer();
 
-	void FindTargetDataUnderMouse();
+	virtual void FindTargetDataUnderMouse();
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")

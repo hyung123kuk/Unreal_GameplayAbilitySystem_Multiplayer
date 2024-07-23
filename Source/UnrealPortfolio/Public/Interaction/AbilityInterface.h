@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "MouseTargetActorInterface.generated.h"
+#include "AbilityInterface.generated.h"
+
+class UHKAbilitySystemComponent;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UMouseTargetActorInterface : public UInterface
+class UAbilityInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,14 +18,12 @@ class UMouseTargetActorInterface : public UInterface
 /**
  * 
  */
-class UNREALPORTFOLIO_API IMouseTargetActorInterface
+class UNREALPORTFOLIO_API IAbilityInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void HighlightActor() = 0;
-	virtual void UnHighlightActor() = 0;
 
-	virtual AActor* GetTarget() = 0;
+	virtual bool GetLocalPlayerCondition(UHKAbilitySystemComponent* AbilitySystemComponent );
 };

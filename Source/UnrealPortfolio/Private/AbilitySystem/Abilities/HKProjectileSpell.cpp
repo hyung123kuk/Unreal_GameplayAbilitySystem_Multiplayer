@@ -89,7 +89,6 @@ void UHKProjectileSpell::PlaySpawnProjectileMontage()
 
 void UHKProjectileSpell::OccurMontageEvent(const AActor* AvatarActor, const FVector& CombatSocketLocation)
 {
-	AActor* Target = ActorCombatInterface->GetCombatTarget();
 	SpawnProjectile(Target->GetActorLocation());
 }
 

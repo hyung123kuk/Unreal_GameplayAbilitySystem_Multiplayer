@@ -28,7 +28,7 @@ public:
 	/** Enemy Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
-
+	virtual AActor* GetTarget() override;
 	/**Enemy Interface End*/
 
 	/** Combat Interface */

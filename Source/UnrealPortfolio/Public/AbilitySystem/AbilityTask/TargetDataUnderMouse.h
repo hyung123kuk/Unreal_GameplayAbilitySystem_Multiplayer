@@ -17,10 +17,12 @@ class UNREALPORTFOLIO_API UTargetDataUnderMouse : public UAbilityTask
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "TargetDataUnderMouse", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnlt = "true"))
-	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility);
+	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, TArray<AActor*> TargetActors);
 
 	UPROPERTY(BlueprintAssignable)
 	FMouseTargetDataSignature ValidData;
+
+	TArray<TWeakObjectPtr<AActor>> TargetActor;
 
 private:
 	virtual void Activate() override;
