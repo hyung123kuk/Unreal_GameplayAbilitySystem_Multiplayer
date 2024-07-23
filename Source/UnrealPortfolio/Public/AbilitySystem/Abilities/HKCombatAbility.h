@@ -54,7 +54,7 @@ protected:
 	TObjectPtr<AActor> Target;
 
 	UPROPERTY(EditDefaultsOnly, Category = "CombatRange")
-	bool bEndAbilityOutOfCombatRange;
+	bool bCloserMouseTarget;
 	UPROPERTY(EditDefaultsOnly, Category = "CombatRange")
 	float CombatRange;
 

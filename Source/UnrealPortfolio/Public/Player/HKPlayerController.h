@@ -26,6 +26,7 @@ class UNREALPORTFOLIO_API AHKPlayerController : public APlayerController
 	AHKPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
 public:
+	UFUNCTION(BlueprintCallable)
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
 
 

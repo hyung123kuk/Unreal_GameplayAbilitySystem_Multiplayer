@@ -11,11 +11,12 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/Actor.h"
 #include "AbilitySystem/HKAbilitySystemLibrary.h"
+#include "Player/HKPlayerController.h"
 
 void UHKProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	DeltaTime = 0;
 	if (!IsLocalPlayer())
 	{
 		PlaySpawnProjectileMontage();
@@ -36,18 +37,36 @@ void UHKProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 void UHKProjectileSpell::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	if (!IsLocalPlayer())
+		return;
+
 	APlayerController* PC = GetCurrentActorInfo()->PlayerController.Get();
+	AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PC);
+
 	FHitResult CursorHit;
 	PC->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (PlayerController->GetLastTargetActor() == nullptr)
+		return;
 
-	FRotator Rotation = (CursorHit.Location - CurrentActorInfo->AvatarActor->GetActorLocation()).Rotation();
-	CurrentActorInfo->AvatarActor->SetActorRotation(Rotation);
+	DeltaTime += GetWorld()->GetDeltaSeconds();
+ 	FRotator Rotation = (PlayerController->GetLastTargetActor()->GetActorLocation() - CurrentActorInfo->AvatarActor->GetActorLocation()).Rotation();
+	FRotator SmoothRotator = FMath::RInterpTo(CurrentActorInfo->AvatarActor->GetActorRotation(), Rotation, DeltaTime/ MouseChargingTime, 1.0f);
+	CurrentActorInfo->AvatarActor->SetActorRotation(SmoothRotator);
 }
 
 void UHKProjectileSpell::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	if (!IsLocalPlayer())
+		return;
+
 	if (bMouseReleasedSpawn)
 	{
+		if (DeltaTime < MouseChargingTime)
+		{
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+			return;
+		}
+
 		FindTargetDataUnderMouse();
 	}
 }
@@ -66,6 +85,21 @@ void UHKProjectileSpell::ActivateAbility_TargetDataUnderMouse(const FGameplayAbi
 	AActor* HitActor = HitResult.GetActor();
 	if (HitActor == nullptr || !HitActor->Implements<UCombatInterface>())
 	{
+		TArray<AActor*> TargetActors = UAbilitySystemBlueprintLibrary::GetActorsFromTargetData(TargetData, 1);
+		if (TargetActors.Num() > 0)
+		{
+			HitActor = TargetActors[0];
+		}
+	}
+
+	if (HitActor == nullptr || !HitActor->Implements<UCombatInterface>())
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		return;
+	}
+
+	if (Cast<ICombatInterface>(HitActor)->IsDead())
+	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 		return;
 	}
@@ -75,6 +109,7 @@ void UHKProjectileSpell::ActivateAbility_TargetDataUnderMouse(const FGameplayAbi
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 		return;
 	}
+
 	ActorCombatInterface->SetCombatTarget(HitActor);
 
 	PlaySpawnProjectileMontage();

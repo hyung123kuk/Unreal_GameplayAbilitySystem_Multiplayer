@@ -51,6 +51,12 @@ void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbility
 		return;
 	}
 
+	if (Cast<ICombatInterface>(HitActor)->IsDead())
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		return;
+	}
+
 	if (IsSameTeam(GetAvatarActorFromActorInfo(), HitActor))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);

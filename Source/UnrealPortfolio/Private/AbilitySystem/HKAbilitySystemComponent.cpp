@@ -45,6 +45,10 @@ bool UHKAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag
 				if (TryActivateAbility(AbilitySpec.Handle))
 					return true;
 			}
+			else
+			{
+				return true;
+			}
 		}
 	}
 

@@ -24,7 +24,7 @@ void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage)
 
 bool UHKCombatAbility::GetLocalPlayerCondition(UHKAbilitySystemComponent* AbilitySystemComponent)
 {
-	if (bEndAbilityOutOfCombatRange)
+	if (bCloserMouseTarget)
 	{
 		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(AbilitySystemComponent->GetAvatarActor());
 		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetLocalViewingPlayerController());

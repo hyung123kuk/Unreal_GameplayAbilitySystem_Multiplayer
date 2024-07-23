@@ -44,10 +44,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Released Spawn")
 	bool bMouseReleasedSpawn;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Released Spawn")
+	float MouseChargingTime;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Option")
 	bool bOverridePitch;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Option")
 	float PitchOverride;
 
+
+
+	float DeltaTime;
 };
