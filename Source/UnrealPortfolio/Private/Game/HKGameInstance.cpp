@@ -56,3 +56,21 @@ FInGamePlayerInfo UHKGameInstance::GetPlayerInfoWithID(FString ID)
 
     return FInGamePlayerInfo();
 }
+
+FInGamePlayerInfo UHKGameInstance::GetAdminPlayerInfo()
+{
+    for (auto& PlayerInfo : InGamePlayersInfo)
+    {
+        if (PlayerInfo.RoomAdmin)
+        {
+            return PlayerInfo;
+        }
+    }
+    return FInGamePlayerInfo();
+}
+
+FInGamePlayerInfo UHKGameInstance::GetMyGameInfo()
+{
+
+    return FInGamePlayerInfo();
+}

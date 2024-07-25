@@ -7,9 +7,6 @@
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "HKGameInstance.generated.h"
 
-class UInventory;
-
-
 /**
  * 
  */
@@ -30,6 +27,8 @@ public:
 	void StoreInGamePlayerInfoBeforeGameStart(TArray<FInGamePlayerInfo> InGamePlayerInfoParams);
 	const TArray<FInGamePlayerInfo>& GetPlayersInfo() const { return InGamePlayersInfo; } 
 	FInGamePlayerInfo GetPlayerInfoWithID(FString ID);
+	FInGamePlayerInfo GetAdminPlayerInfo();
+	FInGamePlayerInfo GetMyGameInfo();
 	// ~ Store InGame Player Info Before Start Game End
 
 private:

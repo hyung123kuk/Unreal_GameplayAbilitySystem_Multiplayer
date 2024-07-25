@@ -62,6 +62,9 @@ struct FInGamePlayerInfo
 	FString UserIP;
 
 	UPROPERTY()
+	bool RoomAdmin;
+
+	UPROPERTY()
 	FUserItemInfo UserItemInfo;
 };
 

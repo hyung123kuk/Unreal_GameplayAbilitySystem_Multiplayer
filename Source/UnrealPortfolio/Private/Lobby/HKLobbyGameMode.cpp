@@ -544,6 +544,7 @@ void AHKLobbyGameMode::GameStart(const ARoom* Room)
 		AHKUILobbyPlayerController* PlayerController = Cast<AHKUILobbyPlayerController>(Player->GetPlayerController());
 		FInGamePlayerInfo PlayerInfo;
 		PlayerInfo.UserID = Player->GetPlayerName();
+		PlayerInfo.RoomAdmin = Player->GetIsRoomAdmin();
 		PlayerInfo.UserIP = Player->GetNetConnection()->LowLevelGetRemoteAddress(false);
 		PlayerInfo.UserItemInfo = PlayerController->ItemInfo;
 		PlayerInfo.UserOrder = i++;

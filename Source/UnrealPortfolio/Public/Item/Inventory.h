@@ -18,10 +18,14 @@ struct FUserItem
 	int Id;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int UniqueId;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Count;
 
 	UPROPERTY()
 	FItemInfomation ItemInfo;
+
 };
 
 /**
@@ -38,9 +42,11 @@ public:
 	void AddItemsToArray(const TArray<FUserItem> Items);
 	void AddItemsToArray(const TArray<int> Ids, const TArray<int> Count);
 
-	void AddItem(const int Id, const int Count);
+	void AddItem(const int Id, const int Count, int UniqueID = 0);
 	void AddItem(const FUserItem Item);
-	
+
+public:
+	void AddEquipmentItem(const FUserItem Item); // InGame
 
 private:
 	void AddConsumableItem(const FUserItem Item);
@@ -53,10 +59,16 @@ protected:
 	TObjectPtr<UItemInfoData> ConsumableItemsInfo;
 
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UItemInfoData> EquipmentItemsInfo;
+
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UItemInfoData> CharacterItemsInfo;
 
 	UPROPERTY()
 	TMap<int ,FUserItem> ConsumableItems;
+	
+	UPROPERTY()
+	TMap<int, FUserItem> EquipmentItems;
 
 	UPROPERTY()
 	TArray<FUserItem> Characters;

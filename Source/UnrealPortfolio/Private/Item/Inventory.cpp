@@ -9,6 +9,7 @@
 void UInventory::ReSettingItems(const TArray<int> Ids, const TArray<int> Count)
 {
 	ConsumableItems.Empty();
+	EquipmentItems.Empty();
 	Characters.Empty();
 	AddItemsToArray(Ids, Count);
 }
@@ -29,10 +30,11 @@ void UInventory::AddItemsToArray(const TArray<int> Ids,const TArray<int> Count)
 	}
 }
 
-void UInventory::AddItem(const int Id, const int Count)
+void UInventory::AddItem(const int Id, const int Count, int UniqueID)
 {
 	FUserItem NewItem;
 	NewItem.Id = Id;
+	NewItem.UniqueId = UniqueID;
 	NewItem.Count = Count;
 
 	AddItem(NewItem);
@@ -40,10 +42,20 @@ void UInventory::AddItem(const int Id, const int Count)
 
 void UInventory::AddItem(const FUserItem Item)
 {
+	UE_LOG(LogTemp, Log, TEXT("%d : %d"), Item.Id, Item.Count);
+
 	FItemInfomation ConsumableItemInfo = ConsumableItemsInfo->FindItemInfoForItemID(Item.Id);
 	if (ConsumableItemInfo.Id != -1)
 	{
 		AddConsumableItem(Item);
+		SendChangedInventoryInformationToClients();
+		return;
+	}
+
+	FItemInfomation EquipmentItemInfo = EquipmentItemsInfo->FindItemInfoForItemID(Item.Id);
+	if (EquipmentItemInfo.Id != -1)
+	{
+		AddEquipmentItem(Item);
 		SendChangedInventoryInformationToClients();
 		return;
 	}
@@ -80,6 +92,24 @@ void UInventory::AddConsumableItem(const FUserItem Item)
 	}
 }
 
+void UInventory::AddEquipmentItem(const FUserItem Item)
+{
+	FItemInfomation ItemInfo = EquipmentItemsInfo->FindItemInfoForItemID(Item.Id);
+	if (ItemInfo.Id == -1)
+	{
+		return;
+	}
+
+	FUserItem NewUserItem;
+	NewUserItem.Id = Item.Id;
+	NewUserItem.UniqueId = Item.UniqueId;
+	NewUserItem.Count = Item.Count;
+	NewUserItem.ItemInfo = ItemInfo;
+
+	//장비는 Unique ID로 저장 (장비는 동일 장비를 여러개 가질 수 있음)
+	EquipmentItems.Add(Item.UniqueId, NewUserItem);
+}
+
 void UInventory::AddCharacter(const FUserItem Item)
 {
 	for(FUserItem Character : Characters)
@@ -106,6 +136,7 @@ void UInventory::AddCharacter(const FUserItem Item)
 
 void UInventory::SendChangedInventoryInformationToClients()
 {
+	//Lobby 에서만 동기화를 위해 보내줍니다.
 	AHKUILobbyPlayerController* LocalClientPlayerController = Cast<AHKUILobbyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	if (!IsValid(LocalClientPlayerController))
 	{

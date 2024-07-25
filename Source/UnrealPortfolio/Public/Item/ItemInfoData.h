@@ -6,6 +6,9 @@
 #include "Engine/DataAsset.h"
 #include "ItemInfoData.generated.h"
 
+class UGameplayAbility;
+class UGameplayEffect;
+
 UENUM(BlueprintType)
 enum class EItemCategoryType : uint8
 {
@@ -34,6 +37,12 @@ struct FItemInfomation
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EItemCategoryType ItemType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<UGameplayAbility*> GiveAbility;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<UGameplayEffect*> OccurEffects;
 };
 
 /**

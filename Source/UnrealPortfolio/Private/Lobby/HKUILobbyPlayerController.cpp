@@ -240,17 +240,11 @@ void AHKUILobbyPlayerController::StoreInGamePlayerInfoAndGameStart_Implementatio
     if (LobbyPlayerState->GetIsRoomAdmin())
     {
         //방장 플레이어
-        UWorld* World = GetWorld();
-        if (World)
-        {
-            UGameplayStatics::OpenLevel(GetWorld(), FName(*FString("Game")), true, "listen");
-        }
-        //UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=Game?Host=true")));	
+        UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=Game?Host=true?Id=%s")));
     }
     else
     {
-        ClientTravel(AdminIP, ETravelType::TRAVEL_Absolute);
-        //UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=192.168.0.101")));//, *ListenServerIP,*GetPlayerName()));
+        UGameplayStatics::OpenLevel(GetWorld(), TEXT("Loading"), true, FString::Printf(TEXT("NextLevel=%s?Id=%s"), *AdminIP, *PlayerState->GetPlayerName()));//, *ListenServerIP,*GetPlayerName()));
     }
 }
 

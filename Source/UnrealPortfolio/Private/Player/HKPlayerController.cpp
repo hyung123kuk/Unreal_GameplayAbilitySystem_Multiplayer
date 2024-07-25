@@ -12,6 +12,10 @@
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "GameFramework/Character.h"
+#include "Item/Inventory.h"
+#include "Lobby/HKUILobbyPlayerController.h"
+#include "Game/HKGameInstance.h"
+#include "Player/HKPlayerState.h"
 
 AHKPlayerController::AHKPlayerController()
 {
@@ -26,11 +30,32 @@ void AHKPlayerController::PlayerTick(float DeltaTime)
 	AutoRun();
 }
 
+void AHKPlayerController::OnRep_PlayerState()
+{
+	UHKGameInstance* GameInstance = Cast<UHKGameInstance>(GetGameInstance());
+	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
+	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
+	SettingUserInformation(PlayerInfo);
+}
+
+void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
+{
+	if (Inventory == nullptr)
+	{
+		Inventory = NewObject<UInventory>(this, InventoryClass);
+	}
+	
+	Inventory->ReSettingItems(PlayerInfo.UserItemInfo.ItemIds, PlayerInfo.UserItemInfo.ItemCounts);
+	for (FUserItem StartItem : StartItems)
+	{
+		Inventory->AddItem(StartItem);
+	}
+}
+
 void AHKPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	check(HKContext);
-
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (Subsystem)
@@ -58,6 +83,7 @@ void AHKPlayerController::SetupInputComponent()
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AHKPlayerController::ShiftReleased);
 	HKInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
+
 
 void AHKPlayerController::Move(const FInputActionValue& InputActionValue)
 {

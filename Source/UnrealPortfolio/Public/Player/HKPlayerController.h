@@ -14,6 +14,9 @@ class IMouseTargetActorInterface;
 class USplineComponent;
 class UHKAbilitySystemComponent;
 class UHKInputConfig;
+class UInventory;
+struct FInGamePlayerInfo;
+struct FUserItem;
 
 /**
  * 
@@ -29,11 +32,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
 
+	void SettingUserInformation(FInGamePlayerInfo PlayerInfo);
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-
+	virtual void OnRep_PlayerState() override;
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> HKContext;
@@ -81,5 +85,13 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
 
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UInventory> InventoryClass;
+
+	UPROPERTY()
+	TObjectPtr<UInventory> Inventory;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FUserItem> StartItems;
 
 };
