@@ -50,12 +50,5 @@ void AHKCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = HKPlayerState->GetAbilitySystemComponent();
 	AttributeSet = HKPlayerState->GetAttributeSet();
 
-	if (AHKPlayerController* HKPlayerController = Cast<AHKPlayerController>(GetController()))
-	{
-		if (AHKHUD* PlayerHUD = Cast<AHKHUD>(HKPlayerController->GetHUD()))
-		{
-			PlayerHUD->InitOverlay(HKPlayerController, HKPlayerState, AbilitySystemComponent, AttributeSet);
-		}
-	}
 	InitializeDefaultAttributes();
 }

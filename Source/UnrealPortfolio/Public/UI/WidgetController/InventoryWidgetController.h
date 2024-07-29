@@ -26,6 +26,7 @@ struct FInventoryWidgetControllerParams
 	TArray<FUserItem> Characters;
 };
 
+//Lobby용 Inventory Controller입니다.
 UCLASS(BlueprintType, Blueprintable)
 class UNREALPORTFOLIO_API UInventoryWidgetController : public UHKWidgetControllerBase
 {

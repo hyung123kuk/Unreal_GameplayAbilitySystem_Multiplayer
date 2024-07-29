@@ -44,6 +44,7 @@ void UInventory::AddItem(const FUserItem Item)
 {
 	UE_LOG(LogTemp, Log, TEXT("%d : %d"), Item.Id, Item.Count);
 
+	ChangeItemValue.Broadcast(Item);
 	FItemInfomation ConsumableItemInfo = ConsumableItemsInfo->FindItemInfoForItemID(Item.Id);
 	if (ConsumableItemInfo.Id != -1)
 	{

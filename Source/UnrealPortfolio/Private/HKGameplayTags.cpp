@@ -104,24 +104,59 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Input Tag for Right Mouse Button")
 	);
 
-	GameplayTags.InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag.1"),
+	GameplayTags.InputTag_Quick = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick"),
+		FString("Input Tag for QuickSlot")
+	);
+
+	GameplayTags.InputTag_Quick_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.1"),
 		FString("Input Tag for 1 Key")
 	);
 
-	GameplayTags.InputTag_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag.2"),
+	GameplayTags.InputTag_Quick_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.2"),
 		FString("Input Tag for 2 Key")
 	);
 
-	GameplayTags.InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag.3"),
+	GameplayTags.InputTag_Quick_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.3"),
 		FString("Input Tag for 3 Key")
 	);
 
-	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag.4"),
+	GameplayTags.InputTag_Quick_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.4"),
 		FString("Input Tag for 4 Key")
+	);
+
+	GameplayTags.InputTag_Quick_5 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.5"),
+		FString("Input Tag for 5 Key")
+	);
+
+	GameplayTags.InputTag_Quick_6 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.6"),
+		FString("Input Tag for 6 Key")
+	);
+
+	GameplayTags.InputTag_Quick_7 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.7"),
+		FString("Input Tag for 7 Key")
+	);
+
+	GameplayTags.InputTag_Quick_8 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Quick.8"),
+		FString("Input Tag for 8 Key")
+	);
+
+	GameplayTags.InputTag_K = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.K"),
+		FString("Input Tag for K Key")
+	);
+
+	GameplayTags.InputTag_I = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.I"),
+		FString("Input Tag for I Key")
 	);
 
 

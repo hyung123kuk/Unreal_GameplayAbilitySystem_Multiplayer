@@ -28,6 +28,9 @@ struct FUserItem
 
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeItemValueMessage, FUserItem, ItemInfo);
+
+
 /**
  * 
  */
@@ -35,6 +38,9 @@ UCLASS(BlueprintType, Blueprintable)
 class UNREALPORTFOLIO_API UInventory : public UObject
 {
 	GENERATED_BODY()
+	
+public:
+	FChangeItemValueMessage ChangeItemValue;
 	
 public:
 	void ReSettingItems(const TArray<int> Ids, const TArray<int> Count);
@@ -51,7 +57,6 @@ public:
 private:
 	void AddConsumableItem(const FUserItem Item);
 	void AddCharacter(const FUserItem Item);
-
 	void SendChangedInventoryInformationToClients();
 
 protected:

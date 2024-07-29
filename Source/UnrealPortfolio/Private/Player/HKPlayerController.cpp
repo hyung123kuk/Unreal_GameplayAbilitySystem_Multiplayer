@@ -16,6 +16,9 @@
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "Game/HKGameInstance.h"
 #include "Player/HKPlayerState.h"
+#include "UI/Widget/HKSlotWidget.h"
+#include "UI/HUD/HKHUD.h"
+
 
 AHKPlayerController::AHKPlayerController()
 {
@@ -36,6 +39,19 @@ void AHKPlayerController::OnRep_PlayerState()
 	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
 	SettingUserInformation(PlayerInfo);
+	InitHUD();
+}
+
+void AHKPlayerController::InitHUD()
+{
+	AHKPlayerState* HKPlayerState = GetPlayerState<AHKPlayerState>();
+	if (HKPlayerState == nullptr)
+		return;
+
+	if (AHKHUD* PlayerHUD = Cast<AHKHUD>(GetHUD()))
+	{
+		PlayerHUD->InitOverlay(this, HKPlayerState, HKPlayerState->GetAbilitySystemComponent(), HKPlayerState->GetAttributeSet());
+	}
 }
 
 void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
@@ -70,6 +86,10 @@ void AHKPlayerController::BeginPlay()
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
+
+	InventoryWidget = CreateWidget<UHKSlotWidget>(GetWorld(), InventoryWidgetClass);
+	SkillWindowWidget = CreateWidget<UHKSlotWidget>(GetWorld(), SkillWindowWidgetClass);
+	InitHUD();
 }
 
 void AHKPlayerController::SetupInputComponent()
@@ -84,6 +104,31 @@ void AHKPlayerController::SetupInputComponent()
 	HKInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
+
+void AHKPlayerController::ToggleInventory()
+{
+	if (!InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->AddToViewport();
+	}
+	else
+	{
+		InventoryWidget->RemoveFromParent();
+	}
+
+}
+
+void AHKPlayerController::ToggleSkillWindow()
+{
+	if (!SkillWindowWidget->IsInViewport())
+	{
+		SkillWindowWidget->AddToViewport();
+	}
+	else
+	{
+		SkillWindowWidget->RemoveFromParent();
+	}
+}
 
 void AHKPlayerController::Move(const FInputActionValue& InputActionValue)
 {
@@ -144,6 +189,24 @@ void AHKPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		bTargeting = ThisActor ? true : false;
 		ClickMouseTarget = ThisActor ? ThisActor->GetTarget() : nullptr;
 		bAutoRunning = false;
+	}
+
+	if (InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_I))
+	{
+		ToggleInventory();
+	}
+
+	if (InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_K))
+	{
+		ToggleSkillWindow();
+	}
+
+	if (InputTag.MatchesTag(FHKGameplayTags::Get().InputTag_Quick))
+	{
+		int32 Index = InputTag.ToString().Find(TEXT("."), ESearchCase::IgnoreCase,ESearchDir::FromEnd);
+		FString SlotChar = InputTag.ToString().Mid(Index+1);
+		UE_LOG(LogTemp, Log, TEXT("Find Test: %s"), *SlotChar);
+		QuickSlotDelegate.Broadcast(InputTag);
 	}
 }
 

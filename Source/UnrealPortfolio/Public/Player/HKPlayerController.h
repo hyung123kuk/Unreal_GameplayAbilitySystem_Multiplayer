@@ -17,6 +17,11 @@ class UHKInputConfig;
 class UInventory;
 struct FInGamePlayerInfo;
 struct FUserItem;
+class UHKSlotWidget;
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FQuickSlotDelegate,const FGameplayTag& , InputSlotChar);
+
 
 /**
  * 
@@ -33,11 +38,19 @@ public:
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
 
 	void SettingUserInformation(FInGamePlayerInfo PlayerInfo);
+	
+	UPROPERTY(BlueprintAssignable)
+	FQuickSlotDelegate QuickSlotDelegate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FGameplayTag> QuickSlotTags;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_PlayerState() override;
+	void InitHUD();
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> HKContext;
@@ -51,6 +64,9 @@ private:
 	void ShiftPressed() { bShiftKeyDown = true; };
 	void ShiftReleased() { bShiftKeyDown = false; };
 	bool bShiftKeyDown = false;
+
+	void ToggleInventory();
+	void ToggleSkillWindow();
 
 	void Move(const FInputActionValue& InputActionValue);
 	void AutoRun();
@@ -91,7 +107,21 @@ private:
 	UPROPERTY()
 	TObjectPtr<UInventory> Inventory;
 
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UHKSlotWidget> InventoryWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UHKSlotWidget> InventoryWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UHKSlotWidget> SkillWindowWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UHKSlotWidget> SkillWindowWidget;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FUserItem> StartItems;
+
+
 
 };
