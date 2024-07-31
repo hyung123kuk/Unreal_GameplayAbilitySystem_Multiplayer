@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameplayTagContainer.h"
+#include "Item/Inventory.h"
 #include "HKPlayerController.generated.h"
 
 class UInputAction;
@@ -16,12 +17,10 @@ class UHKAbilitySystemComponent;
 class UHKInputConfig;
 class UInventory;
 struct FInGamePlayerInfo;
-struct FUserItem;
 class UHKSlotWidget;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FQuickSlotDelegate,const FGameplayTag& , InputSlotChar);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FQuickSlotDelegate,const FGameplayTag& , InputSlotTag);
 
 /**
  * 
@@ -36,14 +35,40 @@ class UNREALPORTFOLIO_API AHKPlayerController : public APlayerController
 public:
 	UFUNCTION(BlueprintCallable)
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
-
+	virtual void OnPossess(APawn* aPawn) override;
 	void SettingUserInformation(FInGamePlayerInfo PlayerInfo);
-	
+	UInventory* GetInventory() { return Inventory; }
+
+public:
 	UPROPERTY(BlueprintAssignable)
 	FQuickSlotDelegate QuickSlotDelegate;
 
+protected:
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FGameplayTag> QuickSlotTags;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UInventory> Inventory;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UHKSlotWidget> InventoryWidget;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UHKSlotWidget> SkillWindowWidget;
+
+	UFUNCTION()
+	void TryUseItem(FUserItem Item);
+
+	UPROPERTY(BlueprintReadOnly)
+	FUserItem TempUseItem; // 서버로 전달할 정보 임시 저장소 (UseItem Ability에서 사용)
+
+
+	void ToggleInventory();
+	void ToggleSkillWindow();
+
+	UPROPERTY(EditAnywhere)
+	TArray<FUserItem> StartItems;
 
 protected:
 	virtual void BeginPlay() override;
@@ -64,9 +89,6 @@ private:
 	void ShiftPressed() { bShiftKeyDown = true; };
 	void ShiftReleased() { bShiftKeyDown = false; };
 	bool bShiftKeyDown = false;
-
-	void ToggleInventory();
-	void ToggleSkillWindow();
 
 	void Move(const FInputActionValue& InputActionValue);
 	void AutoRun();
@@ -104,23 +126,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UInventory> InventoryClass;
 
-	UPROPERTY()
-	TObjectPtr<UInventory> Inventory;
-
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UHKSlotWidget> InventoryWidgetClass;
-
-	UPROPERTY()
-	TObjectPtr<UHKSlotWidget> InventoryWidget;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UHKSlotWidget> SkillWindowWidgetClass;
 
-	UPROPERTY()
-	TObjectPtr<UHKSlotWidget> SkillWindowWidget;
-
-	UPROPERTY(EditAnywhere)
-	TArray<FUserItem> StartItems;
 
 
 

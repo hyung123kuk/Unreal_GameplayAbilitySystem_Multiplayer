@@ -10,16 +10,25 @@ void UHKAbilitySystemComponent::AbilityActorInfoSet()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UHKAbilitySystemComponent::ClientEffectApplied);
 }
 
-void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
+void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities)
 {
-	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : AddAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		if (const UHKGameplayAbility* HKAbility = Cast<UHKGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(HKAbility->StartupInputTag);
-			GiveAbility(AbilitySpec);
+			GiveAbility(AbilitySpec);		
 		}
+	}
+}
+
+void UHKAbilitySystemComponent::RemoveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& RemoveAbilities)
+{
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : RemoveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		OnRemoveAbility(AbilitySpec);
 	}
 }
 

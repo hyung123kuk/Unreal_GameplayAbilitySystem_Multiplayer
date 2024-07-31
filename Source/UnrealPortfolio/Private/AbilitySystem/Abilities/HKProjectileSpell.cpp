@@ -63,7 +63,7 @@ void UHKProjectileSpell::InputReleased(const FGameplayAbilitySpecHandle Handle, 
 	{
 		if (DeltaTime < MouseChargingTime)
 		{
-			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+			OnFailedAbility();
 			return;
 		}
 
@@ -78,7 +78,7 @@ void UHKProjectileSpell::ActivateAbility_TargetDataUnderMouse(const FGameplayAbi
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
 	if (!HitResult.bBlockingHit)
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
@@ -94,19 +94,19 @@ void UHKProjectileSpell::ActivateAbility_TargetDataUnderMouse(const FGameplayAbi
 
 	if (HitActor == nullptr || !HitActor->Implements<UCombatInterface>())
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
 	if (Cast<ICombatInterface>(HitActor)->IsDead())
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
 	if (IsSameTeam(GetAvatarActorFromActorInfo(), HitActor))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
@@ -171,5 +171,5 @@ void UHKProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation
 
 	Projectile->FinishSpawning(SpawnTransform);
 
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	OnCompleteAbility();
 }

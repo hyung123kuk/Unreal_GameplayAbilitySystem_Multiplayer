@@ -7,12 +7,15 @@
 #include "AbilitySystemInterface.h"
 #include "Interaction/CombatInterface.h"
 #include "CharacterClassInfo.h"
+#include "GameplayTagContainer.h"
+#include "Item/Inventory.h"
 #include "HKCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayAbility;
 class UGameplayEffect;
+struct FUserItem;
 
 UCLASS(Abstract)
 class UNREALPORTFOLIO_API AHKCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -34,20 +37,40 @@ public:
 	virtual const FGameplayTag& GetTeam() const;
 	/**Combat Interface End*/
 
+	/** Act **/
+	UFUNCTION(BlueprintCallable)
+	FUserItem GetEquipItem(FGameplayTag EquipTag);
+	TArray<FTaggedMontage> GetActMontages();
+
+	UFUNCTION(BlueprintCallable)
+	void UseItem(FUserItem Item);
+
+	UFUNCTION(BlueprintCallable)
+	void SetEquipItem(FUserItem NewItem);
+
+	TMap<FGameplayTag, FUserItem> EquipmentItem;
+	/** Act **/
+
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 
 
 protected:
+	void OccurGameplayTags(FGameplayTag GameplayTags);
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;
-	void AddCharacterAbilities();
+	void AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities);
+	void RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities);
+
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Montages")
+	TArray<FTaggedMontage> ActMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -60,7 +83,7 @@ protected:
 
 	bool bDead = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
@@ -85,7 +108,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 

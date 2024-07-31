@@ -183,6 +183,11 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Attack Ability Tag")
 	);
 
+	GameplayTags.Abilities_Swap = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Swap"),
+		FString("Swap Ability Tag")
+	);
+
 	//
 	// Combat Sockets
 	//
@@ -221,6 +226,12 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Attack 4")
 	);
 
+
+	GameplayTags.Montage_Swap = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Swap"),
+		FString("Swap Montage")
+	);
+
 	//
 	// Attack Type
 	//
@@ -241,8 +252,47 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	//
+	//	Act Type
+	//
+
+	GameplayTags.Act_SwapType_Sword = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Act.SwapType.Sword"),
+		FString("Sword Swap")
+	);
+
+	GameplayTags.Act_SwapType_Bow = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Act.SwapType.Bow"),
+		FString("Bow Swap")
+	);
+
+	GameplayTags.Act_SwapType_Staff = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Act.SwapType.Staff"),
+		FString("Staff Swap")
+	);
+
+	//
+	// EquipmentType
+	//
+
+	GameplayTags.EquipmentType_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EquipmentType.Weapon"),
+		FString("EquipmentType")
+	);
+
+	//
+	// TriggerType
+	//
+
+	GameplayTags.Trigger_UseItem = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Trigger.UseItem"),
+		FString("Use Item")
+	);
+
+
+	//
 	// GameplayCue
 	//
+
 
 	GameplayTags.GameplayCue_MeleeImpact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayCue.MeleeImpact"),

@@ -6,6 +6,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 #include "UI/HKWidgetControllerBase.h"
+#include "UI/SlotWidgetController.h"
 
 void UHKSlotWidget::NativePreConstruct()
 {
@@ -29,6 +30,7 @@ void UHKSlotWidget::NativePreConstruct()
 			Slots.Add(NewSlot);
 		}
 	}
+	
 }
 
 void UHKSlotWidget::SetItemInfoToEmptySlot(USlotWidgetController* SlotWidgetController)
@@ -36,18 +38,64 @@ void UHKSlotWidget::SetItemInfoToEmptySlot(USlotWidgetController* SlotWidgetCont
 	int EmptySlotindex = FindEmptySlotIndex();
 	if (EmptySlotindex != -1)
 	{
+		FSlotInfoWidgetControllerParams SlotWidget = SlotWidgetController->GetSlotInfoParmas();
+		if (SlotWidget.OriginSlotWitdet == nullptr)
+		{
+			SlotWidget.OriginSlotWitdet = this;
+		}
+
+		SlotWidget.SlotWitdet = this;
+		SlotWidget.SlotNumber = EmptySlotindex;
+		SlotWidgetController->SetWidgetControllerParams(SlotWidget);
 		SetItemInfoWithIndex(SlotWidgetController, EmptySlotindex);
 	}
 }
 
 void UHKSlotWidget::SetItemInfoWithIndex(USlotWidgetController* SlotWidgetController, int index)
 {
-	if (index < Slots.Num())
+	if (index >= Slots.Num())
 	{
 		return;
 	}
 
+	FSlotInfoWidgetControllerParams SlotWidget = SlotWidgetController->GetSlotInfoParmas();
+	SlotWidget.SlotWitdet = this;
+	SlotWidget.SlotNumber = index;
+	SlotWidgetController->SetWidgetControllerParams(SlotWidget);
+
 	Slots[index]->SetSlotWIdgetController(SlotWidgetController);
+}
+
+void UHKSlotWidget::AddNewWidgetController(FSlotStruct NewSlotItem)
+{
+	USlotWidgetController* NewSlotWidgetController = NewObject<USlotWidgetController>(this);
+	FSlotInfoWidgetControllerParams SlotWidgetControllerParams = NewSlotWidgetController->GetSlotInfoParmas();
+	SlotWidgetControllerParams.SlotImage = NewSlotItem.SlotTexture;
+	SlotWidgetControllerParams.Count = NewSlotItem.Count;
+	SlotWidgetControllerParams.ContainInfo = NewSlotItem.SlotInformation;
+	SlotWidgetControllerParams.Id = NewSlotItem.Id;
+	SlotWidgetControllerParams.UniqueId= NewSlotItem.UniqueId;
+	NewSlotWidgetController->SetWidgetControllerParams(SlotWidgetControllerParams);
+	OriginWidgetControllers.Add(NewSlotItem, NewSlotWidgetController);
+	SetItemInfoToEmptySlot(NewSlotWidgetController);
+}
+
+void UHKSlotWidget::RemoveWidgetController(FSlotStruct SlotItem)
+{
+	USlotWidgetController* RemoveWidgetController = OriginWidgetControllers.FindAndRemoveChecked(SlotItem);
+	FSlotInfoWidgetControllerParams SlotInfoParmas = RemoveWidgetController->GetSlotInfoParmas();
+	USlot* RemoveSlot = SlotInfoParmas.SlotWitdet->GetSlots()[SlotInfoParmas.SlotNumber];
+	RemoveSlot->RemoveSlotWidgetController();
+}
+
+void UHKSlotWidget::ChangeValueWidgetController(FSlotStruct SlotItem)
+{
+	USlotWidgetController* SlotWidgetController = OriginWidgetControllers.Find(SlotItem)->Get();
+	FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
+	SlotInfoParams.Count = SlotItem.Count;
+	SlotWidgetController->SetWidgetControllerParams(SlotInfoParams);
+	USlot* ChangeSlot = SlotInfoParams.SlotWitdet->GetSlots()[SlotInfoParams.SlotNumber];
+	ChangeSlot->Refresh();
 }
 
 bool UHKSlotWidget::CanPutItemToSlot(ESlotContainInformation SlotInformationType)
@@ -87,6 +135,9 @@ void UHKSlotWidget::SwapSlot(UHKSlotWidget* DragSlotWidget, int DragIndex, UHKSl
 		case ESlotContainInformation::Skill:
 			DragSlotWidget->ToSkillTypeData(DropSlotWidgetController, DragIndex);
 			break;
+		case ESlotContainInformation::Empty:
+			DragSlotWidget->GetSlots()[DragIndex]->RemoveSlotWidgetController();
+			break;
 
 		default:
 			check(false);
@@ -102,7 +153,9 @@ void UHKSlotWidget::SwapSlot(UHKSlotWidget* DragSlotWidget, int DragIndex, UHKSl
 		case ESlotContainInformation::Skill:
 			DropSlotWidget->FromSkillTypeData(DragSlotWidgetController, DropIndex);
 			break;
-
+		case ESlotContainInformation::Empty:
+			DropSlotWidget->GetSlots()[DropIndex]->RemoveSlotWidgetController();
+			break;
 		default:
 			check(false);
 			break;

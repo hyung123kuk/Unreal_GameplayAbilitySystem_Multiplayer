@@ -33,8 +33,6 @@ APlayerController* AHKGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole,
 		NewPlayerController->GetPlayerState<AHKPlayerState>()->SetPlayerName(Id);
 	}
 
-	Cast<AHKPlayerController>(NewPlayerController)->SettingUserInformation(PlayerInfo);
-
 	return NewPlayerController;
 }
 

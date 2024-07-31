@@ -32,7 +32,7 @@ void AHKCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	InitAbilityActorInfo();
-	AddCharacterAbilities();
+	AddCharacterAbilities(StartupAbilities);
 }
 
 void AHKCharacter::OnRep_PlayerState()

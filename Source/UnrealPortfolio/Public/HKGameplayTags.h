@@ -53,11 +53,11 @@ public:
 	FGameplayTag InputTag_Quick_7;
 	FGameplayTag InputTag_Quick_8;
 
-
-
+	
 	FGameplayTag Damage;
 
 	FGameplayTag Abilities_Attack;
+	FGameplayTag Abilities_Swap;
 
 	FGameplayTag CombatSocket_Character;
 	FGameplayTag CombatSocket_Weapon;
@@ -66,12 +66,21 @@ public:
 	FGameplayTag Montage_Attack_2;
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
+	FGameplayTag Montage_Swap;
 
 	FGameplayTag AttackType_Melee;
 	FGameplayTag AttackType_Projectile;
 	FGameplayTag AttackType_Cast;
+	FGameplayTag Act_SwapType_Sword;
+	FGameplayTag Act_SwapType_Bow;
+	FGameplayTag Act_SwapType_Staff;
+
+	FGameplayTag EquipmentType_Weapon;
+
+	FGameplayTag Trigger_UseItem;
 
 	FGameplayTag Effects_HitReact;
+
 
 	FGameplayTag GameplayCue_MeleeImpact;
 

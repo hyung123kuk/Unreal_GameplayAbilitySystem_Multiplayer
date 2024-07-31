@@ -22,11 +22,14 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Refresh();
-
+	void RemoveSlotWidgetController();
 	void SetSlotWIdgetController(USlotWidgetController* slotWidgetController);
 
+	UFUNCTION(BlueprintCallable)
+	void UseSlotItem();
+
 	ESlotContainInformation GetContainInformationType();
-	UHKSlotWidget* GetParentWidget() { return ParentWidget; }
+	UHKSlotWidget* GetParentWidget() { return SlotWidget; }
 	USlotWidgetController* GetSlotWidgetController() { return SlotWidgetController; }
 
 protected:
@@ -44,7 +47,7 @@ private:
 	TObjectPtr<USlot> DragSlot;
 
 	UPROPERTY()
-	TObjectPtr<UHKSlotWidget> ParentWidget;
+	TObjectPtr<UHKSlotWidget> SlotWidget;
 
 	int SlotNumber;
 

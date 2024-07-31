@@ -6,6 +6,7 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "HKGameplayTags.h"
+#include "BlueprintGameplayTagLibrary.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
 
 AHKCharacterBase::AHKCharacterBase()
@@ -21,6 +22,7 @@ AHKCharacterBase::AHKCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
 }
 
@@ -76,6 +78,48 @@ const FGameplayTag& AHKCharacterBase::GetTeam() const
 	return Team;
 }
 
+TArray<FTaggedMontage> AHKCharacterBase::GetActMontages()
+{
+	return ActMontage;
+}
+
+FUserItem AHKCharacterBase::GetEquipItem(FGameplayTag EquipTag)
+{
+	FUserItem* EquipItem = EquipmentItem.Find(EquipTag);
+	return *EquipItem;
+}
+
+void AHKCharacterBase::UseItem(FUserItem Item)
+{
+	for (FGameplayTag TriggerTag : Item.ItemInfo.TriggerTags) 
+	{
+		OccurGameplayTags(TriggerTag);
+	}
+
+	for (TSubclassOf<UGameplayEffect> Effect : Item.ItemInfo.OccurEffects)
+	{
+		ApplyEffectToSelf(Effect,1.0f);
+	}
+}
+
+void AHKCharacterBase::SetEquipItem(FUserItem NewItem)
+{
+	if (EquipmentItem.Contains(NewItem.ItemInfo.EquipmentTag))
+	{
+		FUserItem* UserItem = EquipmentItem.Find(NewItem.ItemInfo.EquipmentTag);
+		if (UserItem->Id != -1)
+		{
+			RemoveCharacterAbilities(UserItem->ItemInfo.GiveAbilities);
+			EquipmentItem.Remove(UserItem->ItemInfo.EquipmentTag);
+		}
+	}
+
+	EquipmentItem.Add(NewItem.ItemInfo.EquipmentTag, NewItem);
+
+	AddCharacterAbilities(NewItem.ItemInfo.GiveAbilities);
+	UseItem(NewItem);
+}
+
 void AHKCharacterBase::MulticastHandleDeath_Implementation()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
@@ -120,11 +164,25 @@ void AHKCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
-void AHKCharacterBase::AddCharacterAbilities()
+void AHKCharacterBase::AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities)
 {
 	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
 	if (!HasAuthority()) return;
 
-	HKASC->AddCharacterAbilities(StartupAbilities);
+	HKASC->AddCharacterAbilities(Abilities);
+	
 }
 
+void AHKCharacterBase::RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities)
+{
+	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
+	if (!HasAuthority()) return;
+
+	HKASC->RemoveAbilities(Abilities);
+}
+
+void AHKCharacterBase::OccurGameplayTags(FGameplayTag GameplayTags)
+{
+	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(GameplayTags);
+	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+}

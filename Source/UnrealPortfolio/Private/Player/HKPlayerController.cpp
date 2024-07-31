@@ -12,12 +12,14 @@
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "GameFramework/Character.h"
-#include "Item/Inventory.h"
 #include "Lobby/HKUILobbyPlayerController.h"
 #include "Game/HKGameInstance.h"
 #include "Player/HKPlayerState.h"
 #include "UI/Widget/HKSlotWidget.h"
 #include "UI/HUD/HKHUD.h"
+#include "Character/HKCharacterBase.h"
+#include "BlueprintGameplayTagLibrary.h"
+
 
 
 AHKPlayerController::AHKPlayerController()
@@ -38,8 +40,45 @@ void AHKPlayerController::OnRep_PlayerState()
 	UHKGameInstance* GameInstance = Cast<UHKGameInstance>(GetGameInstance());
 	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
+
 	SettingUserInformation(PlayerInfo);
-	InitHUD();
+}
+
+
+void AHKPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+	UHKGameInstance* GameInstance = Cast<UHKGameInstance>(GetGameInstance());
+	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
+	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
+
+	SettingUserInformation(PlayerInfo);
+}
+
+void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
+{
+	//한번만 초기화
+	if (Inventory == nullptr)
+	{
+		Inventory = NewObject<UInventory>(this, InventoryClass);
+
+		InitHUD();
+		InventoryWidget = CreateWidget<UHKSlotWidget>(GetWorld(), InventoryWidgetClass);
+		SkillWindowWidget = CreateWidget<UHKSlotWidget>(GetWorld(), SkillWindowWidgetClass);
+		InventoryWidget->AddToViewport();
+		SkillWindowWidget->AddToViewport();
+		ToggleInventory();
+		ToggleSkillWindow();
+
+		Inventory->ReSettingItems(PlayerInfo.UserItemInfo.ItemIds, PlayerInfo.UserItemInfo.ItemCounts);
+
+		for (FUserItem StartItem : StartItems)
+		{
+			Inventory->AddItem(StartItem);
+		}
+
+		Inventory->UseItemValueDelegate.AddDynamic(this, &AHKPlayerController::TryUseItem);
+	}
 }
 
 void AHKPlayerController::InitHUD()
@@ -52,21 +91,9 @@ void AHKPlayerController::InitHUD()
 	{
 		PlayerHUD->InitOverlay(this, HKPlayerState, HKPlayerState->GetAbilitySystemComponent(), HKPlayerState->GetAttributeSet());
 	}
+
 }
 
-void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
-{
-	if (Inventory == nullptr)
-	{
-		Inventory = NewObject<UInventory>(this, InventoryClass);
-	}
-	
-	Inventory->ReSettingItems(PlayerInfo.UserItemInfo.ItemIds, PlayerInfo.UserItemInfo.ItemCounts);
-	for (FUserItem StartItem : StartItems)
-	{
-		Inventory->AddItem(StartItem);
-	}
-}
 
 void AHKPlayerController::BeginPlay()
 {
@@ -86,10 +113,6 @@ void AHKPlayerController::BeginPlay()
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
-
-	InventoryWidget = CreateWidget<UHKSlotWidget>(GetWorld(), InventoryWidgetClass);
-	SkillWindowWidget = CreateWidget<UHKSlotWidget>(GetWorld(), SkillWindowWidgetClass);
-	InitHUD();
 }
 
 void AHKPlayerController::SetupInputComponent()
@@ -102,31 +125,38 @@ void AHKPlayerController::SetupInputComponent()
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AHKPlayerController::ShiftPressed);
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AHKPlayerController::ShiftReleased);
 	HKInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
+
 }
 
+void AHKPlayerController::TryUseItem(FUserItem Item)
+{
+	TempUseItem = Item;
+
+	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(FHKGameplayTags::Get().Trigger_UseItem);
+	GetASC()->TryActivateAbilitiesByTag(TagContainer);
+}
 
 void AHKPlayerController::ToggleInventory()
 {
-	if (!InventoryWidget->IsInViewport())
+	if (InventoryWidget->GetRenderTransform().Scale.X < 0.1f)
 	{
-		InventoryWidget->AddToViewport();
+		InventoryWidget->SetRenderScale(FVector2D(1.f, 1.f));
 	}
 	else
 	{
-		InventoryWidget->RemoveFromParent();
+		InventoryWidget->SetRenderScale(FVector2D(0.f,0.f));
 	}
-
 }
 
 void AHKPlayerController::ToggleSkillWindow()
 {
-	if (!SkillWindowWidget->IsInViewport())
+	if (SkillWindowWidget->GetRenderTransform().Scale.X < 0.1f)
 	{
-		SkillWindowWidget->AddToViewport();
+		SkillWindowWidget->SetRenderScale(FVector2D(1.f, 1.f));
 	}
 	else
 	{
-		SkillWindowWidget->RemoveFromParent();
+		SkillWindowWidget->SetRenderScale(FVector2D(0.f, 0.f));
 	}
 }
 
@@ -203,9 +233,6 @@ void AHKPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 	if (InputTag.MatchesTag(FHKGameplayTags::Get().InputTag_Quick))
 	{
-		int32 Index = InputTag.ToString().Find(TEXT("."), ESearchCase::IgnoreCase,ESearchDir::FromEnd);
-		FString SlotChar = InputTag.ToString().Mid(Index+1);
-		UE_LOG(LogTemp, Log, TEXT("Find Test: %s"), *SlotChar);
 		QuickSlotDelegate.Broadcast(InputTag);
 	}
 }

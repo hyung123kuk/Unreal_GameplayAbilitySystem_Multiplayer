@@ -27,7 +27,7 @@ struct FTaggedMontage
 	FName SocketName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FGameplayTag AttackType;
+	FGameplayTag Type;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USoundBase* ImpactSound = nullptr;

@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "Interaction/CombatInterface.h"
 #include "HKGameplayAbility.generated.h"
+
+class AHKCharacterBase;
 
 /**
  * 
@@ -23,6 +26,29 @@ protected:
 	bool IsLocalPlayer();
 
 	virtual void FindTargetDataUnderMouse();
+
+	UFUNCTION()
+	virtual void OnCompleteMontage();
+	UFUNCTION()
+	virtual void OnCancelledMontage();
+	UFUNCTION()
+	virtual void OnInterruptedMontage();
+
+	virtual void OnCompleteAbility();
+	virtual void OnFailedAbility();
+
+	UFUNCTION()
+	virtual void OnOccurMontageEvent(FGameplayEventData Payload);
+
+	void PlayRandomActMontage(FGameplayTag Type);
+	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent);
+	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+
+protected:
+	FTaggedMontage TaggedMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<AHKCharacterBase> CharacterBase;
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")

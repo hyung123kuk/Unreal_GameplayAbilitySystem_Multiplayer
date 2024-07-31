@@ -27,15 +27,16 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}
 	APawn* OwningPawn = OwnerComp.GetAIOwner()->GetPawn();
 
-	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OwningPawn);
-	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(FHKGameplayTags::Get().Abilities_Attack);
-	ASC->TryActivateAbilitiesByTag(TagContainer);
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(OwningPawn);
 	if (CombatInterface)
 	{
 		CombatInterface->SetCombatTarget(TargetActor);
 	}
+
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OwningPawn);
+	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(FHKGameplayTags::Get().Abilities_Attack);
+	ASC->TryActivateAbilitiesByTag(TagContainer);
 
 	return EBTNodeResult::Type::Succeeded;
 }

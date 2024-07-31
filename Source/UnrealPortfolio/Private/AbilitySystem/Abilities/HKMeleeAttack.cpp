@@ -30,7 +30,7 @@ void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbility
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData,0);
 	if (!HitResult.bBlockingHit)
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
@@ -47,19 +47,19 @@ void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbility
 
 	if (HitActor == nullptr || !HitActor->Implements<UCombatInterface>())
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
 	if (Cast<ICombatInterface>(HitActor)->IsDead())
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 
 	if (IsSameTeam(GetAvatarActorFromActorInfo(), HitActor))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return;
 	}
 	ActorCombatInterface->SetCombatTarget(HitActor);
@@ -87,7 +87,6 @@ void UHKMeleeAttack::OccurMontageEvent(const AActor* TargetActor, const FVector&
 	for (auto Enemy : OutOverlappingActors)
 	{
 		CauseDamage(Enemy, Damage);
-
 	}
 	
 	if (OutOverlappingActors.Num() > 0)

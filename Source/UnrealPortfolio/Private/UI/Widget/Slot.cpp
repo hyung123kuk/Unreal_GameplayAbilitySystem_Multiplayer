@@ -5,13 +5,21 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/SlotWidgetController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Player/HKPlayerController.h"
 
 void USlot::Init(UHKSlotWidget* Parent, TArray<ESlotContainInformation> ContainTypes,int SlotNum, USlot* DSlot)
 {
-	ParentWidget = Parent;
+	SlotWidget = Parent;
 	CanContainTypes = ContainTypes;
 	DragSlot = DSlot;
 	SlotNumber = SlotNum;
+}
+
+
+void USlot::RemoveSlotWidgetController()
+{
+	SlotWidgetController = nullptr;
+	Refresh();
 }
 
 void USlot::SetSlotWIdgetController(USlotWidgetController* slotWidgetController)
@@ -20,8 +28,21 @@ void USlot::SetSlotWIdgetController(USlotWidgetController* slotWidgetController)
 	Refresh();
 }
 
+void USlot::UseSlotItem()
+{
+	AHKPlayerController* PlayerController = Cast<AHKPlayerController>(GetOwningPlayer());
+	if (GetContainInformationType() == ESlotContainInformation::Item)
+	{
+		FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
+		PlayerController->GetInventory()->UseItem(SlotInfoParams.Id, SlotInfoParams.UniqueId);
+	}
+}
+
 ESlotContainInformation USlot::GetContainInformationType()
 {
+	if (SlotWidgetController == nullptr)
+		return ESlotContainInformation::Empty;
+
 	return SlotWidgetController->GetContainInfo();
 }
 
@@ -36,6 +57,11 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 		reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 	}
+	else if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Click : Right Button Down"));
+		UseSlotItem();
+	}
 
 	return reply.NativeReply;
 }
@@ -49,8 +75,11 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 
 		UDragDropOperation* oper = NewObject<UDragDropOperation>();
 		OutOperation = oper;
-		DragSlot->Init(ParentWidget, CanContainTypes, SlotNumber, nullptr);
+		DragSlot->Init(SlotWidget, CanContainTypes, SlotNumber, nullptr);
+		DragSlot->SetSlotWIdgetController(SlotWidgetController);
 		DragSlot->Refresh();
+		
+		
 		oper->DefaultDragVisual = DragSlot;
 		
 	}
@@ -69,11 +98,10 @@ bool USlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDr
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Drag : Success"));
 		USlot* OperationSlot = Cast<USlot>(InOperation->DefaultDragVisual);
 		
-		//받는 위젯에서 받을 수 있는 슬롯 아이템 타입인 경우
 		ESlotContainInformation DragSlotContainType = OperationSlot->GetContainInformationType();
-		if (CanContainTypes.Contains(DragSlotContainType) && ParentWidget->CanPutItemToSlot(DragSlotContainType))
+		if (CanContainTypes.Contains(DragSlotContainType) && SlotWidget->CanPutItemToSlot(DragSlotContainType))
 		{
-			ParentWidget->SwapSlot(OperationSlot->GetParentWidget(), OperationSlot->SlotNumber, ParentWidget, SlotNumber);
+			SlotWidget->SwapSlot(OperationSlot->GetParentWidget(), OperationSlot->SlotNumber, SlotWidget, SlotNumber);
 			return true;
 		}
 	}

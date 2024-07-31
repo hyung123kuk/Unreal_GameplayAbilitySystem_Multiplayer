@@ -4,21 +4,62 @@
 
 #include "CoreMinimal.h"
 #include "UI/HKUserWidget.h"
+#include "GameplayTagContainer.h"
 #include "HKSlotWidget.generated.h"
 
 
 class USlot;
 class UUniformGridPanel;
+class UHKWidgetControllerBase;
+
 
 UENUM(BlueprintType)
 enum class ESlotContainInformation : uint8
 {
 	Item,
 	Skill,
-	None
+	Empty,
+	None,
 };
 
-class UHKWidgetControllerBase;
+
+USTRUCT(BlueprintType)
+struct FSlotStruct
+{
+	GENERATED_BODY()
+	
+	bool operator==(const FSlotStruct& Other) const
+	{
+		return (SlotInformation == Other.SlotInformation) && (Other.Id == Id) && (Other.UniqueId == UniqueId);
+	}
+
+	friend FORCEINLINE uint32 GetTypeHash(const FSlotStruct& SlotStructData)
+	{
+		return GetTypeHash(SlotStructData.Name);
+	}
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString Name;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString Explanation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ESlotContainInformation SlotInformation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UTexture2D> SlotTexture;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int Id;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int UniqueId;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int Count;
+
+};
 
 /**
  * 
@@ -62,6 +103,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetItemInfoWithIndex(USlotWidgetController* SlotWidgetController, int index);
 
+	UFUNCTION(BlueprintCallable)
+	void AddNewWidgetController(FSlotStruct NewSlotItem);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveWidgetController(FSlotStruct SlotItem);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeValueWidgetController(FSlotStruct SlotItem);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -90,11 +139,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<TObjectPtr<USlot>> Slots;
 
+	//FSlotInfoWidgetControllerParams의 OriginSlotWitdet을 참고
+	//원래 있어야할 위치가 해당 Widget인 WidgetController들 이는 다른 SlotWidget에 가도 옮겨지지 않음.
+	// ex) 퀵 슬롯에 아이템 정보를 넣어도 원래 아이템이 있던 곳은 인벤토리 위젯 정보이다.
+	UPROPERTY(BlueprintReadOnly)
+	TMap<FSlotStruct, TObjectPtr<USlotWidgetController>> OriginWidgetControllers;
+
 	UPROPERTY(EditAnywhere, Category = "Tooltip")
 	bool UseTooltip; //TODO;
 
 	UPROPERTY(EditAnywhere, Category = "Tooltip")
 	TSubclassOf<USlot> TooltipClass; //TODO;
 
-	
+
 };

@@ -77,14 +77,14 @@ bool UHKCombatAbility::PlayRandomAttackMontage(FGameplayTag AttackType)
 	TArray<FTaggedMontage> TypeMontages;
 	for (FTaggedMontage& Montage : ActorCombatInterface->GetAttackMontages())
 	{
-		if (Montage.AttackType == AttackType)
+		if (Montage.Type == AttackType)
 			TypeMontages.Add(Montage);
 	}
 
 	TaggedMontage = GetRandomTaggedMontageFromArray(TypeMontages);
 	if (TaggedMontage.Montage == nullptr)
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		OnFailedAbility();
 		return false;
 	}
 
@@ -92,16 +92,7 @@ bool UHKCombatAbility::PlayRandomAttackMontage(FGameplayTag AttackType)
 	return true;
 }
 
-FTaggedMontage UHKCombatAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const
-{
-	if (TaggedMontages.Num() > 0)
-	{
-		const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
-		return TaggedMontages[Selection];
-	}
 
-	return FTaggedMontage();
-}
 
 void UHKCombatAbility::FacingTarget()
 {
@@ -110,25 +101,6 @@ void UHKCombatAbility::FacingTarget()
 	{
 		ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), Target->GetActorLocation());
 	}
-}
-
-void UHKCombatAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent)
-{
-	UE_LOG(LogTemp, Log, TEXT("%s"), *MontageEvent.GetTagName().ToString());
-
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, MontageEvent);
-	WaitGameplayEventTask->EventReceived.AddDynamic(this, &UHKCombatAbility::OnOccurMontageEvent);
-
-	WaitGameplayEventTask->ReadyForActivation();
-	
-	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), MontageToPlay);
-
-	PlayAttackTask->OnCompleted.AddDynamic(this, &UHKCombatAbility::OnCompleteMontage);
-	PlayAttackTask->OnCancelled.AddDynamic(this, &UHKCombatAbility::OnCancelledMontage);
-	PlayAttackTask->OnInterrupted.AddDynamic(this, &UHKCombatAbility::OnInterruptedMontage);
-
-	PlayAttackTask->ReadyForActivation();
-
 }
 
 void UHKCombatAbility::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)
@@ -142,24 +114,5 @@ void UHKCombatAbility::OnOccurMontageEvent(FGameplayEventData Payload)
 	OccurMontageEvent(Target, CombatSocketLocation);
 }
 
-void UHKCombatAbility::OnCompleteMontage()
-{
-	bool bReplicateEndAbility = true;
-	bool bWasCancelled = false;
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
 
-void UHKCombatAbility::OnCancelledMontage()
-{
-	bool bReplicateEndAbility = true;
-	bool bWasCancelled = true;
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
-
-void UHKCombatAbility::OnInterruptedMontage()
-{
-	bool bReplicateEndAbility = true;
-	bool bWasCancelled = true;
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
 

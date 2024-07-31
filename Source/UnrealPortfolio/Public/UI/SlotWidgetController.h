@@ -5,18 +5,26 @@
 #include "CoreMinimal.h"
 #include "UI/HKWidgetControllerBase.h"
 #include "UI/Widget/HKSlotWidget.h"
+#include "GameplayTagContainer.h"
 #include "SlotWidgetController.generated.h"
 
-class UHKGameplayAbility;
-class UGameplayEffect;
 
 USTRUCT(BlueprintType)
 struct FSlotInfoWidgetControllerParams
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int Id;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int UniqueId;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UHKSlotWidget* OriginSlotWitdet; // 처음 만들어 졌던 SlotWidget
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UHKSlotWidget* SlotWitdet; //현재 위치 SlotWidget
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int SlotNumber;
@@ -30,12 +38,6 @@ struct FSlotInfoWidgetControllerParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESlotContainInformation ContainInfo;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UHKGameplayAbility*> GameAbilities;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UGameplayEffect*> GameplayEffects;
-	
 };
 
 /**

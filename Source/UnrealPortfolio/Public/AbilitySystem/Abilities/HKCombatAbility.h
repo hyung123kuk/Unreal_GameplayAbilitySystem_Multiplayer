@@ -31,23 +31,12 @@ protected:
 
 	bool IsSameTeam(const AActor* Actor,const AActor* Actor2);
 	bool PlayRandomAttackMontage(FGameplayTag AttackType);
-	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
 	void FacingTarget();
-
-	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent);
-
-	UFUNCTION()
-	virtual void OnCompleteMontage();
-	UFUNCTION()
-	virtual void OnCancelledMontage();
-	UFUNCTION()
-	virtual void OnInterruptedMontage();
-
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation);
 
 protected:
-	FTaggedMontage TaggedMontage;
+
 	FGameplayTag Team;
 	ICombatInterface* ActorCombatInterface;
 
@@ -59,6 +48,5 @@ protected:
 	float CombatRange;
 
 private:
-	UFUNCTION()
-	void OnOccurMontageEvent(FGameplayEventData Payload);
+	virtual void OnOccurMontageEvent(FGameplayEventData Payload) override;
 };
