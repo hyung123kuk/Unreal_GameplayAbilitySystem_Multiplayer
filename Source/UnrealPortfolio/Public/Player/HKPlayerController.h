@@ -98,6 +98,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> ShiftAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> MouseWheelAction;
+
 	void MouseRightPressed() { bMouseRightDown = true; };
 	void MouseRightReleased() { bMouseRightDown = false; };
 	bool bMouseRightDown = false;
@@ -107,8 +110,8 @@ private:
 	bool bShiftKeyDown = false;
 
 	void Move(const FInputActionValue& InputActionValue);
-	void ClickMouseRight(const FInputActionValue& InputActionValue);
 	void CameraRotate(const FInputActionValue& InputActionValue);
+	void CameraZoomInZoomOut(const FInputActionValue& InputActionValue);
 	void AutoRun();
 
 	void CursorTrace();

@@ -19,6 +19,7 @@
 #include "UI/HUD/HKHUD.h"
 #include "Character/HKCharacterBase.h"
 #include "BlueprintGameplayTagLibrary.h"
+#include "Character/HKCharacter.h"
 
 
 
@@ -128,6 +129,7 @@ void AHKPlayerController::SetupInputComponent()
 	HKInputComponent->BindAction(MouseRightAction, ETriggerEvent::Started, this, &AHKPlayerController::MouseRightPressed);
 	HKInputComponent->BindAction(MouseRightAction, ETriggerEvent::Completed, this, &AHKPlayerController::MouseRightReleased);
 	HKInputComponent->BindAction(CameraRotateAction, ETriggerEvent::Triggered, this, &AHKPlayerController::CameraRotate);
+	HKInputComponent->BindAction(MouseWheelAction, ETriggerEvent::Triggered, this, &AHKPlayerController::CameraZoomInZoomOut);
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AHKPlayerController::ShiftPressed);
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AHKPlayerController::ShiftReleased);
 	HKInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
@@ -196,6 +198,13 @@ void AHKPlayerController::CameraRotate(const FInputActionValue& InputActionValue
 
 	GetPawn()->AddControllerYawInput(LookAxisVector.X);
 	GetPawn()->AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AHKPlayerController::CameraZoomInZoomOut(const FInputActionValue& InputActionValue)
+{
+	FVector2D Vector = InputActionValue.Get<FVector2D>();
+
+	Cast<AHKCharacter>(GetCharacter())->CameraZoomInZoomOut(Vector.X);
 }
 
 void AHKPlayerController::AutoRun()
