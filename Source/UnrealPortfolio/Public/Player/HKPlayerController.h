@@ -90,13 +90,25 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> MouseRightAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> CameraRotateAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> ShiftAction;
+
+	void MouseRightPressed() { bMouseRightDown = true; };
+	void MouseRightReleased() { bMouseRightDown = false; };
+	bool bMouseRightDown = false;
 
 	void ShiftPressed() { bShiftKeyDown = true; };
 	void ShiftReleased() { bShiftKeyDown = false; };
 	bool bShiftKeyDown = false;
 
 	void Move(const FInputActionValue& InputActionValue);
+	void ClickMouseRight(const FInputActionValue& InputActionValue);
+	void CameraRotate(const FInputActionValue& InputActionValue);
 	void AutoRun();
 
 	void CursorTrace();

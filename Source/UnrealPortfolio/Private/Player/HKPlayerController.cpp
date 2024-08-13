@@ -125,6 +125,9 @@ void AHKPlayerController::SetupInputComponent()
 	UHKInputComponent* HKInputComponent = CastChecked<UHKInputComponent>(InputComponent);
 
 	HKInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AHKPlayerController::Move);
+	HKInputComponent->BindAction(MouseRightAction, ETriggerEvent::Started, this, &AHKPlayerController::MouseRightPressed);
+	HKInputComponent->BindAction(MouseRightAction, ETriggerEvent::Completed, this, &AHKPlayerController::MouseRightReleased);
+	HKInputComponent->BindAction(CameraRotateAction, ETriggerEvent::Triggered, this, &AHKPlayerController::CameraRotate);
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AHKPlayerController::ShiftPressed);
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AHKPlayerController::ShiftReleased);
 	HKInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
@@ -182,6 +185,17 @@ void AHKPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControllerdPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControllerdPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
+}
+
+void AHKPlayerController::CameraRotate(const FInputActionValue& InputActionValue)
+{
+	if (!bMouseRightDown)
+		return;
+
+	FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
+
+	GetPawn()->AddControllerYawInput(LookAxisVector.X);
+	GetPawn()->AddControllerPitchInput(LookAxisVector.Y);
 }
 
 void AHKPlayerController::AutoRun()

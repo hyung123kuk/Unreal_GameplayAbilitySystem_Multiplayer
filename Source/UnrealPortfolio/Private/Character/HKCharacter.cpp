@@ -20,6 +20,8 @@ AHKCharacter::AHKCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+
+	
 }
 
 void AHKCharacter::BeginPlay()
