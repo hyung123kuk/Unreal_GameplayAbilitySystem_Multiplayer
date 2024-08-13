@@ -9,6 +9,8 @@
 #include "CharacterClassInfo.h"
 #include "GameplayTagContainer.h"
 #include "Item/Inventory.h"
+#include "Skill/SkillInventory.h"
+#include "Skill/SkillInfoData.h"
 #include "HKCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
@@ -54,11 +56,18 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 
+	USkillInventory* GetSkillInventory() { return SkillInventory; }
+	
+	UFUNCTION(BlueprintCallable)
+	void CastSkill(int SkillId);
+
+	void MakeSkillInventory();
+	void InitSkillInventory();
 
 protected:
 	void OccurGameplayTags(FGameplayTag GameplayTags);
-	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
+
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;
@@ -110,5 +119,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<USkillInventory> SkillInventoryClass;
+
+	UPROPERTY()
+	TObjectPtr<USkillInventory> SkillInventory;
 
 };

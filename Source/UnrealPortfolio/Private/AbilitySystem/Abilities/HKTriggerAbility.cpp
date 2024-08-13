@@ -10,7 +10,7 @@ void UHKTriggerAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	int ID = 0;
 	int UniqueID = 0;
-	K2_SetDataInformation(ID, UniqueID);
+	K2_SetDataInformation(IN ID,IN UniqueID);
 	FindTriggerData(ID, UniqueID);
 }
 

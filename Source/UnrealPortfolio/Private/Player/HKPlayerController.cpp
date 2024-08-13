@@ -63,6 +63,8 @@ void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
 		Inventory = NewObject<UInventory>(this, InventoryClass);
 
 		InitHUD();
+		Cast<AHKCharacterBase>(GetCharacter())->MakeSkillInventory();
+
 		InventoryWidget = CreateWidget<UHKSlotWidget>(GetWorld(), InventoryWidgetClass);
 		SkillWindowWidget = CreateWidget<UHKSlotWidget>(GetWorld(), SkillWindowWidgetClass);
 		InventoryWidget->AddToViewport();
@@ -70,6 +72,7 @@ void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
 		ToggleInventory();
 		ToggleSkillWindow();
 
+		Cast<AHKCharacterBase>(GetCharacter())->InitSkillInventory();
 		Inventory->ReSettingItems(PlayerInfo.UserItemInfo.ItemIds, PlayerInfo.UserItemInfo.ItemCounts);
 
 		for (FUserItem StartItem : StartItems)
@@ -134,6 +137,11 @@ void AHKPlayerController::TryUseItem(FUserItem Item)
 
 	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(FHKGameplayTags::Get().Trigger_UseItem);
 	GetASC()->TryActivateAbilitiesByTag(TagContainer);
+}
+
+USkillInventory* AHKPlayerController::GetSkillInventory()
+{
+	return Cast<AHKCharacterBase>(GetCharacter())->GetSkillInventory();;
 }
 
 void AHKPlayerController::ToggleInventory()
@@ -305,6 +313,7 @@ void AHKPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		ControlledPawn->AddMovementInput(WorldDirection);
 	}
 }
+
 
 UHKAbilitySystemComponent* AHKPlayerController::GetASC()
 {

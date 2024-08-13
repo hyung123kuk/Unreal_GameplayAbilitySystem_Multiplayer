@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameplayTagContainer.h"
 #include "Item/Inventory.h"
+#include "Skill/SkillInfoData.h"
 #include "HKPlayerController.generated.h"
 
 class UInputAction;
@@ -18,6 +19,7 @@ class UHKInputConfig;
 class UInventory;
 struct FInGamePlayerInfo;
 class UHKSlotWidget;
+class USkillInventory;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FQuickSlotDelegate,const FGameplayTag& , InputSlotTag);
@@ -38,6 +40,11 @@ public:
 	virtual void OnPossess(APawn* aPawn) override;
 	void SettingUserInformation(FInGamePlayerInfo PlayerInfo);
 	UInventory* GetInventory() { return Inventory; }
+
+	UFUNCTION(BlueprintCallable)
+	USkillInventory* GetSkillInventory();
+
+	UHKAbilitySystemComponent* GetASC();
 
 public:
 	UPROPERTY(BlueprintAssignable)
@@ -61,8 +68,7 @@ protected:
 	void TryUseItem(FUserItem Item);
 
 	UPROPERTY(BlueprintReadOnly)
-	FUserItem TempUseItem; // 서버로 전달할 정보 임시 저장소 (UseItem Ability에서 사용)
-
+	FUserItem TempUseItem; // 방금 사용한 아이템
 
 	void ToggleInventory();
 	void ToggleSkillWindow();
@@ -109,7 +115,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<UHKAbilitySystemComponent> HKAbilitySystemComponent;
 
-	UHKAbilitySystemComponent* GetASC();
+
 
 	FVector CachedDestination = FVector::ZeroVector;
 	float FollowTime = 0.f;
@@ -131,8 +137,5 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UHKSlotWidget> SkillWindowWidgetClass;
-
-
-
 
 };

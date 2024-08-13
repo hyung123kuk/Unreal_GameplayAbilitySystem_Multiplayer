@@ -21,6 +21,8 @@ public:
 
 	FEffectAssetTags EffectAssetTags;
 
+	void CastSkill();
+
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities);
 	void RemoveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& RemoveAbilities);
 

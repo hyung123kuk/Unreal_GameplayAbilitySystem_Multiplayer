@@ -6,6 +6,7 @@
 #include "UI/SlotWidgetController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Player/HKPlayerController.h"
+#include "Skill/SkillInventory.h"
 
 void USlot::Init(UHKSlotWidget* Parent, TArray<ESlotContainInformation> ContainTypes,int SlotNum, USlot* DSlot)
 {
@@ -35,6 +36,11 @@ void USlot::UseSlotItem()
 	{
 		FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
 		PlayerController->GetInventory()->UseItem(SlotInfoParams.Id, SlotInfoParams.UniqueId);
+	}
+	else if (GetContainInformationType() == ESlotContainInformation::Skill)
+	{
+		FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
+		PlayerController->GetSkillInventory()->TryCastSkill(SlotInfoParams.Id);
 	}
 }
 

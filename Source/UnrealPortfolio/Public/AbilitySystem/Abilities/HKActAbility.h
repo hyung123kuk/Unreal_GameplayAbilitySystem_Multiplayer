@@ -17,7 +17,7 @@ class UNREALPORTFOLIO_API UHKActAbility : public UHKGameplayAbility
 	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	virtual void OnOccurMontageEvent(FGameplayEventData Payload) override;
+	virtual void OnOccurMontageEvent(FGameplayEventData Payload) override;	
 
 	UFUNCTION(BlueprintImplementableEvent)
 	FGameplayTag K2_GetActTagType();

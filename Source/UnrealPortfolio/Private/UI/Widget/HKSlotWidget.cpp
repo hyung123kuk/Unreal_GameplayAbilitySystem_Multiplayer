@@ -58,6 +58,12 @@ void UHKSlotWidget::SetItemInfoWithIndex(USlotWidgetController* SlotWidgetContro
 		return;
 	}
 
+	if (SlotWidgetController == nullptr)
+	{
+		Slots[index]->RemoveSlotWidgetController();
+		return;
+	}
+
 	FSlotInfoWidgetControllerParams SlotWidget = SlotWidgetController->GetSlotInfoParmas();
 	SlotWidget.SlotWitdet = this;
 	SlotWidget.SlotNumber = index;
@@ -126,6 +132,23 @@ void UHKSlotWidget::SwapSlot(UHKSlotWidget* DragSlotWidget, int DragIndex, UHKSl
 	USlotWidgetController* DragSlotWidgetController = DragSlotWidget->GetSlots()[DragIndex]->GetSlotWidgetController();
 	USlotWidgetController* DropSlotWidgetController = DropSlotWidget->GetSlots()[DropIndex]->GetSlotWidgetController();
 
+	//끝 슬롯은 시작 슬롯의 아이템 타입에 따라 다른 함수 호출
+	switch (DragSlotItemType)
+	{
+	case ESlotContainInformation::Item:
+		DropSlotWidget->FromItemTypeData(DragSlotWidgetController, DropIndex);
+		break;
+	case ESlotContainInformation::Skill:
+		DropSlotWidget->FromSkillTypeData(DragSlotWidgetController, DropIndex);
+		break;
+	case ESlotContainInformation::Empty:
+		DropSlotWidget->GetSlots()[DropIndex]->RemoveSlotWidgetController();
+		break;
+	default:
+		check(false);
+		break;
+	}
+
 	//시작 슬롯은 끝 슬롯의 아이템 타입에 따라 다른 함수 호출
 	switch (DropSlotItemType)
 	{
@@ -136,26 +159,10 @@ void UHKSlotWidget::SwapSlot(UHKSlotWidget* DragSlotWidget, int DragIndex, UHKSl
 			DragSlotWidget->ToSkillTypeData(DropSlotWidgetController, DragIndex);
 			break;
 		case ESlotContainInformation::Empty:
-			DragSlotWidget->GetSlots()[DragIndex]->RemoveSlotWidgetController();
+			if (!DragSlotWidget->GetOnlyDragSlot()) // 끝점이 빈 슬롯이면 비울 것인지 (스킬창에서는 옮겼다고 비우면 안됨)
+				DragSlotWidget->GetSlots()[DragIndex]->RemoveSlotWidgetController();
 			break;
 
-		default:
-			check(false);
-			break;
-	}
-
-	//끝 슬롯은 시작 슬롯의 아이템 타입에 따라 다른 함수 호출
-	switch (DragSlotItemType)
-	{
-		case ESlotContainInformation::Item:
-			DropSlotWidget->FromItemTypeData(DragSlotWidgetController, DropIndex);
-			break;
-		case ESlotContainInformation::Skill:
-			DropSlotWidget->FromSkillTypeData(DragSlotWidgetController, DropIndex);
-			break;
-		case ESlotContainInformation::Empty:
-			DropSlotWidget->GetSlots()[DropIndex]->RemoveSlotWidgetController();
-			break;
 		default:
 			check(false);
 			break;

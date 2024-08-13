@@ -43,14 +43,14 @@ struct FItemInfomation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag EquipmentTag;
 
-	//몽타주에 사용할 추가 태그
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FGameplayTag MontageTypeTag;
-	
 	//사용시 발생하는 태그 (ex.몽타주)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FGameplayTag> TriggerTags;
 
+	//몽타주에 사용할 추가 태그
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag MontageTypeTag;
+	
 	//사용시 부여되는 어빌리티 ( 무기 교체시 해당 무기의 공격 어빌리티를 가진다던가.. )
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<UGameplayAbility>> GiveAbilities;

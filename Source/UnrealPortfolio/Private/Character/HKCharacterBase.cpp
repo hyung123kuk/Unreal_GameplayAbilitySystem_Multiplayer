@@ -137,14 +137,28 @@ void AHKCharacterBase::MulticastHandleDeath_Implementation()
 	bDead = true;
 }
 
-void AHKCharacterBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void AHKCharacterBase::InitAbilityActorInfo()
 {
+}
+
+void AHKCharacterBase::MakeSkillInventory()
+{
+	if (SkillInventoryClass != nullptr && SkillInventory == nullptr)
+	{
+		SkillInventory = NewObject<USkillInventory>(this, SkillInventoryClass);
+	}
+}
+
+void AHKCharacterBase::InitSkillInventory()
+{
+	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
+	SkillInventory->Init(HKASC);
+	if (!HasAuthority()) return;
+
+	if (SkillInventory != nullptr)
+	{
+		SkillInventory->AddSkillInventoryAbilities(HKASC);
+	}
 }
 
 void AHKCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
@@ -170,7 +184,6 @@ void AHKCharacterBase::AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility
 	if (!HasAuthority()) return;
 
 	HKASC->AddCharacterAbilities(Abilities);
-	
 }
 
 void AHKCharacterBase::RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities)
@@ -179,6 +192,11 @@ void AHKCharacterBase::RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbil
 	if (!HasAuthority()) return;
 
 	HKASC->RemoveAbilities(Abilities);
+}
+
+void AHKCharacterBase::CastSkill(int SkillId)
+{
+	SkillInventory->TryCastSkill(SkillId);
 }
 
 void AHKCharacterBase::OccurGameplayTags(FGameplayTag GameplayTags)

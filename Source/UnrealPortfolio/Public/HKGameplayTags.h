@@ -75,6 +75,17 @@ public:
 	FGameplayTag Act_SwapType_Bow;
 	FGameplayTag Act_SwapType_Staff;
 
+
+	//Skiil
+	FGameplayTag Skill_End;
+
+	FGameplayTag Skill_5Combo_1;
+	FGameplayTag Skill_5Combo_2;
+	FGameplayTag Skill_5Combo_3;
+	FGameplayTag Skill_5Combo_4;
+	FGameplayTag Skill_5Combo_5;
+
+
 	FGameplayTag EquipmentType_Weapon;
 
 	FGameplayTag Trigger_UseItem;

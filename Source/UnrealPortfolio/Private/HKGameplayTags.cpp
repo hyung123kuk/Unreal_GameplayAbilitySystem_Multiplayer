@@ -252,6 +252,42 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	//
+	//	Skiil
+	//
+
+	GameplayTags.Skill_End = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.End"),
+		FString("Skill End")
+	);
+
+	GameplayTags.Skill_5Combo_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.5Combo.1"),
+		FString("5Combo_1")
+	);
+
+	GameplayTags.Skill_5Combo_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.5Combo.2"),
+		FString("5Combo_2")
+	);
+
+	GameplayTags.Skill_5Combo_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.5Combo.3"),
+		FString("5Combo_3")
+	);
+
+	GameplayTags.Skill_5Combo_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.5Combo.4"),
+		FString("5Combo_4")
+	);
+
+	GameplayTags.Skill_5Combo_5 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.5Combo.5"),
+		FString("5Combo_5")
+	);
+
+
+
+	//
 	//	Act Type
 	//
 

@@ -51,7 +51,7 @@ struct FSlotStruct
 	TObjectPtr<UTexture2D> SlotTexture;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int Id;
+	int Id = -1;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int UniqueId;
@@ -75,7 +75,7 @@ public:
 	int FindEmptySlotIndex();
 	void SwapSlot(UHKSlotWidget* DragSlotWidget, int DragIndex, UHKSlotWidget* DropSlotWidget, int DropIndex);
 	TArray<TObjectPtr<USlot>> GetSlots() { return Slots; }
-
+	bool GetOnlyDragSlot() { return OnlyDrag; }
 
 	//Drop 슬롯 아이템 정보가 왔을 때
 	UFUNCTION(BlueprintImplementableEvent)
@@ -138,6 +138,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<TObjectPtr<USlot>> Slots;
+
+	UPROPERTY(EditAnywhere, Category = "Slot")
+	bool OnlyDrag = false;
 
 	//FSlotInfoWidgetControllerParams의 OriginSlotWitdet을 참고
 	//원래 있어야할 위치가 해당 Widget인 WidgetController들 이는 다른 SlotWidget에 가도 옮겨지지 않음.

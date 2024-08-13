@@ -37,7 +37,14 @@ bool UHKAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag
 	if (!InputTag.IsValid()) 
 		return false;
 
-	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	if (ActivatableAbilities.Items.Num() == 0)
+	{
+		int a = 5;
+		int b = 10;
+		a = b;
+	}
+
+	for (FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{

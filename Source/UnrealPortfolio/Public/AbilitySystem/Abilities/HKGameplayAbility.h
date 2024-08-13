@@ -41,7 +41,7 @@ protected:
 	virtual void OnOccurMontageEvent(FGameplayEventData Payload);
 
 	void PlayRandomActMontage(FGameplayTag Type);
-	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent);
+	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent,bool EndAbilityWhenCompleteMontage = true);
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
 protected:

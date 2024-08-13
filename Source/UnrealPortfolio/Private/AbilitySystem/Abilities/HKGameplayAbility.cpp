@@ -72,7 +72,7 @@ FTaggedMontage UHKGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<
 	return FTaggedMontage();
 }
 
-void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent)
+void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, bool EndAbilityWhenCompleteMontage)
 {
 	UE_LOG(LogTemp, Log, TEXT("%s"), *MontageEvent.GetTagName().ToString());
 
@@ -82,13 +82,14 @@ void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag M
 	WaitGameplayEventTask->ReadyForActivation();
 
 	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), MontageToPlay);
+	if (EndAbilityWhenCompleteMontage)
+	{
+		PlayAttackTask->OnCompleted.AddDynamic(this, &UHKGameplayAbility::OnCompleteMontage);
+	}
 
-	PlayAttackTask->OnCompleted.AddDynamic(this, &UHKGameplayAbility::OnCompleteMontage);
 	PlayAttackTask->OnCancelled.AddDynamic(this, &UHKGameplayAbility::OnCancelledMontage);
 	PlayAttackTask->OnInterrupted.AddDynamic(this, &UHKGameplayAbility::OnInterruptedMontage);
-
 	PlayAttackTask->ReadyForActivation();
-
 }
 
 void UHKGameplayAbility::OnOccurMontageEvent(FGameplayEventData Payload)
