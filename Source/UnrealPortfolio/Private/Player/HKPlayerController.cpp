@@ -36,44 +36,41 @@ void AHKPlayerController::PlayerTick(float DeltaTime)
 	AutoRun();
 }
 
+void AHKPlayerController::OnRep_Pawn()
+{
+	Super::OnRep_Pawn();
+	SettingUserSkillInventory();
+}
+
 void AHKPlayerController::OnRep_PlayerState()
 {
+	Super::OnRep_PlayerState();
+
 	UHKGameInstance* GameInstance = Cast<UHKGameInstance>(GetGameInstance());
 	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
-
-	SettingUserInformation(PlayerInfo);
+	SettingUserInventory(PlayerInfo);
 }
 
-
-void AHKPlayerController::OnPossess(APawn* aPawn)
+void AHKPlayerController::OnPossess(APawn* InPawn)
 {
-	Super::OnPossess(aPawn);
+	Super::OnPossess(InPawn);
 	UHKGameInstance* GameInstance = Cast<UHKGameInstance>(GetGameInstance());
 	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
-
-	SettingUserInformation(PlayerInfo);
+	SettingUserInventory(PlayerInfo);
+	SettingUserSkillInventory();
 }
 
-void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
+void AHKPlayerController::SettingUserInventory(FInGamePlayerInfo PlayerInfo)
 {
-	//한번만 초기화
 	if (Inventory == nullptr)
 	{
 		Inventory = NewObject<UInventory>(this, InventoryClass);
-
 		InitHUD();
-		Cast<AHKCharacterBase>(GetCharacter())->MakeSkillInventory();
-
 		InventoryWidget = CreateWidget<UHKSlotWidget>(GetWorld(), InventoryWidgetClass);
-		SkillWindowWidget = CreateWidget<UHKSlotWidget>(GetWorld(), SkillWindowWidgetClass);
 		InventoryWidget->AddToViewport();
-		SkillWindowWidget->AddToViewport();
 		ToggleInventory();
-		ToggleSkillWindow();
-
-		Cast<AHKCharacterBase>(GetCharacter())->InitSkillInventory();
 		Inventory->ReSettingItems(PlayerInfo.UserItemInfo.ItemIds, PlayerInfo.UserItemInfo.ItemCounts);
 
 		for (FUserItem StartItem : StartItems)
@@ -82,6 +79,19 @@ void AHKPlayerController::SettingUserInformation(FInGamePlayerInfo PlayerInfo)
 		}
 
 		Inventory->UseItemValueDelegate.AddDynamic(this, &AHKPlayerController::TryUseItem);
+	}
+}
+
+void AHKPlayerController::SettingUserSkillInventory()
+{
+	if (SkillWindowWidget == nullptr)
+	{
+		AHKCharacterBase* CharacterBase = Cast<AHKCharacterBase>(GetCharacter());
+		CharacterBase->MakeSkillInventory();
+		SkillWindowWidget = CreateWidget<UHKSlotWidget>(GetWorld(), SkillWindowWidgetClass);
+		SkillWindowWidget->AddToViewport();
+		ToggleSkillWindow();
+		CharacterBase->InitSkillInventory();
 	}
 }
 

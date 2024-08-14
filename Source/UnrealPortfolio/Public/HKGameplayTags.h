@@ -75,6 +75,8 @@ public:
 	FGameplayTag Act_SwapType_Bow;
 	FGameplayTag Act_SwapType_Staff;
 
+	//CoolDonw
+	FGameplayTag CoolDown_Attack;
 
 	//Skiil
 	FGameplayTag Skill_End;
@@ -85,6 +87,9 @@ public:
 	FGameplayTag Skill_5Combo_4;
 	FGameplayTag Skill_5Combo_5;
 
+	FGameplayTag Skill_MultiShot_1;
+
+	FGameplayTag Skill_SuddenAttack_1;
 
 	FGameplayTag EquipmentType_Weapon;
 

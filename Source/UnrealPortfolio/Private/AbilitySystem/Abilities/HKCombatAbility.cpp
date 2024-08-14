@@ -13,6 +13,8 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "Character/HKCharacter.h"
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerState.h"
 
 
 void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage)
@@ -105,6 +107,30 @@ void UHKCombatAbility::FacingTarget()
 
 void UHKCombatAbility::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)
 {
+}
+
+bool UHKCombatAbility::ServerProcess()
+{
+	const bool bDedicatedServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_DedicatedServer;
+	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
+	return bDedicatedServer || bListenServer;
+}
+
+bool UHKCombatAbility::IsListenServerCharacter()
+{
+	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (PlayerController == nullptr)
+		return false;
+
+	APlayerState* LocalPlayerState = PlayerController->GetPlayerState<APlayerState>();
+	if (LocalPlayerState == nullptr)
+		return false;
+	
+	APlayerState* PlayerState = Cast<APlayerState>(GetCurrentActorInfo()->OwnerActor);
+	bool LocalCharacter = PlayerState == LocalPlayerState;
+
+	return bListenServer && LocalCharacter;
 }
 
 void UHKCombatAbility::OnOccurMontageEvent(FGameplayEventData Payload)

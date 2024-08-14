@@ -27,8 +27,7 @@ void UHKProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	}
 	else
 	{
-		const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
-		if (bIsServer)
+		if (ServerProcess() && !IsListenServerCharacter())
 		{
 			FindTargetDataUnderMouse();
 		}
@@ -129,8 +128,16 @@ void UHKProjectileSpell::OccurMontageEvent(const AActor* AvatarActor, const FVec
 
 void UHKProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
-	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
-	if (!bIsServer) return;
+	if (!ServerProcess())
+	{
+		CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false);
+		return;
+	}
+
+	if (IsListenServerCharacter())
+	{
+		CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false);
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("SpawnProjectile"));
 	const FVector SocketLocation = ActorCombatInterface->GetCombatSocketLocation(TaggedMontage.SocketTag, TaggedMontage.SocketName);
@@ -171,5 +178,4 @@ void UHKProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation
 
 	Projectile->FinishSpawning(SpawnTransform);
 
-	OnCompleteAbility();
 }

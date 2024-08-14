@@ -35,6 +35,10 @@ protected:
 	void FacingTarget();
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation);
 
+	bool ServerProcess();
+	bool IsListenServerCharacter();
+
+
 protected:
 
 	FGameplayTag Team;

@@ -11,6 +11,7 @@
 #include "HKGameplayTags.h"
 #include "GameframeWork/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Game/HKGameInstance.h"
 
 
 AHKCharacter::AHKCharacter()

@@ -99,6 +99,7 @@ void UHKGameplayAbility::OnOccurMontageEvent(FGameplayEventData Payload)
 
 void UHKGameplayAbility::OnCompleteMontage()
 {
+	CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo,false);
 	bool bReplicateEndAbility = true;
 	bool bWasCancelled = false;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
@@ -120,6 +121,7 @@ void UHKGameplayAbility::OnInterruptedMontage()
 
 void UHKGameplayAbility::OnCompleteAbility()
 {
+	CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false);
 	bool bReplicateEndAbility = true;
 	bool bWasCancelled = false;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);

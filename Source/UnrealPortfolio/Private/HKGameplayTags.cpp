@@ -251,6 +251,18 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Cast Attack")
 	);
 
+
+	//
+	//	CoolDown
+	//
+
+	GameplayTags.CoolDown_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CoolDown.Attack"),
+		FString("Attack CoolDown")
+	);
+
+
+
 	//
 	//	Skiil
 	//
@@ -285,7 +297,15 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("5Combo_5")
 	);
 
+	GameplayTags.Skill_MultiShot_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.MultiShot.1"),
+		FString("MultiShot_1")
+	);
 
+	GameplayTags.Skill_SuddenAttack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.SuddenAttack.1"),
+		FString("SuddenAttack_1")
+	);
 
 	//
 	//	Act Type

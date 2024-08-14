@@ -37,18 +37,18 @@ bool UHKAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag
 	if (!InputTag.IsValid()) 
 		return false;
 
-	if (ActivatableAbilities.Items.Num() == 0)
-	{
-		int a = 5;
-		int b = 10;
-		a = b;
-	}
-
 	for (FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
 			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(AbilitySpec.Ability);
+			float CoolDownRemain = AbilitySpec.Ability->GetCooldownTimeRemaining(AbilityActorInfo.Get());
+			if (CoolDownRemain > 0.0f)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Cool Down : %f"), CoolDownRemain);
+				return true;
+			}
+
 			if (AbilityInterface != nullptr)
 			{
 				if (!AbilityInterface->GetLocalPlayerCondition(this))

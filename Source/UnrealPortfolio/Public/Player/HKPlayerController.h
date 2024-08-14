@@ -34,11 +34,16 @@ class UNREALPORTFOLIO_API AHKPlayerController : public APlayerController
 	
 	AHKPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
+	virtual void OnRep_Pawn() override;
+	virtual void OnRep_PlayerState() override;
+	virtual void OnPossess(APawn* InPawn) override;
+
 public:
+
 	UFUNCTION(BlueprintCallable)
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
-	virtual void OnPossess(APawn* aPawn) override;
-	void SettingUserInformation(FInGamePlayerInfo PlayerInfo);
+	void SettingUserInventory(FInGamePlayerInfo PlayerInfo);
+	void SettingUserSkillInventory();
 	UInventory* GetInventory() { return Inventory; }
 
 	UFUNCTION(BlueprintCallable)
@@ -79,7 +84,6 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	virtual void OnRep_PlayerState() override;
 	void InitHUD();
 
 private:
