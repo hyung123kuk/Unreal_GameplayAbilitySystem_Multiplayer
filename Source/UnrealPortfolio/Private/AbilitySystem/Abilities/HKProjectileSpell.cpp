@@ -27,9 +27,12 @@ void UHKProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	}
 	else
 	{
+		if (IsStandAlone())
+			return;
+
 		if (ServerProcess() && !IsListenServerCharacter())
 		{
-			FindTargetDataUnderMouse();
+			FindTargetDataUnderMouse(); // 클라이언트에서 데이터가 올 떄 까지 기다립니다.
 		}
 	}
 }

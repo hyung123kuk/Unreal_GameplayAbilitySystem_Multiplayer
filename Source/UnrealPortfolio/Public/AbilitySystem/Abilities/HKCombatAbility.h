@@ -36,6 +36,7 @@ protected:
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation);
 
 	bool ServerProcess();
+	bool IsStandAlone();
 	bool IsListenServerCharacter();
 
 

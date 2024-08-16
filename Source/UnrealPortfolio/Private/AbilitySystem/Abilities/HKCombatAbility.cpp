@@ -113,7 +113,14 @@ bool UHKCombatAbility::ServerProcess()
 {
 	const bool bDedicatedServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_DedicatedServer;
 	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
-	return bDedicatedServer || bListenServer;
+	const bool bStandalone = GetAvatarActorFromActorInfo()->GetNetMode() == NM_Standalone;
+	return bDedicatedServer || bListenServer || bStandalone;
+}
+
+bool UHKCombatAbility::IsStandAlone()
+{
+	const bool bStandalone = GetAvatarActorFromActorInfo()->GetNetMode() == NM_Standalone;
+	return bStandalone;
 }
 
 bool UHKCombatAbility::IsListenServerCharacter()
@@ -123,14 +130,8 @@ bool UHKCombatAbility::IsListenServerCharacter()
 	if (PlayerController == nullptr)
 		return false;
 
-	APlayerState* LocalPlayerState = PlayerController->GetPlayerState<APlayerState>();
-	if (LocalPlayerState == nullptr)
-		return false;
-	
-	APlayerState* PlayerState = Cast<APlayerState>(GetCurrentActorInfo()->OwnerActor);
-	bool LocalCharacter = PlayerState == LocalPlayerState;
-
-	return bListenServer && LocalCharacter;
+	const bool bLocalCharacter = PlayerController == GetActorInfo().PlayerController;
+	return bListenServer && bLocalCharacter;
 }
 
 void UHKCombatAbility::OnOccurMontageEvent(FGameplayEventData Payload)

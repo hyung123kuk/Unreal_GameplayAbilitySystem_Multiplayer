@@ -98,6 +98,7 @@ void UHKMeleeAttack::OccurMontageEvent(const AActor* TargetActor, const FVector&
 		DrawDebugSphere(GetWorld(), CombatSocketLocation, CombatRange, 16, FColor::Red, false, 1.5f);
 	}
 
+	CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false);
 }
 
 

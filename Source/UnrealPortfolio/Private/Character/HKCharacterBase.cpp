@@ -8,6 +8,8 @@
 #include "HKGameplayTags.h"
 #include "BlueprintGameplayTagLibrary.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Net/UnrealNetwork.h"
+
 
 AHKCharacterBase::AHKCharacterBase()
 {
@@ -26,9 +28,21 @@ AHKCharacterBase::AHKCharacterBase()
 
 }
 
+void AHKCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+	OnRep_CharacterClass();
+}
+
 UAbilitySystemComponent* AHKCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AHKCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AHKCharacterBase, CharacterClass);
 }
 
 void AHKCharacterBase::Die()
@@ -192,6 +206,11 @@ void AHKCharacterBase::RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbil
 	if (!HasAuthority()) return;
 
 	HKASC->RemoveAbilities(Abilities);
+}
+
+void AHKCharacterBase::OnRep_CharacterClass()
+{
+	SetCharacterClassWeaponType(CharacterClass);
 }
 
 void AHKCharacterBase::CastSkill(int SkillId)

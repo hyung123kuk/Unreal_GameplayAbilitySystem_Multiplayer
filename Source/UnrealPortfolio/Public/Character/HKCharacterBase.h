@@ -26,8 +26,10 @@ class UNREALPORTFOLIO_API AHKCharacterBase : public ACharacter, public IAbilityS
 
 public:
 	AHKCharacterBase();
+	virtual void BeginPlay() override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	/** Combat Interface */
 	virtual void Die() override;
@@ -92,7 +94,13 @@ protected:
 
 	bool bDead = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
+	UFUNCTION()
+	void OnRep_CharacterClass();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetCharacterClassWeaponType(ECharacterClass NewCharacterClass);
+
+	UPROPERTY(ReplicatedUsing = OnRep_CharacterClass, EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
