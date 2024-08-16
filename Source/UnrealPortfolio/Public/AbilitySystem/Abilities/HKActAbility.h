@@ -23,6 +23,6 @@ protected:
 	FGameplayTag K2_GetActTagType();
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void K2_OnOccurMontageEvent(FGameplayEventData Payload);
+	void K2_OnOccurMontageEvent();
 
 };

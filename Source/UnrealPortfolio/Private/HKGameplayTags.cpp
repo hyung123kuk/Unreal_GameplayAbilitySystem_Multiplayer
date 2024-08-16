@@ -261,7 +261,10 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("Attack CoolDown")
 	);
 
-
+	GameplayTags.CoolDown_SwapWeapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CoolDown.SwapWeapon"),
+		FString("SwapWeapon CoolDown")
+	);
 
 	//
 	//	Skiil

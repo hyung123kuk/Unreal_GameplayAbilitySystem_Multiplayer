@@ -12,7 +12,7 @@ public:
 	static void InitializeNativeGameplayTags();
 
 	//
-	//	Primary Attribute;
+	//	Primary Attribute
 	//
 	FGameplayTag Attribute_Primary_Strength;
 	FGameplayTag Attribute_Primary_Intelligence;
@@ -20,7 +20,7 @@ public:
 	FGameplayTag Attribute_Primary_Vigor;
 
 	//
-	//	Secondary Attribute;
+	//	Secondary Attribute
 	//
 	FGameplayTag Attribute_Secondary_Armor;
 	FGameplayTag Attribute_Secondary_MissChance;
@@ -36,7 +36,7 @@ public:
 	FGameplayTag Team_3;
 
 	//
-	//Input Tags;
+	//	Input Tags
 	//
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -75,8 +75,9 @@ public:
 	FGameplayTag Act_SwapType_Bow;
 	FGameplayTag Act_SwapType_Staff;
 
-	//CoolDonw
+	//CoolDown
 	FGameplayTag CoolDown_Attack;
+	FGameplayTag CoolDown_SwapWeapon;
 
 	//Skiil
 	FGameplayTag Skill_End;

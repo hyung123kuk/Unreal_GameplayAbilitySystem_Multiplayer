@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/HKCharacterBase.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -23,6 +24,31 @@ bool UHKGameplayAbility::IsLocalPlayer()
 		return false;
 	}
 	return true;
+}
+
+bool UHKGameplayAbility::ServerProcess()
+{
+	const bool bDedicatedServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_DedicatedServer;
+	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
+	const bool bStandalone = GetAvatarActorFromActorInfo()->GetNetMode() == NM_Standalone;
+	return bDedicatedServer || bListenServer || bStandalone;
+}
+
+bool UHKGameplayAbility::IsStandAlone()
+{
+	const bool bStandalone = GetAvatarActorFromActorInfo()->GetNetMode() == NM_Standalone;
+	return bStandalone;
+}
+
+bool UHKGameplayAbility::IsListenServerCharacter()
+{
+	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (PlayerController == nullptr)
+		return false;
+
+	const bool bLocalCharacter = PlayerController == GetActorInfo().PlayerController;
+	return bListenServer && bLocalCharacter;
 }
 
 void UHKGameplayAbility::FindTargetDataUnderMouse()

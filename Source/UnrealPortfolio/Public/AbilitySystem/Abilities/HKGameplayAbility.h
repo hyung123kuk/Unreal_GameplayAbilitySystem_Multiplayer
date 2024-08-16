@@ -24,6 +24,9 @@ protected:
 	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
 
 	bool IsLocalPlayer();
+	bool ServerProcess();
+	bool IsStandAlone();
+	bool IsListenServerCharacter();
 
 	virtual void FindTargetDataUnderMouse();
 
