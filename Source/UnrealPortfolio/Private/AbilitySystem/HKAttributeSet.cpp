@@ -126,7 +126,7 @@ void UHKAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		{
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
+			UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health : %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 			const bool bFatal = NewHealth <= 0.f;
 			if (bFatal)
 			{

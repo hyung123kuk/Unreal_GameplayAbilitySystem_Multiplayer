@@ -16,4 +16,5 @@ void UHKActAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 void UHKActAbility::OnOccurMontageEvent(FGameplayEventData Payload)
 {
 	K2_OnOccurMontageEvent();
+	OnCompleteAbility();
 }

@@ -42,10 +42,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
+	AActor* GetMousePointerActor();
+	AActor* GetLockOnTarget() { return LockOnTargetActor; }
 	void SettingUserInventory(FInGamePlayerInfo PlayerInfo);
 	void SettingUserSkillInventory();
 	UInventory* GetInventory() { return Inventory; }
-
+	void MoveToDestination(FVector Destination); // SkillAbility에서 멀면 다가가는 용도
+	void LockOnTarget(AActor* Target,float DistanceToOccurTag, FGameplayTag EventTag);
 	UFUNCTION(BlueprintCallable)
 	USkillInventory* GetSkillInventory();
 
@@ -53,7 +56,13 @@ public:
 
 public:
 	UPROPERTY(BlueprintAssignable)
-	FQuickSlotDelegate QuickSlotDelegate;
+	FQuickSlotDelegate QuickSlotPressedDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FQuickSlotDelegate QuickSlotHeldDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FQuickSlotDelegate QuickSlotReleasedDelegate;
 
 protected:
 
@@ -128,19 +137,23 @@ private:
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UHKInputConfig> InputConfig;
 
 	UPROPERTY()
 	TObjectPtr<UHKAbilitySystemComponent> HKAbilitySystemComponent;
 
-
-
 	FVector CachedDestination = FVector::ZeroVector;
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
 	bool bAutoRunning = false;
 	bool bTargeting = false;
+
+	bool bLockOn = false;
+	AActor* LockOnTargetActor;
+	float LockOnDistanceToOccurTag;
+	FGameplayTag LockOnEventTag;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;

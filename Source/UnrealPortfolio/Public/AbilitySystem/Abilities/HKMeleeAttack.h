@@ -26,6 +26,4 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
 	float Damage;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MeleeAttack")
-	bool DirectAttack;
 };

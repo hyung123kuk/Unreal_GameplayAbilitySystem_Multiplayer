@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 
+
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/HKAttributeSet.h"
 #include "HKGameplayTags.h"
@@ -79,6 +80,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bMiss = FMath::RandRange(1, 100) < TargetMissChance;
 	if (bMiss)
 	{
+
 		UHKAbilitySystemLibrary::SetIsMiss(EffectContextHandle, bMiss);
 		return;
 	}

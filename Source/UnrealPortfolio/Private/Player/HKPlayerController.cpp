@@ -62,6 +62,14 @@ void AHKPlayerController::OnPossess(APawn* InPawn)
 	SettingUserSkillInventory();
 }
 
+AActor* AHKPlayerController::GetMousePointerActor()
+{
+	if (ThisActor == nullptr)
+		return nullptr;
+
+	return ThisActor->GetTarget();
+}
+
 void AHKPlayerController::SettingUserInventory(FInGamePlayerInfo PlayerInfo)
 {
 	if (Inventory == nullptr)
@@ -227,7 +235,23 @@ void AHKPlayerController::AutoRun()
 		ControlledPawn->AddMovementInput(Direction);
 
 		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
-		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		if (bLockOn)
+		{
+			if (DistanceToDestination <= LockOnDistanceToOccurTag)
+			{
+				ClickMouseTarget = LockOnTargetActor;
+				ThisActor = Cast<IMouseTargetActorInterface>(LockOnTargetActor);
+				Cast<IMouseTargetActorInterface>(ThisActor)->UnHighlightActor();
+
+				AbilityInputTagHeld(LockOnEventTag);
+				bAutoRunning = false;
+				bLockOn = false;
+				LockOnTargetActor = nullptr;
+				LockOnEventTag = FGameplayTag();
+				LockOnDistanceToOccurTag = 0.f;
+			}
+		}
+		else if (DistanceToDestination <= AutoRunAcceptanceRadius)
 		{
 			bAutoRunning = false;
 		}
@@ -237,6 +261,13 @@ void AHKPlayerController::AutoRun()
 void AHKPlayerController::CursorTrace()
 {
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (bLockOn)
+	{
+		if(LockOnTargetActor != nullptr)
+			Cast<IMouseTargetActorInterface>(LockOnTargetActor)->HighlightActor();
+		return;
+	}
+
 	if (!CursorHit.bBlockingHit)
 		return;
 
@@ -260,6 +291,7 @@ void AHKPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		bTargeting = ThisActor ? true : false;
 		ClickMouseTarget = ThisActor ? ThisActor->GetTarget() : nullptr;
 		bAutoRunning = false;
+		bLockOn = false;
 	}
 
 	if (InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_I))
@@ -274,12 +306,18 @@ void AHKPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 	if (InputTag.MatchesTag(FHKGameplayTags::Get().InputTag_Quick))
 	{
-		QuickSlotDelegate.Broadcast(InputTag);
+		QuickSlotPressedDelegate.Broadcast(InputTag);
 	}
 }
 
 void AHKPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	if (InputTag.MatchesTag(FHKGameplayTags::Get().InputTag_Quick))
+	{
+		QuickSlotReleasedDelegate.Broadcast(InputTag);
+		return;
+	}
+
 	if (!InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_LMB))
 	{
 		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
@@ -317,6 +355,12 @@ void AHKPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AHKPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	if (InputTag.MatchesTag(FHKGameplayTags::Get().InputTag_Quick))
+	{
+		QuickSlotHeldDelegate.Broadcast(InputTag);
+		return;
+	}
+
 	if (!InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_LMB))
 	{
 		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
@@ -340,11 +384,45 @@ void AHKPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
+	MoveToDestination(CachedDestination);
+}
+
+void AHKPlayerController::MoveToDestination(FVector Destination)
+{
 	if (APawn* ControlledPawn = GetPawn())
 	{
-		const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+		const FVector WorldDirection = (Destination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 		ControlledPawn->AddMovementInput(WorldDirection);
 	}
+}
+
+void AHKPlayerController::LockOnTarget(AActor* Target, float DistanceToOccurTag, FGameplayTag EventTag)
+{
+	if (Target == nullptr)
+		return;
+
+	bLockOn = true;
+	LockOnTargetActor = Target;
+	LockOnDistanceToOccurTag = DistanceToOccurTag;
+	LockOnEventTag = EventTag;
+
+	CachedDestination = Target->GetActorLocation();
+	const APawn* ControlledPawn = GetPawn();
+	if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+	{
+		Spline->ClearSplinePoints();
+		for (const FVector& PointLoc : NavPath->PathPoints)
+		{
+			Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+			//DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
+		}
+		if (NavPath->PathPoints.Num() > 0)
+		{
+			CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
+			bAutoRunning = true;
+		}
+	}
+
 }
 
 

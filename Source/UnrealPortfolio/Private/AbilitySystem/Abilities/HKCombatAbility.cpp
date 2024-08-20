@@ -30,16 +30,27 @@ bool UHKCombatAbility::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 		AActor* ClickMouseTarget = PlayerController->GetLastTargetActor();
 		if (ClickMouseTarget == nullptr)
 		{
-			return false;
+			if (bLockOn)
+			{
+				ClickMouseTarget = PlayerController->GetLockOnTarget();
+			}
+
+			if (ClickMouseTarget == nullptr)
+				return false;
 		}
 
-		if (PlayerCharacter->GetDistanceTo(ClickMouseTarget) > CombatRange)
+		if (PlayerCharacter->GetDistanceTo(ClickMouseTarget) <= CombatRange)
 		{
-			return false;
+			return true;
+		}
+
+		if (bLockOn)
+		{
+			PlayerController->LockOnTarget(ClickMouseTarget, CombatRange - LockOnCloserRange, StartupInputTag);
 		}
 	}
 
-	return true;
+	return false;
 }
 
 void UHKCombatAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -91,6 +102,13 @@ bool UHKCombatAbility::PlayRandomAttackMontage(FGameplayTag AttackType)
 	return true;
 }
 
+
+
+void UHKCombatAbility::FacingPosition(const FVector& TargetPosition)
+{
+	ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), TargetPosition);
+}
+
 void UHKCombatAbility::FacingTarget()
 {
 	Target = ActorCombatInterface->GetCombatTarget();
@@ -106,7 +124,7 @@ void UHKCombatAbility::OccurMontageEvent(const AActor* TargetActor, const FVecto
 
 void UHKCombatAbility::OnOccurMontageEvent(FGameplayEventData Payload)
 {
-	UE_LOG(LogTemp, Log, TEXT("OccurMontageEvent"));
+	UE_LOG(LogTemp, Log, TEXT("UHKCombatAbility[OnOccurMontageEvent] MontageTagEventTrigger!"));
 	const FVector CombatSocketLocation = ActorCombatInterface->GetCombatSocketLocation(TaggedMontage.SocketTag, TaggedMontage.SocketName);
 	OccurMontageEvent(Target, CombatSocketLocation);
 }

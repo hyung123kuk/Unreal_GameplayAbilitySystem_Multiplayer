@@ -34,15 +34,26 @@ public:
 	FSkiilCoolTimeDelegate SkillCoolTimeDelegate;
 
 	UPROPERTY(BlueprintAssignable)
-	FSkiilDelegate CastSkillDelegate;
+	FSkiilDelegate PressedSkillDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FSkiilDelegate HeldSkillDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FSkiilDelegate ReleasedSkillDelegate;
 	
 public:
 	UFUNCTION(BlueprintCallable)
 	FSkillInfo FindSkill(const int Id);
-	
-	UFUNCTION(BlueprintCallable)
-	void TryCastSkill(const int Id);
 
+	UFUNCTION(BlueprintCallable)
+	void PressedSkill(const int Id);
+
+	UFUNCTION(BlueprintCallable)
+	void HeldSkill(const int Id);
+
+	UFUNCTION(BlueprintCallable)
+	void ReleasedSkill(const int Id);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Skills")

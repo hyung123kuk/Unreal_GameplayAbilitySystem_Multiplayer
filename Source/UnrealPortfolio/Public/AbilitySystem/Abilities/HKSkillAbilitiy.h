@@ -48,10 +48,11 @@ class UNREALPORTFOLIO_API UHKSkillAbilitiy : public UHKCombatAbility
 	GENERATED_BODY()
 	
 public:
+	virtual bool GetLocalPlayerCondition(UHKAbilitySystemComponent* AbilitySystemComponent) override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
-	
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation) override;
+	UFUNCTION()
 	virtual void CastSkill();
 
 protected:

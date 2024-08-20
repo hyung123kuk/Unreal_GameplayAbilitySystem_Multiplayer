@@ -213,11 +213,6 @@ void AHKCharacterBase::OnRep_CharacterClass()
 	SetCharacterClassWeaponType(CharacterClass);
 }
 
-void AHKCharacterBase::CastSkill(int SkillId)
-{
-	SkillInventory->TryCastSkill(SkillId);
-}
-
 void AHKCharacterBase::OccurGameplayTags(FGameplayTag GameplayTags)
 {
 	FGameplayTagContainer TagContainer = UBlueprintGameplayTagLibrary::MakeGameplayTagContainerFromTag(GameplayTags);

@@ -50,7 +50,7 @@ protected:
 protected:
 	FTaggedMontage TaggedMontage;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AHKCharacterBase> CharacterBase;
 
 public:

@@ -32,10 +32,9 @@ protected:
 	bool IsSameTeam(const AActor* Actor,const AActor* Actor2);
 	bool PlayRandomAttackMontage(FGameplayTag AttackType);
 
+	void FacingPosition(const FVector& TargetPosition);
 	void FacingTarget();
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation);
-
-
 
 protected:
 
@@ -44,10 +43,15 @@ protected:
 
 	TObjectPtr<AActor> Target;
 
+	UPROPERTY(EditDefaultsOnly, Category = "LockON")
+	bool bLockOn; //타겟 LockOn
+	UPROPERTY(EditDefaultsOnly, Category = "LockON")
+	float LockOnCloserRange = 30.f; //타겟 LockOn 시전 사거리 감소
 	UPROPERTY(EditDefaultsOnly, Category = "CombatRange")
-	bool bCloserMouseTarget;
+	bool bCloserMouseTarget; //마우스의 해당 타겟 까지 가야함
 	UPROPERTY(EditDefaultsOnly, Category = "CombatRange")
-	float CombatRange;
+	float CombatRange; //bCloserMouseTarget = true시 사거리
+
 
 private:
 	virtual void OnOccurMontageEvent(FGameplayEventData Payload) override;

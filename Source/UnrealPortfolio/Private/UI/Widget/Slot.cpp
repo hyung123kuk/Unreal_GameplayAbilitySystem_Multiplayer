@@ -29,7 +29,7 @@ void USlot::SetSlotWIdgetController(USlotWidgetController* slotWidgetController)
 	Refresh();
 }
 
-void USlot::UseSlotItem()
+void USlot::PressedSlot()
 {
 	AHKPlayerController* PlayerController = Cast<AHKPlayerController>(GetOwningPlayer());
 	if (GetContainInformationType() == ESlotContainInformation::Item)
@@ -40,7 +40,27 @@ void USlot::UseSlotItem()
 	else if (GetContainInformationType() == ESlotContainInformation::Skill)
 	{
 		FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
-		PlayerController->GetSkillInventory()->TryCastSkill(SlotInfoParams.Id);
+		PlayerController->GetSkillInventory()->PressedSkill(SlotInfoParams.Id);
+	}
+}
+
+void USlot::HeldSlot()
+{
+	AHKPlayerController* PlayerController = Cast<AHKPlayerController>(GetOwningPlayer());
+	if (GetContainInformationType() == ESlotContainInformation::Skill)
+	{
+		FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
+		PlayerController->GetSkillInventory()->HeldSkill(SlotInfoParams.Id);
+	}
+}
+
+void USlot::ReleaseSlot()
+{
+	AHKPlayerController* PlayerController = Cast<AHKPlayerController>(GetOwningPlayer());
+	if (GetContainInformationType() == ESlotContainInformation::Skill)
+	{
+		FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
+		PlayerController->GetSkillInventory()->ReleasedSkill(SlotInfoParams.Id);
 	}
 }
 
@@ -66,7 +86,7 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 	else if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Click : Right Button Down"));
-		UseSlotItem();
+		PressedSlot();
 	}
 
 	return reply.NativeReply;

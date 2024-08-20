@@ -60,9 +60,6 @@ public:
 
 	USkillInventory* GetSkillInventory() { return SkillInventory; }
 	
-	UFUNCTION(BlueprintCallable)
-	void CastSkill(int SkillId);
-
 	void MakeSkillInventory();
 	void InitSkillInventory();
 

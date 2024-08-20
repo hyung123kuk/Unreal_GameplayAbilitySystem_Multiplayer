@@ -46,7 +46,7 @@ FSkillInfo USkillInventory::FindSkill(const int Id)
 	return FSkillInfo();
 }
 
-void USkillInventory::TryCastSkill(const int Id)
+void USkillInventory::PressedSkill(const int Id)
 {
 	for (FSkillInfo Skill : Skills)
 	{
@@ -54,7 +54,33 @@ void USkillInventory::TryCastSkill(const int Id)
 		{
 			UHKGameplayAbility* HKGameplayAbility = Cast<UHKGameplayAbility>(Skill.SkillAbility.GetDefaultObject());
 			ASC->AbilityInputTagHeld(HKGameplayAbility->StartupInputTag);
-			CastSkillDelegate.Broadcast(Skill);
+			PressedSkillDelegate.Broadcast(Skill);
+		}
+	}
+}
+
+void USkillInventory::HeldSkill(const int Id)
+{
+	for (FSkillInfo Skill : Skills)
+	{
+		if (Skill.Id == Id)
+		{
+			UHKGameplayAbility* HKGameplayAbility = Cast<UHKGameplayAbility>(Skill.SkillAbility.GetDefaultObject());
+			ASC->AbilityInputTagHeld(HKGameplayAbility->StartupInputTag);
+			HeldSkillDelegate.Broadcast(Skill);
+		}
+	}
+}
+
+void USkillInventory::ReleasedSkill(const int Id)
+{
+	for (FSkillInfo Skill : Skills)
+	{
+		if (Skill.Id == Id)
+		{
+			UHKGameplayAbility* HKGameplayAbility = Cast<UHKGameplayAbility>(Skill.SkillAbility.GetDefaultObject());
+			ASC->AbilityInputTagReleased(HKGameplayAbility->StartupInputTag);
+			ReleasedSkillDelegate.Broadcast(Skill);
 		}
 	}
 }

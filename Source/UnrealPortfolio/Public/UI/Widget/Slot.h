@@ -26,7 +26,13 @@ public:
 	void SetSlotWIdgetController(USlotWidgetController* slotWidgetController);
 
 	UFUNCTION(BlueprintCallable)
-	void UseSlotItem();
+	void PressedSlot();
+
+	UFUNCTION(BlueprintCallable)
+	void HeldSlot();
+
+	UFUNCTION(BlueprintCallable)
+	void ReleaseSlot();
 
 	ESlotContainInformation GetContainInformationType();
 	UHKSlotWidget* GetParentWidget() { return SlotWidget; }

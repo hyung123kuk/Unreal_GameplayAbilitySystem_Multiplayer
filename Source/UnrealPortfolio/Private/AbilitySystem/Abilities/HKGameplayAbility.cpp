@@ -100,7 +100,7 @@ FTaggedMontage UHKGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<
 
 void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, bool EndAbilityWhenCompleteMontage)
 {
-	UE_LOG(LogTemp, Log, TEXT("%s"), *MontageEvent.GetTagName().ToString());
+	UE_LOG(LogTemp, Log, TEXT("HKGameplayAbility[PlayMontage] MontageEventTag : %s"), *MontageEvent.GetTagName().ToString());
 
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, MontageEvent);
 	WaitGameplayEventTask->EventReceived.AddDynamic(this, &UHKGameplayAbility::OnOccurMontageEvent);
