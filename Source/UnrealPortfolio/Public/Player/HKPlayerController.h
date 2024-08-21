@@ -20,6 +20,7 @@ class UInventory;
 struct FInGamePlayerInfo;
 class UHKSlotWidget;
 class USkillInventory;
+class UDamageTextComponent;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FQuickSlotDelegate,const FGameplayTag& , InputSlotTag);
@@ -39,6 +40,9 @@ class UNREALPORTFOLIO_API AHKPlayerController : public APlayerController
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:
+
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bMiss, bool bCriticalHit);
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetLastTargetActor() { return ClickMouseTarget; }
@@ -169,5 +173,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UHKSlotWidget> SkillWindowWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
 };

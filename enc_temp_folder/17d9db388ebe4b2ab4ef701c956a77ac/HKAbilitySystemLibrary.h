@@ -7,7 +7,6 @@
 #include "Character/CharacterClassInfo.h"
 #include "HKAbilitySystemLibrary.generated.h"
 
-class UOverlayWidgetController;
 
 /**
  * 
@@ -18,8 +17,6 @@ class UNREALPORTFOLIO_API UHKAbilitySystemLibrary : public UBlueprintFunctionLib
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintPure, Category = "HKAbilitySystemLibrary|WidgetController")
-	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "HKAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);

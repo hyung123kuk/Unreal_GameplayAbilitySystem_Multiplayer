@@ -31,7 +31,7 @@ struct FOnAttributeChangeData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class UNREALPORTFOLIO_API UOverlayWidgetController : public UHKGASWidgetController
 {
 	GENERATED_BODY()

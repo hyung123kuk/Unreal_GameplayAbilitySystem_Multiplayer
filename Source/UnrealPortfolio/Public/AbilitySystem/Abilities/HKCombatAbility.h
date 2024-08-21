@@ -29,7 +29,7 @@ protected:
 
 	virtual void FindTargetDataUnderMouse() override;
 
-	bool IsSameTeam(const AActor* Actor,const AActor* Actor2);
+	bool IsSameTeam(AActor* Actor,AActor* Actor2);
 	bool PlayRandomAttackMontage(FGameplayTag AttackType);
 
 	void FacingPosition(const FVector& TargetPosition);

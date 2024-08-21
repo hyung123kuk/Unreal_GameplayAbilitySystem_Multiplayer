@@ -11,6 +11,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Interaction/CombatInterface.h"
 #include "AbilitySystem/HKAbilitySystemLibrary.h"
+#include "Player/HKPlayerController.h"
 
 UHKAttributeSet::UHKAttributeSet()
 {
@@ -103,6 +104,7 @@ void UHKAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& 
 }
 
 
+
 void UHKAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -126,7 +128,7 @@ void UHKAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		{
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-			UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health : %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
+			UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health : %f / %f"), *Props.TargetAvatarActor->GetName(), GetHealth(), GetMaxHealth());
 			const bool bFatal = NewHealth <= 0.f;
 			if (bFatal)
 			{
@@ -146,10 +148,30 @@ void UHKAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 			const bool bMiss = UHKAbilitySystemLibrary::IsMiss(Props.EffectContextHandle);
 			const bool bCriticalHit = UHKAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-
+			ShowFloatingText(Props, LocalIncomingDamage, bMiss, bCriticalHit);
 		}
 	}
 }
+
+void UHKAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bMiss, bool bCriticalHit) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		//플레이어가 피해를 입힐 때
+		if (AHKPlayerController* PC = Cast<AHKPlayerController>(Props.SourceCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bMiss, bCriticalHit);
+			return;
+		}
+
+		//적이 피해를 입힐 때
+		if (AHKPlayerController* PC = Cast<AHKPlayerController>(Props.TargetCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bMiss, bCriticalHit);
+		}
+	}
+}
+
 
 void UHKAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {

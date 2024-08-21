@@ -10,25 +10,6 @@
 #include "Interaction/CombatInterface.h"
 #include "Interaction/MouseTargetActorInterface.h"
 #include "AbilitySystemComponent.h"
-#include "UI/HUD/HKHUD.h"
-#include "UI/WidgetController/InGame/OverlayWidgetController.h"
-
-UOverlayWidgetController* UHKAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
-{
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
-	{
-		if (AHKHUD* HKHUD = Cast<AHKHUD>(PC->GetHUD()))
-		{
-			AHKPlayerState* PS = PC->GetPlayerState<AHKPlayerState>();
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AS = PS->GetAttributeSet();
-			const FGASWidgetControllerParams WidgetFControllerParams(PC, PS, ASC, AS);
-			return HKHUD->GetOverlayWidgetController(WidgetFControllerParams);
-		}
-	}
-
-	return nullptr;
-}
 
 UCharacterClassInfo* UHKAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {

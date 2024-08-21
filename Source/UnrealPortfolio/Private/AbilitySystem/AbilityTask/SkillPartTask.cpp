@@ -82,7 +82,7 @@ void USkillPartTask::OnEndSkillPartTask()
 	EndSkillPartTask.Broadcast();
 }
 
-bool USkillPartTask::IsSameTeam(const AActor* Actor, const AActor* Actor2)
+bool USkillPartTask::IsSameTeam(AActor* Actor, AActor* Actor2)
 {
 	return UHKAbilitySystemLibrary::IsSameTeam(Actor, Actor2);
 }

@@ -77,7 +77,7 @@ void UHKCombatAbility::FindTargetDataUnderMouse()
 	}
 }
 
-bool UHKCombatAbility::IsSameTeam(const AActor* Actor,const AActor* Actor2)
+bool UHKCombatAbility::IsSameTeam(AActor* Actor,AActor* Actor2)
 {
 	return UHKAbilitySystemLibrary::IsSameTeam(Actor,Actor2);
 }

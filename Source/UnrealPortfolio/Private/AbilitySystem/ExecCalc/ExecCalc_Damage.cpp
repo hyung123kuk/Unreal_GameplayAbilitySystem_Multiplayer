@@ -75,7 +75,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float TargetMissChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MissChanceDef, EvaluationParameters, TargetMissChance);
 	TargetMissChance = FMath::Max<float>(TargetMissChance, 0.f);
-	UE_LOG(LogTemp, Log, TEXT("Execute_Implementation"));
 	const bool bMiss = FMath::RandRange(1, 100) < TargetMissChance;
 	if (bMiss)
 	{
@@ -103,6 +102,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	UHKAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 	Damage = bCriticalHit ? 2.f * Damage + SourceCriticalHitDamage : Damage;
+
+	Damage = (Damage * FMath::RandRange(-0.1f, 0.1f)) + Damage;
 
 	FGameplayModifierEvaluatedData EvaluatedData(UHKAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);

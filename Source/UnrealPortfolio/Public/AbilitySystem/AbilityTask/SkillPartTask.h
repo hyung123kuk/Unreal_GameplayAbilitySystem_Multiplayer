@@ -62,7 +62,7 @@ private:
 	bool IsLocalPlayer();
 
 	UFUNCTION(BlueprintCallable)
-	bool IsSameTeam(const AActor* Actor, const AActor* Actor2);
+	bool IsSameTeam(AActor* Actor, AActor* Actor2);
 	
 	UFUNCTION(BlueprintCallable)
 	void OnEndSkillPartTask();

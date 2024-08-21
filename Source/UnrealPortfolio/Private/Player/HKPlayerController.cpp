@@ -20,7 +20,7 @@
 #include "Character/HKCharacterBase.h"
 #include "BlueprintGameplayTagLibrary.h"
 #include "Character/HKCharacter.h"
-
+#include "UI/Widget/DamageTextComponent.h"
 
 
 AHKPlayerController::AHKPlayerController()
@@ -60,6 +60,18 @@ void AHKPlayerController::OnPossess(APawn* InPawn)
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
 	SettingUserInventory(PlayerInfo);
 	SettingUserSkillInventory();
+}
+
+void AHKPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bMiss, bool bCriticalHit)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount, bMiss, bCriticalHit);
+	}
 }
 
 AActor* AHKPlayerController::GetMousePointerActor()
