@@ -9,6 +9,7 @@
 #include "AbilitySystem/HKAbilitySystemLibrary.h"
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "HKGameplayTags.h"
+#include "UnrealPortfolio/UnrealPortfolio.h"
 
 void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, FSkillPartTaskInfo& TaskInfo)
 {
@@ -20,6 +21,7 @@ void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, FSkillPa
 	SocketName = TaskInfo.SocketName;
 	ActorCombatInterface = Cast<ICombatInterface>(OwningAbility->GetAvatarActorFromActorInfo());
 	Team = ActorCombatInterface->GetTeam();
+	SkillAbility = Cast<UHKSkillAbilitiy>(OwningAbility);
 }
 
 void USkillPartTask::Activate()
@@ -48,7 +50,6 @@ void USkillPartTask::OnOccurTriggerTag(FGameplayEventData Payload)
 		UE_LOG(LogTemp, Log, TEXT("USkillPartTask[OnOccurTriggerTag] Wait For TargetData"));
 		TargetData->ReadyForActivation();
 	}
-	
 }
 
 void USkillPartTask::Activate_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
@@ -84,33 +85,31 @@ void USkillPartTask::OnEndSkillPartTask()
 
 bool USkillPartTask::IsSameTeam(AActor* Actor, AActor* Actor2)
 {
-	return UHKAbilitySystemLibrary::IsSameTeam(Actor, Actor2);
+	return SkillAbility->IsSameTeam(Actor,Actor2);
 }
 
 void USkillPartTask::FacingPosition(const FVector& TargetPosition)
 {
-	ActorCombatInterface->Execute_UpdateFacingTarget(Ability->GetAvatarActorFromActorInfo(), TargetPosition);
+	SkillAbility->FacingPosition(TargetPosition);
 }
 
 void USkillPartTask::FacingTarget()
 {
-	AActor* Target = ActorCombatInterface->GetCombatTarget();
-	if (Target != nullptr)
-	{
-		ActorCombatInterface->Execute_UpdateFacingTarget(Ability->GetAvatarActorFromActorInfo(), Target->GetActorLocation());
-	}
+	SkillAbility->FacingTarget();
 }
 
 TArray<AActor*> USkillPartTask::FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle)
 {
-	TArray<AActor*> RadiusActor = FindTargetsWithRadius(Origin, Radius);
+	TArray<AActor*> RadiusActors = FindTargetsWithRadius(Origin, Radius);
 	TArray<AActor*> TargetActors;
-	for (AActor* Target : RadiusActor)
+	for (AActor* RadiusActor : RadiusActors)
 	{
-		FVector TargetVector = Target->GetActorLocation() - Origin;
-		if (cos(Angle) < FVector::DotProduct(TargetVector.GetSafeNormal(), Direction.GetSafeNormal()))
+		FVector TargetVector = RadiusActor->GetActorLocation() - Origin;
+		float angle = cos(FMath::DegreesToRadians(Angle));
+		float DotProduct = FVector::DotProduct(TargetVector.GetSafeNormal(), Direction.GetSafeNormal());
+		if (angle < DotProduct)
 		{
-			TargetActors.Add(Target);
+			TargetActors.Add(RadiusActor);
 		}
 	}
 
@@ -121,14 +120,14 @@ TArray<AActor*> USkillPartTask::FindTargetsWithRadius(const FVector& Origin, flo
 {
 	TArray<FOverlapResult> Overlaps;
 
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(AABTA_SphereMultiTrace), false, Ability->GetAvatarActorFromActorInfo());
-	GetWorld()->OverlapMultiByChannel(Overlaps, Origin, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(Radius), Params);
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(AABTA_SphereMultiTrace), false, GetAvatarActorFromActorInfo());
+	GetWorld()->OverlapMultiByChannel(Overlaps, Origin, FQuat::Identity, ECC_Projectile, FCollisionShape::MakeSphere(Radius), Params);
 
 	TArray<AActor*> HitActors;
 	for (const FOverlapResult& Overlap : Overlaps)
 	{
 		AActor* HitActor = Overlap.OverlapObjectHandle.FetchActor<AActor>();
-		if (HitActor && !HitActors.Contains(HitActor))
+		if (HitActor && HitActor->Implements<UCombatInterface>() && !IsSameTeam(HitActor, GetAvatarActorFromActorInfo()))
 		{
 			HitActors.Add(HitActor);
 		}
@@ -144,16 +143,11 @@ AActor* USkillPartTask::GetAvatarActorFromActorInfo()
 
 bool USkillPartTask::IsLocalPlayer()
 {
-	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
-	if (PC == nullptr)
-	{
-		return false;
-	}
-	return true;
+	return SkillAbility->IsLocalPlayer();
 }
 
 void USkillPartTask::CauseDamage(AActor* TargetActor, float Damage)
 {
-	Cast<UHKCombatAbility>(Ability)->CauseDamage(TargetActor,Damage);
+	SkillAbility->CauseDamage(TargetActor, Damage);
 }
 

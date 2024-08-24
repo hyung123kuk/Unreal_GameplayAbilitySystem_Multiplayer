@@ -82,4 +82,6 @@ protected:
 	bool EndAbilityWhenCompleteTask;
 
 	int PartCount;
+
+	bool OnlyOne;
 };

@@ -18,15 +18,19 @@ class UNREALPORTFOLIO_API UHKGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 	
 
+public:
+	bool IsLocalPlayer();
+	bool ServerProcess();
+	bool IsStandAlone();
+	bool IsListenServerCharacter();
+
+
+	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	UFUNCTION()
 	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
 
-	bool IsLocalPlayer();
-	bool ServerProcess();
-	bool IsStandAlone();
-	bool IsListenServerCharacter();
 
 	virtual void FindTargetDataUnderMouse();
 

@@ -45,7 +45,7 @@ void UHKSkillAbilitiy::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	PartCount = 0;
-
+	OnlyOne = false;
 	if (!IsLocalPlayer())
 	{
 		CastSkill();
@@ -54,16 +54,19 @@ void UHKSkillAbilitiy::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	{
 		FindTargetDataUnderMouse();
 	}
-
 }
+
 void UHKSkillAbilitiy::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
 {
+	if (OnlyOne == true)
+		return;
 	Super::ActivateAbility_TargetDataUnderMouse(TargetData);
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
 	
 	PlayMontage(Montage, EndTag, EndAbilityWhenCompleteMontage);
 	FacingPosition(HitResult.Location);
 	CastSkill();
+	OnlyOne = true;
 }
 
 void UHKSkillAbilitiy::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)

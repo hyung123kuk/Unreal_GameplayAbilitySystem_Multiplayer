@@ -76,6 +76,8 @@ private:
 
 
 private:
+	UHKSkillAbilitiy* SkillAbility;
+
 	FGameplayTag Team;
 
 	ICombatInterface* ActorCombatInterface;

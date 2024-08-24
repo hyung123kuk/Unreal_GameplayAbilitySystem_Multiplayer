@@ -20,6 +20,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor, float Damage);
 	
+
+	bool IsSameTeam(AActor* Actor, AActor* Actor2);
+	bool PlayRandomAttackMontage(FGameplayTag AttackType);
+
+	void FacingPosition(const FVector& TargetPosition);
+	void FacingTarget();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
@@ -29,11 +36,6 @@ protected:
 
 	virtual void FindTargetDataUnderMouse() override;
 
-	bool IsSameTeam(AActor* Actor,AActor* Actor2);
-	bool PlayRandomAttackMontage(FGameplayTag AttackType);
-
-	void FacingPosition(const FVector& TargetPosition);
-	void FacingTarget();
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation);
 
 protected:
