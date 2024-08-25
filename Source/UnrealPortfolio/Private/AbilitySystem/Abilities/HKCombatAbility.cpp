@@ -13,8 +13,10 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "Character/HKCharacter.h"
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
+#include "Components/CapsuleComponent.h"
+#include "Actor/HKProjectile.h"
 
-void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage)
+void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage) const
 {
 	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, FHKGameplayTags::Get().Damage, Damage);
@@ -47,10 +49,11 @@ bool UHKCombatAbility::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 		if (bLockOn)
 		{
 			PlayerController->LockOnTarget(ClickMouseTarget, CombatRange - LockOnCloserRange, StartupInputTag);
+			return false;
 		}
 	}
 
-	return false;
+	return true;
 }
 
 void UHKCombatAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -70,19 +73,19 @@ void UHKCombatAbility::FindTargetDataUnderMouse()
 		AActor* ClickMouseTarget = PlayerController->GetLastTargetActor();
 		TargetArray.Add(ClickMouseTarget);
 
-
 		UTargetDataUnderMouse* TargetDataUnderMouseTask = UTargetDataUnderMouse::CreateTargetDataUnderMouse(this, TargetArray);
+		TargetDataUnderMouseTask->SetCurrentPredictionKey(0);
 		TargetDataUnderMouseTask->ValidData.AddDynamic(this, &UHKCombatAbility::ActivateAbility_TargetDataUnderMouse);
 		TargetDataUnderMouseTask->ReadyForActivation();
 	}
 }
 
-bool UHKCombatAbility::IsSameTeam(AActor* Actor,AActor* Actor2)
+bool UHKCombatAbility::IsSameTeam(AActor* Actor,AActor* Actor2) const
 {
 	return UHKAbilitySystemLibrary::IsSameTeam(Actor,Actor2);
 }
 
-bool UHKCombatAbility::PlayRandomAttackMontage(FGameplayTag AttackType)
+bool UHKCombatAbility::PlayRandomAttackMontage(const FGameplayTag& AttackType)
 {
 	TArray<FTaggedMontage> TypeMontages;
 	for (FTaggedMontage& Montage : ActorCombatInterface->GetAttackMontages())
@@ -104,7 +107,7 @@ bool UHKCombatAbility::PlayRandomAttackMontage(FGameplayTag AttackType)
 
 
 
-void UHKCombatAbility::FacingPosition(const FVector& TargetPosition)
+void UHKCombatAbility::FacingPosition(const FVector& TargetPosition) const
 {
 	ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), TargetPosition);
 }
@@ -114,17 +117,56 @@ void UHKCombatAbility::FacingTarget()
 	Target = ActorCombatInterface->GetCombatTarget();
 	if (Target != nullptr)
 	{
-		ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), Target->GetActorLocation());
+		AHKCharacterBase* TargetCharacter = Cast<AHKCharacterBase>(Target);
+		float CorrectionDistance = TargetCharacter->GetCapsuleComponent()->GetScaledCapsuleRadius() / 2.f;
+		FVector CorrectionVector = (Target->GetActorLocation() - CharacterBase->GetActorLocation()).GetSafeNormal() * CorrectionDistance;
+
+		ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), Target->GetActorLocation() - CorrectionVector);
 	}
+}
+
+AHKProjectile* UHKCombatAbility::MakeProjectile(TSubclassOf<AHKProjectile> ProjectileClass, const FVector& ProjectileLocation, const FRotator& ProjectileRotation) const
+{
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(ProjectileLocation);
+	SpawnTransform.SetRotation(ProjectileRotation.Quaternion());
+
+	AHKProjectile* Projectile = GetWorld()->SpawnActorDeferred<AHKProjectile>(
+		ProjectileClass,
+		SpawnTransform,
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetOwningActorFromActorInfo()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+	return Projectile;
+}
+
+FGameplayEffectSpecHandle UHKCombatAbility::MakeProjctileEffectSpecHandle(AHKProjectile* Projectile, const FVector& ProjectileTargetLocation, int Damage) const
+{
+	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+
+	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+	EffectContextHandle.SetAbility(this);
+	EffectContextHandle.AddSourceObject(Projectile);
+	TArray<TWeakObjectPtr<AActor>> Actors;
+	Actors.Add(Projectile);
+	EffectContextHandle.AddActors(Actors);
+	FHitResult HitResult;
+	HitResult.Location = ProjectileTargetLocation;
+	EffectContextHandle.AddHitResult(HitResult);
+
+	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, 1, EffectContextHandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FHKGameplayTags::Get().Damage, Damage);
+	return SpecHandle;
 }
 
 void UHKCombatAbility::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)
 {
 }
 
-void UHKCombatAbility::OnOccurMontageEvent(FGameplayEventData Payload)
+void UHKCombatAbility::OnOccurMontageEvent(const FGameplayEventData Payload)
 {
-	UE_LOG(LogTemp, Log, TEXT("UHKCombatAbility[OnOccurMontageEvent] MontageTagEventTrigger!"));
+	UE_LOG(LogTemp, Log, TEXT("UHKCombatAbility[OnOccurMontageEvent] MontageTagEventTrigger! : %s "), *Payload.EventTag.ToString());
 	const FVector CombatSocketLocation = ActorCombatInterface->GetCombatSocketLocation(TaggedMontage.SocketTag, TaggedMontage.SocketName);
 	OccurMontageEvent(Target, CombatSocketLocation);
 }

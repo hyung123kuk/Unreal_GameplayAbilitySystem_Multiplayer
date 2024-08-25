@@ -4,7 +4,7 @@
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
 #include "AbilitySystemComponent.h"
 
-UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, TArray<AActor*> TargetActors)
+UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, const TArray<AActor*> TargetActors)
 {
 	UTargetDataUnderMouse* MyObj = NewAbilityTask<UTargetDataUnderMouse>(OwningAbility);
 	for (AActor* TargetActor : TargetActors)
@@ -13,6 +13,17 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 	}
 	return MyObj;
 }
+
+void UTargetDataUnderMouse::SetCurrentPredictionKey(int16 PredictKeyCurrent)
+{
+	PredictionKeyCurrent = PredictKeyCurrent;
+}
+
+void UTargetDataUnderMouse::SetActivationTag(const FGameplayTag& GameplayTag)
+{
+	ActivationTag = GameplayTag;
+}
+
 
 void UTargetDataUnderMouse::Activate()
 {
@@ -24,15 +35,17 @@ void UTargetDataUnderMouse::Activate()
 	else
 	{
 		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
-		const FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
-
 		//데이터가 서버에 오면 함수 호출
-		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
+		FPredictionKey PredictionKey = GetActivationPredictionKey();
+		PredictionKey.Current = PredictionKeyCurrent;
+		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle, PredictionKey).AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
 
 		//이미 데이터가 서버에 왔다면 함수 호출
-		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, ActivationPredictionKey);
+		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, PredictionKey);
 		if (!bCalledDelegate)
 		{
+			UE_LOG(LogTemp, Log, TEXT("(Server)Prev Arrived Client Data: %d"), PredictionKeyCurrent);
+
 			SetWaitingOnRemotePlayerData();
 		}
 	}
@@ -56,24 +69,33 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	DataHandle.Add(Data);
 	DataHandle.Add(TargetDataActors);
 	
+	FPredictionKey PredictionKey = GetActivationPredictionKey();
+	PredictionKey.Current = PredictionKeyCurrent;
+
+	UE_LOG(LogTemp, Log, TEXT("SendClinet : %d"), PredictionKeyCurrent);
+
 	AbilitySystemComponent->ServerSetReplicatedTargetData(GetAbilitySpecHandle(),
-		GetActivationPredictionKey(),
+		PredictionKey,
 		DataHandle,
-		FGameplayTag(),
+		ActivationTag,
 		AbilitySystemComponent->ScopedPredictionKey);
 
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
-		ValidData.Broadcast(DataHandle);
+		ValidData.Broadcast(DataHandle, ActivationTag);
 	}
 }
 
-void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag)
+void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ClientActivationTag)
 {
-	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());
+	FPredictionKey PredictionKey = GetActivationPredictionKey();
+	PredictionKey.Current = PredictionKeyCurrent;
 
+	UE_LOG(LogTemp, Log, TEXT("Recieve Server : %d"), PredictionKeyCurrent);
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
-		ValidData.Broadcast(DataHandle);
+		ValidData.Broadcast(DataHandle, ClientActivationTag);
 	}
+
+	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), PredictionKey);
 }

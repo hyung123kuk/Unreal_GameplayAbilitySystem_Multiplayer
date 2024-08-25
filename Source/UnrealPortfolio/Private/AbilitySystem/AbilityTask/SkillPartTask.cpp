@@ -11,7 +11,7 @@
 #include "HKGameplayTags.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
 
-void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, FSkillPartTaskInfo& TaskInfo)
+void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, const FSkillPartTaskInfo& TaskInfo)
 {
 	InitTask(*OwningAbility, OwningAbility->GetGameplayTaskDefaultPriority());
 	Ability = OwningAbility;
@@ -19,6 +19,7 @@ void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, FSkillPa
 	TriggerTag = TaskInfo.TriggerTag;
 	SocketTag = TaskInfo.SocketTag;
 	SocketName = TaskInfo.SocketName;
+	PredictionKeyCurrent = TaskInfo.PredictionKeyCurrent;
 	ActorCombatInterface = Cast<ICombatInterface>(OwningAbility->GetAvatarActorFromActorInfo());
 	Team = ActorCombatInterface->GetTeam();
 	SkillAbility = Cast<UHKSkillAbilitiy>(OwningAbility);
@@ -33,7 +34,7 @@ void USkillPartTask::Activate()
 	WaitGameplayEventTask->ReadyForActivation();
 }
 
-void USkillPartTask::OnOccurTriggerTag(FGameplayEventData Payload)
+void USkillPartTask::OnOccurTriggerTag(const FGameplayEventData Payload)
 {
 	UE_LOG(LogTemp, Log, TEXT("USkillPartTask[OnOccurTriggerTag] OnOccurTag : %s"), *TriggerTag.GetTagName().ToString());
 	K2_OnOccurTriggerTag(Payload);
@@ -44,61 +45,63 @@ void USkillPartTask::OnOccurTriggerTag(FGameplayEventData Payload)
 	}
 	else
 	{
-		TArray<AActor*> ActorArray = K2_TargetInfo();
+		TArray<AActor*> ActorArray = K2_TargetInfo(Payload.EventTag);
 		UTargetDataUnderMouse* TargetData = UTargetDataUnderMouse::CreateTargetDataUnderMouse(Ability, ActorArray);
+		TargetData->SetCurrentPredictionKey(PredictionKeyCurrent);
+		TargetData->SetActivationTag(Payload.EventTag);
 		TargetData->ValidData.AddDynamic(this, &USkillPartTask::Activate_TargetDataUnderMouse);
 		UE_LOG(LogTemp, Log, TEXT("USkillPartTask[OnOccurTriggerTag] Wait For TargetData"));
 		TargetData->ReadyForActivation();
 	}
 }
 
-void USkillPartTask::Activate_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
+void USkillPartTask::Activate_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag)
 {
-	UE_LOG(LogTemp, Log, TEXT("USkillPartTask[Activate_TargetDataUnderMouse] Arrived TargetDataInfo"));
 	const FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
 
-	K2_CastNonTargetSkillTask(HitResult);
-	FacingPosition(HitResult.Location);
+	K2_CastNonTargetSkillTask(HitResult, ActivationTag);
+
+	if (bFacingMousePositionWhenMotionWarping)
+		FacingPosition(HitResult.Location);
 
 
 	AActor* HitActor = HitResult.GetActor();
-	if (HitActor != nullptr)
+	if (HitActor != nullptr && HitActor->Implements<UCombatInterface>())
 	{
-		K2_CastMouseTargetSkillTask(HitActor);
-		ActorCombatInterface->SetCombatTarget(HitActor);
+		K2_CastMouseTargetSkillTask(HitActor, ActivationTag);
 	}
 
 	const TArray<AActor*> TargetActors = UAbilitySystemBlueprintLibrary::GetActorsFromTargetData(TargetData, 1);
 	if (TargetActors.Num() > 0)
 	{
-		K2_CastTargetArraySkillTask(TargetActors);
+		K2_CastTargetArraySkillTask(TargetActors, ActivationTag);
 	}
 
 	OnEndSkillPartTask();
 }
 
 
-void USkillPartTask::OnEndSkillPartTask()
+void USkillPartTask::OnEndSkillPartTask() const
 {
 	EndSkillPartTask.Broadcast();
 }
 
-bool USkillPartTask::IsSameTeam(AActor* Actor, AActor* Actor2)
+bool USkillPartTask::IsSameTeam(AActor* Actor, AActor* Actor2) const
 {
 	return SkillAbility->IsSameTeam(Actor,Actor2);
 }
 
-void USkillPartTask::FacingPosition(const FVector& TargetPosition)
+void USkillPartTask::FacingPosition(const FVector& TargetPosition) const
 {
 	SkillAbility->FacingPosition(TargetPosition);
 }
 
-void USkillPartTask::FacingTarget()
+void USkillPartTask::FacingTarget() const
 {
 	SkillAbility->FacingTarget();
 }
 
-TArray<AActor*> USkillPartTask::FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle)
+TArray<AActor*> USkillPartTask::FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle) const
 {
 	TArray<AActor*> RadiusActors = FindTargetsWithRadius(Origin, Radius);
 	TArray<AActor*> TargetActors;
@@ -116,7 +119,7 @@ TArray<AActor*> USkillPartTask::FindTargetsWithAngle(const FVector& Origin, floa
 	return TargetActors;
 }
 
-TArray<AActor*> USkillPartTask::FindTargetsWithRadius(const FVector& Origin, float Radius)
+TArray<AActor*> USkillPartTask::FindTargetsWithRadius(const FVector& Origin, float Radius) const
 {
 	TArray<FOverlapResult> Overlaps;
 
@@ -136,17 +139,17 @@ TArray<AActor*> USkillPartTask::FindTargetsWithRadius(const FVector& Origin, flo
 	return HitActors;
 }
 
-AActor* USkillPartTask::GetAvatarActorFromActorInfo()
+AActor* USkillPartTask::GetAvatarActorFromActorInfo() const
 {
 	return Ability->GetAvatarActorFromActorInfo();
 }
 
-bool USkillPartTask::IsLocalPlayer()
+bool USkillPartTask::IsLocalPlayer() const
 {
 	return SkillAbility->IsLocalPlayer();
 }
 
-void USkillPartTask::CauseDamage(AActor* TargetActor, float Damage)
+void USkillPartTask::CauseDamage(AActor* TargetActor, float Damage) const
 {
 	SkillAbility->CauseDamage(TargetActor, Damage);
 }

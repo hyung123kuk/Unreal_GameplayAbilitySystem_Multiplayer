@@ -4,8 +4,6 @@
 #include "AbilitySystem/Abilities/HKActAbility.h"
 #include "HKGameplayTags.h"
 
-
-
 void UHKActAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);

@@ -8,6 +8,8 @@
 #include "Interaction/AbilityInterface.h"
 #include "HKCombatAbility.generated.h"
 
+
+class AHKProjectile;
 /**
  * 
  */
@@ -18,13 +20,19 @@ class UNREALPORTFOLIO_API UHKCombatAbility : public UHKGameplayAbility, public I
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void CauseDamage(AActor* TargetActor, float Damage);
+	void CauseDamage(AActor* TargetActor, float Damage) const;
 	
-
-	bool IsSameTeam(AActor* Actor, AActor* Actor2);
-	bool PlayRandomAttackMontage(FGameplayTag AttackType);
-
-	void FacingPosition(const FVector& TargetPosition);
+	UFUNCTION(BlueprintCallable)
+	bool IsSameTeam(AActor* Actor, AActor* Actor2) const;
+	UFUNCTION(BlueprintCallable)
+	bool PlayRandomAttackMontage(const FGameplayTag& AttackType);
+	UFUNCTION(BlueprintCallable)
+	AHKProjectile* MakeProjectile(TSubclassOf<AHKProjectile> ProjectileClass, const FVector& ProjectileLocation, const FRotator& ProjectileRotation) const;
+	UFUNCTION(BlueprintCallable)
+	FGameplayEffectSpecHandle MakeProjctileEffectSpecHandle(AHKProjectile* Projectile, const FVector& ProjectileTargetLocation, int Damage) const;
+	UFUNCTION(BlueprintCallable)
+	void FacingPosition(const FVector& TargetPosition) const;
+	UFUNCTION(BlueprintCallable)
 	void FacingTarget();
 
 protected:
@@ -56,5 +64,5 @@ protected:
 
 
 private:
-	virtual void OnOccurMontageEvent(FGameplayEventData Payload) override;
+	virtual void OnOccurMontageEvent(const FGameplayEventData Payload) override;
 };

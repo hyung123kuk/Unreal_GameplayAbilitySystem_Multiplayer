@@ -35,17 +35,18 @@ bool UHKSkillAbilitiy::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 		if (bLockOn)
 		{
 			PlayerController->LockOnTarget(MouseTarget, CombatRange - LockOnCloserRange, StartupInputTag);
+			return false;
 		}
 	}
 
-	return false;
+	return true;
 }
 
 void UHKSkillAbilitiy::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	PartCount = 0;
-	OnlyOne = false;
+
 	if (!IsLocalPlayer())
 	{
 		CastSkill();
@@ -56,17 +57,14 @@ void UHKSkillAbilitiy::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	}
 }
 
-void UHKSkillAbilitiy::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
+void UHKSkillAbilitiy::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag)
 {
-	if (OnlyOne == true)
-		return;
-	Super::ActivateAbility_TargetDataUnderMouse(TargetData);
+	Super::ActivateAbility_TargetDataUnderMouse(TargetData, ActivationTag);
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
 	
 	PlayMontage(Montage, EndTag, EndAbilityWhenCompleteMontage);
 	FacingPosition(HitResult.Location);
 	CastSkill();
-	OnlyOne = true;
 }
 
 void UHKSkillAbilitiy::OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation)
@@ -80,6 +78,7 @@ void UHKSkillAbilitiy::CastSkill()
 	{
 		FSkillPartTaskInfo TaskInfo = SkillPartInfo[PartCount];
 		USkillPartTask* NewTask = NewObject<USkillPartTask>(this, TaskInfo.Task);
+		TaskInfo.PredictionKeyCurrent = PartCount + 1;
 		NewTask->InitSkillPartTask(this, TaskInfo);
 		UAbilityTask::DebugRecordAbilityTaskCreatedByAbility(NewTask);
 		PartCount++;

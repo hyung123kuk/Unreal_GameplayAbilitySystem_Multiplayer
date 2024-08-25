@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
 #include "TargetDataUnderMouse.generated.h"
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature, const FGameplayAbilityTargetDataHandle&, DataHandle);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMouseTargetDataSignature, const FGameplayAbilityTargetDataHandle&, DataHandle, const FGameplayTag&, ActivationTag);
 
 /**
  * 
@@ -17,14 +18,28 @@ class UNREALPORTFOLIO_API UTargetDataUnderMouse : public UAbilityTask
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "TargetDataUnderMouse", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnlt = "true"))
-	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, TArray<AActor*> TargetActors);
+	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, const TArray<AActor*> TargetActors);
+
+	UFUNCTION()
+	void SetCurrentPredictionKey(int16 NewPredictionKeyCurrent);
+
+	UFUNCTION()
+	void SetActivationTag(const FGameplayTag& GameplayTag);
 
 	UPROPERTY(BlueprintAssignable)
 	FMouseTargetDataSignature ValidData;
 
 	TArray<TWeakObjectPtr<AActor>> TargetActor;
 
+
+
 private:
+	UPROPERTY()
+	int16 PredictionKeyCurrent;
+
+	UPROPERTY()
+	FGameplayTag ActivationTag;
+
 	virtual void Activate() override;
 	void SendMouseCursorData();
 

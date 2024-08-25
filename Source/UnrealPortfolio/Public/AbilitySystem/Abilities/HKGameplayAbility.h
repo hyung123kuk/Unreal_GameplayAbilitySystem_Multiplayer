@@ -19,17 +19,17 @@ class UNREALPORTFOLIO_API UHKGameplayAbility : public UGameplayAbility
 	
 
 public:
-	bool IsLocalPlayer();
-	bool ServerProcess();
-	bool IsStandAlone();
-	bool IsListenServerCharacter();
+	bool IsLocalPlayer() const;
+	bool ServerProcess() const;
+	bool IsStandAlone() const;
+	bool IsListenServerCharacter() const;
 
 
 	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	UFUNCTION()
-	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
+	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData,const FGameplayTag& ActivationTag);
 
 
 	virtual void FindTargetDataUnderMouse();
@@ -45,10 +45,10 @@ protected:
 	virtual void OnFailedAbility();
 
 	UFUNCTION()
-	virtual void OnOccurMontageEvent(FGameplayEventData Payload);
+	virtual void OnOccurMontageEvent(const FGameplayEventData Payload);
 
-	void PlayRandomActMontage(FGameplayTag Type);
-	virtual void PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent,bool EndAbilityWhenCompleteMontage = true);
+	void PlayRandomActMontage(const FGameplayTag& Type);
+	virtual void PlayMontage(UAnimMontage* MontageToPlay, const FGameplayTag& MontageEvent,bool EndAbilityWhenCompleteMontage = true);
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
 protected:

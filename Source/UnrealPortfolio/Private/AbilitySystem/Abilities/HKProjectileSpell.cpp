@@ -74,9 +74,9 @@ void UHKProjectileSpell::InputReleased(const FGameplayAbilitySpecHandle Handle, 
 }
 
 
-void UHKProjectileSpell::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
+void UHKProjectileSpell::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag)
 {
-	Super::ActivateAbility_TargetDataUnderMouse(TargetData);
+	Super::ActivateAbility_TargetDataUnderMouse(TargetData, StartupInputTag);
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
 	if (!HitResult.bBlockingHit)
 	{
@@ -151,34 +151,9 @@ void UHKProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation
 		Rotation.Pitch = PitchOverride;
 	}
 
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(SocketLocation);
-	SpawnTransform.SetRotation(Rotation.Quaternion());
-
-	AHKProjectile* Projectile = GetWorld()->SpawnActorDeferred<AHKProjectile>(
-		ProjectileClass,
-		SpawnTransform,
-		GetOwningActorFromActorInfo(),
-		Cast<APawn>(GetOwningActorFromActorInfo()),
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
-	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-
-	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-	EffectContextHandle.SetAbility(this);
-	EffectContextHandle.AddSourceObject(Projectile);
-	TArray<TWeakObjectPtr<AActor>> Actors;
-	Actors.Add(Projectile);
-	EffectContextHandle.AddActors(Actors);
-	FHitResult HitResult;
-	HitResult.Location = ProjectileTargetLocation;
-	EffectContextHandle.AddHitResult(HitResult);
-
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass,1 , EffectContextHandle);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FHKGameplayTags::Get().Damage, Damage);
-
+	AHKProjectile* Projectile = MakeProjectile(ProjectileClass, SocketLocation, Rotation);
+	const FGameplayEffectSpecHandle SpecHandle = MakeProjctileEffectSpecHandle(Projectile, ProjectileTargetLocation, Damage);
 	Projectile->DamageEffectSpecHandle = SpecHandle;
-
-	Projectile->FinishSpawning(SpawnTransform);
+	Projectile->FinishSpawning(Projectile->GetActorTransform());
 
 }

@@ -20,60 +20,62 @@ class UNREALPORTFOLIO_API USkillPartTask : public UAbilityTask
 	GENERATED_BODY()
 	
 public:
-	void InitSkillPartTask(UGameplayAbility* OwningAbility, FSkillPartTaskInfo& TaskInfo);
+	void InitSkillPartTask(UGameplayAbility* OwningAbility, const FSkillPartTaskInfo& TaskInfo);
 	virtual void Activate() override;
 
 	UFUNCTION()
-	virtual void OnOccurTriggerTag(FGameplayEventData Payload);
+	virtual void OnOccurTriggerTag(const FGameplayEventData Payload);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void K2_OnOccurTriggerTag(FGameplayEventData Payload);
+	void K2_OnOccurTriggerTag(FGameplayEventData Payload) const;
 
 
 	UFUNCTION()
-	void Activate_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
+	void Activate_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	TArray<AActor*> K2_TargetInfo();
+	TArray<AActor*> K2_TargetInfo(const FGameplayTag ActivationTag) const;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void K2_CastNonTargetSkillTask(const FHitResult HitResult);
+	void K2_CastNonTargetSkillTask(const FHitResult HitResult,const FGameplayTag ActivationTag) const;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void K2_CastMouseTargetSkillTask(const AActor* HitResult);
+	void K2_CastMouseTargetSkillTask(const AActor* HitResult, const FGameplayTag ActivationTag) const;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void K2_CastTargetArraySkillTask(const TArray<AActor*>& TargetArray);
+	void K2_CastTargetArraySkillTask(const TArray<AActor*>& TargetArray, const FGameplayTag ActivationTag) const;
 
 	UPROPERTY()
 	FEndSkillPartDelegate EndSkillPartTask;
 	
 private:
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle);
+	TArray<AActor*> FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle) const;
 	
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> FindTargetsWithRadius(const FVector& Origin, float Radius);
+	TArray<AActor*> FindTargetsWithRadius(const FVector& Origin, float Radius) const;
 
 	UFUNCTION(BlueprintCallable)
-	AActor* GetAvatarActorFromActorInfo();
+	AActor* GetAvatarActorFromActorInfo() const;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsLocalPlayer();
+	bool IsLocalPlayer() const;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsSameTeam(AActor* Actor, AActor* Actor2);
+	bool IsSameTeam(AActor* Actor, AActor* Actor2) const;
 	
 	UFUNCTION(BlueprintCallable)
-	void OnEndSkillPartTask();
+	void OnEndSkillPartTask() const;
 
-	void FacingPosition(const FVector& TargetPosition);
-	void FacingTarget();
+	void FacingPosition(const FVector& TargetPosition) const;
+	void FacingTarget() const;
 
 	UFUNCTION(BlueprintCallable)
-	void CauseDamage(AActor* TargetActor, float Damage);
+	void CauseDamage(AActor* TargetActor, float Damage) const;
 
-
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bFacingMousePositionWhenMotionWarping;
 
 private:
 	UHKSkillAbilitiy* SkillAbility;
@@ -93,5 +95,7 @@ private:
 
 	UPROPERTY()
 	FName SocketName;	
-	
+
+	UPROPERTY()
+	int16 PredictionKeyCurrent;
 };

@@ -89,6 +89,7 @@ public:
 	FGameplayTag Skill_5Combo_5;
 
 	FGameplayTag Skill_MultiShot_1;
+	FGameplayTag Skill_MultiShot_2;
 
 	FGameplayTag Skill_SuddenAttack_1;
 

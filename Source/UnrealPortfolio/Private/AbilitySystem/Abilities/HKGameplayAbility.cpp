@@ -16,7 +16,7 @@ void UHKGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	CharacterBase = Cast<AHKCharacterBase>(GetAvatarActorFromActorInfo());
 }
 
-bool UHKGameplayAbility::IsLocalPlayer()
+bool UHKGameplayAbility::IsLocalPlayer() const
 {
 	APlayerController* PC = GetCurrentActorInfo()->PlayerController.Get();
 	if (PC == nullptr)
@@ -26,7 +26,7 @@ bool UHKGameplayAbility::IsLocalPlayer()
 	return true;
 }
 
-bool UHKGameplayAbility::ServerProcess()
+bool UHKGameplayAbility::ServerProcess() const
 {
 	const bool bDedicatedServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_DedicatedServer;
 	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
@@ -34,13 +34,13 @@ bool UHKGameplayAbility::ServerProcess()
 	return bDedicatedServer || bListenServer || bStandalone;
 }
 
-bool UHKGameplayAbility::IsStandAlone()
+bool UHKGameplayAbility::IsStandAlone() const
 {
 	const bool bStandalone = GetAvatarActorFromActorInfo()->GetNetMode() == NM_Standalone;
 	return bStandalone;
 }
 
-bool UHKGameplayAbility::IsListenServerCharacter()
+bool UHKGameplayAbility::IsListenServerCharacter() const
 {
 	const bool bListenServer = GetAvatarActorFromActorInfo()->GetNetMode() == NM_ListenServer;
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
@@ -57,18 +57,19 @@ void UHKGameplayAbility::FindTargetDataUnderMouse()
 	{
 		TArray<AActor*> TargetData;
 		UTargetDataUnderMouse* TargetDataUnderMouseTask = UTargetDataUnderMouse::CreateTargetDataUnderMouse(this, TargetData);
+		TargetDataUnderMouseTask->SetCurrentPredictionKey(0);
 		TargetDataUnderMouseTask->ValidData.AddDynamic(this, &UHKGameplayAbility::ActivateAbility_TargetDataUnderMouse);
 		TargetDataUnderMouseTask->ReadyForActivation();
 	}
 }
 
-void UHKGameplayAbility::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
+void UHKGameplayAbility::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag)
 {
 
 }
 
 
-void UHKGameplayAbility::PlayRandomActMontage(FGameplayTag Type)
+void UHKGameplayAbility::PlayRandomActMontage(const FGameplayTag& Type)
 {
 	TArray<FTaggedMontage> TypeMontages;
 	for (FTaggedMontage& Montage : CharacterBase->GetActMontages())
@@ -98,7 +99,7 @@ FTaggedMontage UHKGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<
 	return FTaggedMontage();
 }
 
-void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag MontageEvent, bool EndAbilityWhenCompleteMontage)
+void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, const FGameplayTag& MontageEvent, bool EndAbilityWhenCompleteMontage)
 {
 	UE_LOG(LogTemp, Log, TEXT("HKGameplayAbility[PlayMontage] MontageEventTag : %s"), *MontageEvent.GetTagName().ToString());
 
@@ -118,7 +119,7 @@ void UHKGameplayAbility::PlayMontage(UAnimMontage* MontageToPlay, FGameplayTag M
 	PlayAttackTask->ReadyForActivation();
 }
 
-void UHKGameplayAbility::OnOccurMontageEvent(FGameplayEventData Payload)
+void UHKGameplayAbility::OnOccurMontageEvent(const FGameplayEventData Payload)
 {
 
 }
@@ -131,7 +132,7 @@ void UHKGameplayAbility::OnCompleteMontage()
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void UHKGameplayAbility::OnCancelledMontage()
+void UHKGameplayAbility::OnCancelledMontage() 
 {
 	bool bReplicateEndAbility = true;
 	bool bWasCancelled = true;

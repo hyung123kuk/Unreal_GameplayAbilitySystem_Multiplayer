@@ -23,9 +23,9 @@ void UHKMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 	}
 }
 
-void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData)
+void UHKMeleeAttack::ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag)
 {
-	Super::ActivateAbility_TargetDataUnderMouse(TargetData);
+	Super::ActivateAbility_TargetDataUnderMouse(TargetData, ActivationTag);
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData,0);
 	if (!HitResult.bBlockingHit)
 	{

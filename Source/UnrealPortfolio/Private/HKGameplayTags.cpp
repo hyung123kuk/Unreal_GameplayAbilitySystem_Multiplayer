@@ -305,6 +305,11 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("MultiShot_1")
 	);
 
+	GameplayTags.Skill_MultiShot_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Skill.MultiShot.2"),
+		FString("MultiShot_2")
+	);
+
 	GameplayTags.Skill_SuddenAttack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Skill.SuddenAttack.1"),
 		FString("SuddenAttack_1")

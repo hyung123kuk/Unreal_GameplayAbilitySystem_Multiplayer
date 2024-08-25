@@ -16,7 +16,7 @@ class UNREALPORTFOLIO_API UHKMeleeAttack : public UHKCombatAbility
 	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData);
+	virtual void ActivateAbility_TargetDataUnderMouse(const FGameplayAbilityTargetDataHandle& TargetData, const FGameplayTag& ActivationTag);
 	virtual void MeleeAttack();
 
 	virtual void OccurMontageEvent(const AActor* TargetActor, const FVector& CombatSocketLocation) override;
