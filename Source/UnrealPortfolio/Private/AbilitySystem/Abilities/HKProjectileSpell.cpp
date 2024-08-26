@@ -45,13 +45,11 @@ void UHKProjectileSpell::InputPressed(const FGameplayAbilitySpecHandle Handle, c
 	APlayerController* PC = GetCurrentActorInfo()->PlayerController.Get();
 	AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PC);
 
-	FHitResult CursorHit;
-	PC->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
-	if (PlayerController->GetLastTargetActor() == nullptr)
+	if (PlayerController->GetClickMouseHitResult().GetActor() == nullptr)
 		return;
 
 	DeltaTime += GetWorld()->GetDeltaSeconds();
- 	FRotator Rotation = (PlayerController->GetLastTargetActor()->GetActorLocation() - CurrentActorInfo->AvatarActor->GetActorLocation()).Rotation();
+ 	FRotator Rotation = (PlayerController->GetClickMouseHitResult().GetActor()->GetActorLocation() - CurrentActorInfo->AvatarActor->GetActorLocation()).Rotation();
 	FRotator SmoothRotator = FMath::RInterpTo(CurrentActorInfo->AvatarActor->GetActorRotation(), Rotation, DeltaTime/ MouseChargingTime, 1.0f);
 	CurrentActorInfo->AvatarActor->SetActorRotation(SmoothRotator);
 }

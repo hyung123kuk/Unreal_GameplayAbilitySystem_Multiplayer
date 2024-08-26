@@ -19,9 +19,13 @@ class UNREALPORTFOLIO_API UHKGameplayAbility : public UGameplayAbility
 	
 
 public:
+	UFUNCTION(BlueprintCallable)
 	bool IsLocalPlayer() const;
+	UFUNCTION(BlueprintCallable)
 	bool ServerProcess() const;
+	UFUNCTION(BlueprintCallable)
 	bool IsStandAlone() const;
+	UFUNCTION(BlueprintCallable)
 	bool IsListenServerCharacter() const;
 
 

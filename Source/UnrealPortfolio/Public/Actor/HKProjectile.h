@@ -19,7 +19,7 @@ class UNREALPORTFOLIO_API AHKProjectile : public AActor
 	
 public:
 	AHKProjectile();
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))

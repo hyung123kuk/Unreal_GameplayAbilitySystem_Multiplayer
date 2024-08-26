@@ -15,6 +15,8 @@
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
 #include "Components/CapsuleComponent.h"
 #include "Actor/HKProjectile.h"
+#include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Interaction/CombatInterface.h"
 
 void UHKCombatAbility::CauseDamage(AActor* TargetActor, float Damage) const
 {
@@ -29,19 +31,26 @@ bool UHKCombatAbility::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 	{
 		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(AbilitySystemComponent->GetAvatarActor());
 		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetLocalViewingPlayerController());
-		AActor* ClickMouseTarget = PlayerController->GetLastTargetActor();
-		if (ClickMouseTarget == nullptr)
+		FHitResult ClickMouseTarget = PlayerController->GetClickMouseHitResult();
+
+		if (ClickMouseTarget.bBlockingHit && (ClickMouseTarget.GetActor() == nullptr || !ClickMouseTarget.GetActor()->Implements<UCombatInterface>()))
 		{
 			if (bLockOn)
 			{
-				ClickMouseTarget = PlayerController->GetLockOnTarget();
+				ClickMouseTarget = PlayerController->GetLockOnHitResult();
 			}
-
-			if (ClickMouseTarget == nullptr)
-				return false;
 		}
 
-		if (PlayerCharacter->GetDistanceTo(ClickMouseTarget) <= CombatRange)
+		if (!ClickMouseTarget.bBlockingHit)
+			return false;
+
+		if (ClickMouseTarget.GetActor() == nullptr)
+			return false;
+
+		if (!ClickMouseTarget.GetActor()->Implements<UCombatInterface>())
+			return false;
+
+		if (PlayerCharacter->GetDistanceTo(ClickMouseTarget.GetActor()) <= CombatRange)
 		{
 			return true;
 		}
@@ -49,8 +58,8 @@ bool UHKCombatAbility::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 		if (bLockOn)
 		{
 			PlayerController->LockOnTarget(ClickMouseTarget, CombatRange - LockOnCloserRange, StartupInputTag);
-			return false;
 		}
+		return false;
 	}
 
 	return true;
@@ -70,10 +79,11 @@ void UHKCombatAbility::FindTargetDataUnderMouse()
 		TArray<AActor*> TargetArray;
 		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(GetAvatarActorFromActorInfo());
 		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetController());
-		AActor* ClickMouseTarget = PlayerController->GetLastTargetActor();
-		TargetArray.Add(ClickMouseTarget);
+		FHitResult ClickMouseTarget = PlayerController->GetClickMouseHitResult();
+		TargetArray.Add(ClickMouseTarget.GetActor());
 
 		UTargetDataUnderMouse* TargetDataUnderMouseTask = UTargetDataUnderMouse::CreateTargetDataUnderMouse(this, TargetArray);
+		TargetDataUnderMouseTask->SetMouseTarget(ClickMouseTarget);
 		TargetDataUnderMouseTask->SetCurrentPredictionKey(0);
 		TargetDataUnderMouseTask->ValidData.AddDynamic(this, &UHKCombatAbility::ActivateAbility_TargetDataUnderMouse);
 		TargetDataUnderMouseTask->ReadyForActivation();
@@ -105,8 +115,6 @@ bool UHKCombatAbility::PlayRandomAttackMontage(const FGameplayTag& AttackType)
 	return true;
 }
 
-
-
 void UHKCombatAbility::FacingPosition(const FVector& TargetPosition) const
 {
 	ActorCombatInterface->Execute_UpdateFacingTarget(GetAvatarActorFromActorInfo(), TargetPosition);
@@ -125,6 +133,44 @@ void UHKCombatAbility::FacingTarget()
 	}
 }
 
+TArray<AActor*> UHKCombatAbility::FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle) const
+{
+	TArray<AActor*> RadiusActors = FindTargetsWithRadius(Origin, Radius);
+	TArray<AActor*> TargetActors;
+	for (AActor* RadiusActor : RadiusActors)
+	{
+		FVector TargetVector = RadiusActor->GetActorLocation() - Origin;
+		float angle = cos(FMath::DegreesToRadians(Angle));
+		float DotProduct = FVector::DotProduct(TargetVector.GetSafeNormal(), Direction.GetSafeNormal());
+		if (angle < DotProduct)
+		{
+			TargetActors.Add(RadiusActor);
+		}
+	}
+
+	return TargetActors;
+}
+
+TArray<AActor*> UHKCombatAbility::FindTargetsWithRadius(const FVector& Origin, float Radius) const
+{
+	TArray<FOverlapResult> Overlaps;
+
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(AABTA_SphereMultiTrace), false, GetAvatarActorFromActorInfo());
+	GetWorld()->OverlapMultiByChannel(Overlaps, Origin, FQuat::Identity, ECC_Projectile, FCollisionShape::MakeSphere(Radius), Params);
+
+	TArray<AActor*> HitActors;
+	for (const FOverlapResult& Overlap : Overlaps)
+	{
+		AActor* HitActor = Overlap.OverlapObjectHandle.FetchActor<AActor>();
+		if (HitActor && HitActor->Implements<UCombatInterface>() && !IsSameTeam(HitActor, GetAvatarActorFromActorInfo()))
+		{
+			HitActors.Add(HitActor);
+		}
+	}
+
+	return HitActors;
+}
+
 AHKProjectile* UHKCombatAbility::MakeProjectile(TSubclassOf<AHKProjectile> ProjectileClass, const FVector& ProjectileLocation, const FRotator& ProjectileRotation) const
 {
 	FTransform SpawnTransform;
@@ -139,6 +185,11 @@ AHKProjectile* UHKCombatAbility::MakeProjectile(TSubclassOf<AHKProjectile> Proje
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	return Projectile;
+}
+
+FVector UHKCombatAbility::GetSocketLocation(const FGameplayTag& SocketTag, const FName& SocketName) const
+{
+	return ActorCombatInterface->GetCombatSocketLocation(SocketTag, SocketName);
 }
 
 FGameplayEffectSpecHandle UHKCombatAbility::MakeProjctileEffectSpecHandle(AHKProjectile* Projectile, const FVector& ProjectileTargetLocation, int Damage) const
@@ -157,6 +208,8 @@ FGameplayEffectSpecHandle UHKCombatAbility::MakeProjctileEffectSpecHandle(AHKPro
 
 	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, 1, EffectContextHandle);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FHKGameplayTags::Get().Damage, Damage);
+	Projectile->DamageEffectSpecHandle = SpecHandle;
+
 	return SpecHandle;
 }
 

@@ -45,14 +45,14 @@ public:
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bMiss, bool bCriticalHit);
 
 	UFUNCTION(BlueprintCallable)
-	AActor* GetLastTargetActor() { return ClickMouseTarget; }
-	AActor* GetMousePointerActor();
-	AActor* GetLockOnTarget() { return LockOnTargetActor; }
+	FHitResult GetClickMouseHitResult() { return ClickMouseHitResult; }
+	FHitResult GetNowMousePointer() { return CursorHit; }
+	FHitResult GetLockOnHitResult() { return LockOnTargetHitResult; }
 	void SettingUserInventory(FInGamePlayerInfo PlayerInfo);
 	void SettingUserSkillInventory();
 	UInventory* GetInventory() { return Inventory; }
 	void MoveToDestination(FVector Destination); // SkillAbility에서 멀면 다가가는 용도
-	void LockOnTarget(AActor* Target,float DistanceToOccurTag, FGameplayTag EventTag);
+	void LockOnTarget(FHitResult TargetResult,float DistanceToOccurTag, FGameplayTag EventTag);
 	UFUNCTION(BlueprintCallable)
 	USkillInventory* GetSkillInventory();
 
@@ -135,7 +135,7 @@ private:
 	IMouseTargetActorInterface* LastActor;
 	IMouseTargetActorInterface* ThisActor;
 	FHitResult CursorHit;
-	AActor* ClickMouseTarget;
+	FHitResult ClickMouseHitResult;
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
@@ -155,7 +155,7 @@ private:
 	bool bTargeting = false;
 
 	bool bLockOn = false;
-	AActor* LockOnTargetActor;
+	FHitResult LockOnTargetHitResult;
 	float LockOnDistanceToOccurTag;
 	FGameplayTag LockOnEventTag;
 

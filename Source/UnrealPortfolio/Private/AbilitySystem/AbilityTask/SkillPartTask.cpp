@@ -10,6 +10,7 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "HKGameplayTags.h"
 #include "UnrealPortfolio/UnrealPortfolio.h"
+#include "Actor/HKProjectile.h"
 
 void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, const FSkillPartTaskInfo& TaskInfo)
 {
@@ -19,6 +20,7 @@ void USkillPartTask::InitSkillPartTask(UGameplayAbility* OwningAbility, const FS
 	TriggerTag = TaskInfo.TriggerTag;
 	SocketTag = TaskInfo.SocketTag;
 	SocketName = TaskInfo.SocketName;
+	MouseTargetAtSkiilStartUp = TaskInfo.MouseTargetAtSkiilStartUp;
 	PredictionKeyCurrent = TaskInfo.PredictionKeyCurrent;
 	ActorCombatInterface = Cast<ICombatInterface>(OwningAbility->GetAvatarActorFromActorInfo());
 	Team = ActorCombatInterface->GetTeam();
@@ -31,6 +33,13 @@ void USkillPartTask::Activate()
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(Ability, TriggerTag);
 	WaitGameplayEventTask->EventReceived.AddDynamic(this, &USkillPartTask::OnOccurTriggerTag);
 	UE_LOG(LogTemp, Log, TEXT("USkillPartTask[Activate] Wait For EventTag : %s"), *TriggerTag.GetTagName().ToString());
+	WaitGameplayEventTask->ReadyForActivation();
+}
+
+void USkillPartTask::WaitGameplayEventTag(FGameplayTag Tag)
+{
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(Ability, Tag);
+	WaitGameplayEventTask->EventReceived.AddDynamic(this, &USkillPartTask::OnOccurTriggerTag);
 	WaitGameplayEventTask->ReadyForActivation();
 }
 
@@ -64,11 +73,18 @@ void USkillPartTask::Activate_TargetDataUnderMouse(const FGameplayAbilityTargetD
 	if (bFacingMousePositionWhenMotionWarping)
 		FacingPosition(HitResult.Location);
 
-
 	AActor* HitActor = HitResult.GetActor();
-	if (HitActor != nullptr && HitActor->Implements<UCombatInterface>())
+	if (bTargetingMouseToAbilityStartTarget)
 	{
-		K2_CastMouseTargetSkillTask(HitActor, ActivationTag);
+		if (MouseTargetAtSkiilStartUp != nullptr)
+			K2_CastMouseTargetSkillTask(MouseTargetAtSkiilStartUp, ActivationTag);
+	}
+	else
+	{
+		if(HitActor != nullptr && HitActor->Implements<UCombatInterface>())
+			K2_CastMouseTargetSkillTask(HitActor, ActivationTag);
+		else if(MouseTargetAtSkiilStartUp != nullptr)
+			K2_CastMouseTargetSkillTask(MouseTargetAtSkiilStartUp, ActivationTag);
 	}
 
 	const TArray<AActor*> TargetActors = UAbilitySystemBlueprintLibrary::GetActorsFromTargetData(TargetData, 1);
@@ -101,42 +117,19 @@ void USkillPartTask::FacingTarget() const
 	SkillAbility->FacingTarget();
 }
 
+FVector USkillPartTask::GetSocketLocation(const FGameplayTag& Tag, const FName& Name) const
+{
+	return SkillAbility->GetSocketLocation(Tag, Name);
+}
+
 TArray<AActor*> USkillPartTask::FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle) const
 {
-	TArray<AActor*> RadiusActors = FindTargetsWithRadius(Origin, Radius);
-	TArray<AActor*> TargetActors;
-	for (AActor* RadiusActor : RadiusActors)
-	{
-		FVector TargetVector = RadiusActor->GetActorLocation() - Origin;
-		float angle = cos(FMath::DegreesToRadians(Angle));
-		float DotProduct = FVector::DotProduct(TargetVector.GetSafeNormal(), Direction.GetSafeNormal());
-		if (angle < DotProduct)
-		{
-			TargetActors.Add(RadiusActor);
-		}
-	}
-
-	return TargetActors;
+	return SkillAbility->FindTargetsWithAngle(Origin, Radius, Direction, Angle);
 }
 
 TArray<AActor*> USkillPartTask::FindTargetsWithRadius(const FVector& Origin, float Radius) const
 {
-	TArray<FOverlapResult> Overlaps;
-
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(AABTA_SphereMultiTrace), false, GetAvatarActorFromActorInfo());
-	GetWorld()->OverlapMultiByChannel(Overlaps, Origin, FQuat::Identity, ECC_Projectile, FCollisionShape::MakeSphere(Radius), Params);
-
-	TArray<AActor*> HitActors;
-	for (const FOverlapResult& Overlap : Overlaps)
-	{
-		AActor* HitActor = Overlap.OverlapObjectHandle.FetchActor<AActor>();
-		if (HitActor && HitActor->Implements<UCombatInterface>() && !IsSameTeam(HitActor, GetAvatarActorFromActorInfo()))
-		{
-			HitActors.Add(HitActor);
-		}
-	}
-
-	return HitActors;
+	return SkillAbility->FindTargetsWithRadius(Origin, Radius);
 }
 
 AActor* USkillPartTask::GetAvatarActorFromActorInfo() const
@@ -149,8 +142,37 @@ bool USkillPartTask::IsLocalPlayer() const
 	return SkillAbility->IsLocalPlayer();
 }
 
+bool USkillPartTask::ServerProcess() const
+{
+	return SkillAbility->ServerProcess();
+}
+
+bool USkillPartTask::IsStandAlone() const
+{
+	return SkillAbility->IsStandAlone();
+}
+
+bool USkillPartTask::IsListenServerCharacter() const
+{
+	return SkillAbility->IsListenServerCharacter();
+}
+
 void USkillPartTask::CauseDamage(AActor* TargetActor, float Damage) const
 {
 	SkillAbility->CauseDamage(TargetActor, Damage);
 }
 
+AHKProjectile* USkillPartTask::MakeProjectile(TSubclassOf<AHKProjectile> ProjectileClass, const FVector& ProjectileLocation, const FRotator& ProjectileRotation) const
+{
+	return SkillAbility->MakeProjectile(ProjectileClass, ProjectileLocation, ProjectileRotation);
+}
+
+FGameplayEffectSpecHandle USkillPartTask::MakeProjctileEffectSpecHandle(AHKProjectile* Projectile, const FVector& ProjectileTargetLocation, int Damage) const
+{
+	return SkillAbility->MakeProjctileEffectSpecHandle(Projectile, ProjectileTargetLocation, Damage);
+}
+
+void USkillPartTask::FinishSpawning(AHKProjectile* Projectile) const
+{
+	Projectile->FinishSpawning(Projectile->GetActorTransform());
+}

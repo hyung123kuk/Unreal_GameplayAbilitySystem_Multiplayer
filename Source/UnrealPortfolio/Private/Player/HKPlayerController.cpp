@@ -74,13 +74,6 @@ void AHKPlayerController::ShowDamageNumber_Implementation(float DamageAmount, AC
 	}
 }
 
-AActor* AHKPlayerController::GetMousePointerActor()
-{
-	if (ThisActor == nullptr)
-		return nullptr;
-
-	return ThisActor->GetTarget();
-}
 
 void AHKPlayerController::SettingUserInventory(FInGamePlayerInfo PlayerInfo)
 {
@@ -125,7 +118,6 @@ void AHKPlayerController::InitHUD()
 	{
 		PlayerHUD->InitOverlay(this, HKPlayerState, HKPlayerState->GetAbilitySystemComponent(), HKPlayerState->GetAttributeSet());
 	}
-
 }
 
 
@@ -163,7 +155,6 @@ void AHKPlayerController::SetupInputComponent()
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AHKPlayerController::ShiftPressed);
 	HKInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AHKPlayerController::ShiftReleased);
 	HKInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
-
 }
 
 void AHKPlayerController::TryUseItem(FUserItem Item)
@@ -251,14 +242,14 @@ void AHKPlayerController::AutoRun()
 		{
 			if (DistanceToDestination <= LockOnDistanceToOccurTag)
 			{
-				ClickMouseTarget = LockOnTargetActor;
-				ThisActor = Cast<IMouseTargetActorInterface>(LockOnTargetActor);
+				ClickMouseHitResult = LockOnTargetHitResult;
+				ThisActor = Cast<IMouseTargetActorInterface>(LockOnTargetHitResult.GetActor());
 				Cast<IMouseTargetActorInterface>(ThisActor)->UnHighlightActor();
 
 				AbilityInputTagHeld(LockOnEventTag);
 				bAutoRunning = false;
 				bLockOn = false;
-				LockOnTargetActor = nullptr;
+				LockOnTargetHitResult = FHitResult();
 				LockOnEventTag = FGameplayTag();
 				LockOnDistanceToOccurTag = 0.f;
 			}
@@ -275,8 +266,12 @@ void AHKPlayerController::CursorTrace()
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (bLockOn)
 	{
-		if(LockOnTargetActor != nullptr)
-			Cast<IMouseTargetActorInterface>(LockOnTargetActor)->HighlightActor();
+		if (LockOnTargetHitResult.bBlockingHit && LockOnTargetHitResult.GetActor() != nullptr)
+		{
+			IMouseTargetActorInterface* MouseTargetActorInterface = Cast<IMouseTargetActorInterface>(LockOnTargetHitResult.GetActor());
+			if(MouseTargetActorInterface != nullptr)
+				MouseTargetActorInterface->HighlightActor();
+		}
 		return;
 	}
 
@@ -300,10 +295,14 @@ void AHKPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	if (InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_LMB))
 	{
+		if (bLockOn)
+		{
+			bLockOn = false;
+			CursorTrace();
+		}
 		bTargeting = ThisActor ? true : false;
-		ClickMouseTarget = ThisActor ? ThisActor->GetTarget() : nullptr;
+		ClickMouseHitResult = ThisActor ? CursorHit : FHitResult();
 		bAutoRunning = false;
-		bLockOn = false;
 	}
 
 	if (InputTag.MatchesTagExact(FHKGameplayTags::Get().InputTag_I))
@@ -338,7 +337,7 @@ void AHKPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 
-	ClickMouseTarget = nullptr;
+	ClickMouseHitResult = FHitResult();
 
 	if (!bTargeting && !bShiftKeyDown)
 	{
@@ -408,17 +407,20 @@ void AHKPlayerController::MoveToDestination(FVector Destination)
 	}
 }
 
-void AHKPlayerController::LockOnTarget(AActor* Target, float DistanceToOccurTag, FGameplayTag EventTag)
+void AHKPlayerController::LockOnTarget(FHitResult TargetResult, float DistanceToOccurTag, FGameplayTag EventTag)
 {
-	if (Target == nullptr)
+	if (!TargetResult.bBlockingHit)
+		return;
+
+	if (TargetResult.GetActor() == nullptr)
 		return;
 
 	bLockOn = true;
-	LockOnTargetActor = Target;
+	LockOnTargetHitResult = TargetResult;
 	LockOnDistanceToOccurTag = DistanceToOccurTag;
 	LockOnEventTag = EventTag;
 
-	CachedDestination = Target->GetActorLocation();
+	CachedDestination = TargetResult.GetActor()->GetActorLocation();
 	const APawn* ControlledPawn = GetPawn();
 	if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 	{

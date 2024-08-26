@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
 #include "AbilitySystemComponent.h"
+#include "Interaction/CombatInterface.h"
 
 UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, const TArray<AActor*> TargetActors)
 {
@@ -22,6 +23,11 @@ void UTargetDataUnderMouse::SetCurrentPredictionKey(int16 PredictKeyCurrent)
 void UTargetDataUnderMouse::SetActivationTag(const FGameplayTag& GameplayTag)
 {
 	ActivationTag = GameplayTag;
+}
+
+void UTargetDataUnderMouse::SetMouseTarget(FHitResult MouseTarget)
+{
+	LastMouseTargetHitResult = MouseTarget;
 }
 
 
@@ -61,7 +67,15 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 	FGameplayAbilityTargetDataHandle DataHandle;
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
-	Data->HitResult = CursorHit;
+
+	if (CursorHit.GetActor() != nullptr && CursorHit.GetActor()->Implements<UCombatInterface>())
+	{
+		Data->HitResult = CursorHit;
+	}
+	else
+	{
+		Data->HitResult = LastMouseTargetHitResult;
+	}
 
 	FGameplayAbilityTargetData_ActorArray* TargetDataActors = new FGameplayAbilityTargetData_ActorArray();
 	TargetDataActors->SetActors(TargetActor);

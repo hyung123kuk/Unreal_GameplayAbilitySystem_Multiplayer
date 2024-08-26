@@ -26,6 +26,9 @@ public:
 	UFUNCTION()
 	void SetActivationTag(const FGameplayTag& GameplayTag);
 
+	UFUNCTION()
+	void SetMouseTarget(FHitResult MouseTarget);
+	
 	UPROPERTY(BlueprintAssignable)
 	FMouseTargetDataSignature ValidData;
 
@@ -34,6 +37,9 @@ public:
 
 
 private:
+	UPROPERTY()
+	FHitResult LastMouseTargetHitResult;
+
 	UPROPERTY()
 	int16 PredictionKeyCurrent;
 

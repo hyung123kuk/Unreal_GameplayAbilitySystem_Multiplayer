@@ -8,6 +8,7 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/AbilityTask/SkillPartTask.h"
+#include "Interaction/CombatInterface.h"
 
 bool UHKSkillAbilitiy::GetLocalPlayerCondition(UHKAbilitySystemComponent* AbilitySystemComponent)
 {
@@ -15,19 +16,27 @@ bool UHKSkillAbilitiy::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 	{
 		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(AbilitySystemComponent->GetAvatarActor());
 		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetLocalViewingPlayerController());
-		AActor* MouseTarget = PlayerController->GetMousePointerActor();
-		if (MouseTarget == nullptr)
+		FHitResult MouseTarget = PlayerController->GetNowMousePointer();
+
+		if (MouseTarget.bBlockingHit && (MouseTarget.GetActor() == nullptr || !MouseTarget.GetActor()->Implements<UCombatInterface>()))
 		{
 			if (bLockOn)
 			{
-				MouseTarget = PlayerController->GetLockOnTarget();
+				MouseTarget = PlayerController->GetLockOnHitResult();
 			}
-			
-			if (MouseTarget == nullptr)
-				return false;
 		}
 
-		if (PlayerCharacter->GetDistanceTo(MouseTarget) <= CombatRange)
+		if (!MouseTarget.bBlockingHit)
+			return false;
+
+		if (MouseTarget.GetActor() == nullptr)
+			return false;
+
+		if (!MouseTarget.GetActor()->Implements<UCombatInterface>())
+			return false;
+
+
+		if (PlayerCharacter->GetDistanceTo(MouseTarget.GetActor()) <= CombatRange)
 		{
 			return true;
 		}
@@ -35,8 +44,8 @@ bool UHKSkillAbilitiy::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 		if (bLockOn)
 		{
 			PlayerController->LockOnTarget(MouseTarget, CombatRange - LockOnCloserRange, StartupInputTag);
-			return false;
 		}
+		return false;
 	}
 
 	return true;
@@ -47,12 +56,16 @@ void UHKSkillAbilitiy::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	PartCount = 0;
 
+
 	if (!IsLocalPlayer())
 	{
 		CastSkill();
 	}
 	else
 	{
+		AHKCharacter* PlayerCharacter = Cast<AHKCharacter>(GetAvatarActorFromActorInfo());
+		AHKPlayerController* PlayerController = Cast<AHKPlayerController>(PlayerCharacter->GetLocalViewingPlayerController());
+
 		FindTargetDataUnderMouse();
 	}
 }
@@ -61,9 +74,13 @@ void UHKSkillAbilitiy::ActivateAbility_TargetDataUnderMouse(const FGameplayAbili
 {
 	Super::ActivateAbility_TargetDataUnderMouse(TargetData, ActivationTag);
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
-	
+
+	if (HitResult.bBlockingHit && HitResult.GetActor() != nullptr)
+		MouseTargetAtSkiilStartUp = HitResult.GetActor();
+
 	PlayMontage(Montage, EndTag, EndAbilityWhenCompleteMontage);
-	FacingPosition(HitResult.Location);
+	if (bFacingMousePositionWhenMotionWarping)
+		FacingPosition(HitResult.Location);
 	CastSkill();
 }
 
@@ -79,6 +96,7 @@ void UHKSkillAbilitiy::CastSkill()
 		FSkillPartTaskInfo TaskInfo = SkillPartInfo[PartCount];
 		USkillPartTask* NewTask = NewObject<USkillPartTask>(this, TaskInfo.Task);
 		TaskInfo.PredictionKeyCurrent = PartCount + 1;
+		TaskInfo.MouseTargetAtSkiilStartUp = MouseTargetAtSkiilStartUp;
 		NewTask->InitSkillPartTask(this, TaskInfo);
 		UAbilityTask::DebugRecordAbilityTaskCreatedByAbility(NewTask);
 		PartCount++;

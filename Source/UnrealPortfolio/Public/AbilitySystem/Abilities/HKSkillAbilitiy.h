@@ -41,6 +41,9 @@ struct FSkillPartTaskInfo
 	UPROPERTY()
 	int16 PredictionKeyCurrent;
 
+	UPROPERTY()
+	AActor* MouseTargetAtSkiilStartUp;
+
 };
 /**
  * 
@@ -73,16 +76,18 @@ protected:
 	TArray<FSkillPartTaskInfo> SkillPartInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float ManaCost;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float Cooltime;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool EndAbilityWhenCompleteMontage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool EndAbilityWhenCompleteTask;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bFacingMousePositionWhenMotionWarping;
+
+	UPROPERTY()
+	AActor* MouseTargetAtSkiilStartUp;
+
+private:
 
 	int PartCount;
 

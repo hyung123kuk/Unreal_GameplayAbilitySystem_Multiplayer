@@ -30,10 +30,20 @@ public:
 	AHKProjectile* MakeProjectile(TSubclassOf<AHKProjectile> ProjectileClass, const FVector& ProjectileLocation, const FRotator& ProjectileRotation) const;
 	UFUNCTION(BlueprintCallable)
 	FGameplayEffectSpecHandle MakeProjctileEffectSpecHandle(AHKProjectile* Projectile, const FVector& ProjectileTargetLocation, int Damage) const;
+	
+	
 	UFUNCTION(BlueprintCallable)
 	void FacingPosition(const FVector& TargetPosition) const;
 	UFUNCTION(BlueprintCallable)
 	void FacingTarget();
+	UFUNCTION(BlueprintCallable)
+	FVector GetSocketLocation(const FGameplayTag& SocketTag, const FName& SocketName) const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> FindTargetsWithAngle(const FVector& Origin, float Radius, const FVector& Direction, double Angle) const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> FindTargetsWithRadius(const FVector& Origin, float Radius) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
