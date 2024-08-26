@@ -79,7 +79,7 @@ void UHKSkillAbilitiy::ActivateAbility_TargetDataUnderMouse(const FGameplayAbili
 		MouseTargetAtSkiilStartUp = HitResult.GetActor();
 
 	PlayMontage(Montage, EndTag, EndAbilityWhenCompleteMontage);
-	if (bFacingMousePositionWhenMotionWarping)
+	if (bUseMotionWarpingToHitLocation)
 		FacingPosition(HitResult.Location);
 	CastSkill();
 }

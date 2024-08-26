@@ -23,11 +23,14 @@ public:
 
 	void CastSkill();
 
-	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities);
-	void RemoveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& RemoveAbilities);
+	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities, FGameplayTag Tag);
+	void RemoveAbilities(FGameplayTag TypeTag);
 
 	bool AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+
+
+	TMap<FGameplayTag, TArray<FGameplayAbilitySpecHandle>> AbilitySpecHandle;
 
 protected:
 	UFUNCTION(Client, Reliable)

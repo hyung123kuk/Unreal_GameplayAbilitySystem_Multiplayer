@@ -10,7 +10,7 @@ void UHKAbilitySystemComponent::AbilityActorInfoSet()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UHKAbilitySystemComponent::ClientEffectApplied);
 }
 
-void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities)
+void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities, FGameplayTag Tag)
 {
 	for (const TSubclassOf<UGameplayAbility> AbilityClass : AddAbilities)
 	{
@@ -18,17 +18,33 @@ void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<U
 		if (const UHKGameplayAbility* HKAbility = Cast<UHKGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(HKAbility->StartupInputTag);
-			GiveAbility(AbilitySpec);		
+			FGameplayAbilitySpecHandle SpecHandle = GiveAbility(AbilitySpec);
+			if (AbilitySpecHandle.Contains(Tag))
+			{
+				TArray<FGameplayAbilitySpecHandle> SpecHandleArray = AbilitySpecHandle[Tag];
+				SpecHandleArray.Add(SpecHandle);
+				AbilitySpecHandle.Remove(Tag);
+				AbilitySpecHandle.Add(Tag, SpecHandleArray);
+			}
+			else
+			{
+				TArray<FGameplayAbilitySpecHandle> SpecHandleArray;
+				SpecHandleArray.Add(SpecHandle);
+				AbilitySpecHandle.Add(Tag, SpecHandleArray);
+			}
 		}
 	}
 }
 
-void UHKAbilitySystemComponent::RemoveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& RemoveAbilities)
+void UHKAbilitySystemComponent::RemoveAbilities(FGameplayTag Tag)
 {
-	for (const TSubclassOf<UGameplayAbility> AbilityClass : RemoveAbilities)
+	if (AbilitySpecHandle.Contains(Tag))
 	{
-		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
-		OnRemoveAbility(AbilitySpec);
+		TArray<FGameplayAbilitySpecHandle> SpecHandleArray = AbilitySpecHandle[Tag];
+		for (FGameplayAbilitySpecHandle Handle : SpecHandleArray)
+		{
+			ClearAbility(Handle);
+		}
 	}
 }
 
@@ -43,10 +59,17 @@ bool UHKAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag
 		{
 			IAbilityInterface* AbilityInterface = Cast<IAbilityInterface>(AbilitySpec.Ability);
 			float CoolDownRemain = AbilitySpec.Ability->GetCooldownTimeRemaining(AbilityActorInfo.Get());
+			bool Cost = AbilitySpec.Ability->CheckCost(AbilitySpec.Handle, AbilityActorInfo.Get());
 			if (CoolDownRemain > 0.0f)
 			{
 				UE_LOG(LogTemp, Log, TEXT("Cool Down : %f"), CoolDownRemain);
 				return true;
+			}
+
+			if (!Cost)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Lack Of Cost"));
+				return false;
 			}
 
 			if (AbilityInterface != nullptr)

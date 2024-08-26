@@ -103,10 +103,10 @@ private:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bFacingMousePositionWhenMotionWarping; // 마우스 포지션으로 모션워핑
+	bool bUseMotionWarpingToHitLocation; // 마우스 포지션으로 모션워핑
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bTargetingMouseToAbilityStartTarget; //어빌리티 시작시 타겟을 공격 타겟으로 설정
+	bool bTargetingWhenStartingMouseTarget; //어빌리티 시작시 타겟을 공격 타겟으로 설정
 
 	UPROPERTY(BlueprintReadOnly)
 	AActor* MouseTargetAtSkiilStartUp;

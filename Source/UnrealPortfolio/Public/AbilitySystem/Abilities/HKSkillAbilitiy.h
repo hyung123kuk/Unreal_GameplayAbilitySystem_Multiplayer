@@ -82,7 +82,7 @@ protected:
 	bool EndAbilityWhenCompleteTask;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bFacingMousePositionWhenMotionWarping;
+	bool bUseMotionWarpingToHitLocation;
 
 	UPROPERTY()
 	AActor* MouseTargetAtSkiilStartUp;

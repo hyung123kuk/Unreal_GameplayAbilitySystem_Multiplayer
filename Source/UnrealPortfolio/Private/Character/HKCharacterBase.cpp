@@ -123,14 +123,14 @@ void AHKCharacterBase::SetEquipItem(FUserItem NewItem)
 		FUserItem* UserItem = EquipmentItem.Find(NewItem.ItemInfo.EquipmentTag);
 		if (UserItem->Id != -1)
 		{
-			RemoveCharacterAbilities(UserItem->ItemInfo.GiveAbilities);
+			RemoveCharacterAbilities(FHKGameplayTags::Get().AbilityType_Weapoon);
 			EquipmentItem.Remove(UserItem->ItemInfo.EquipmentTag);
 		}
 	}
 
 	EquipmentItem.Add(NewItem.ItemInfo.EquipmentTag, NewItem);
 
-	AddCharacterAbilities(NewItem.ItemInfo.GiveAbilities);
+	AddCharacterAbilities(NewItem.ItemInfo.GiveAbilities, FHKGameplayTags::Get().AbilityType_Weapoon);
 	UseItem(NewItem);
 }
 
@@ -192,20 +192,20 @@ void AHKCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
-void AHKCharacterBase::AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities)
+void AHKCharacterBase::AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities, FGameplayTag AbilityTypeTag)
 {
 	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
 	if (!HasAuthority()) return;
 
-	HKASC->AddCharacterAbilities(Abilities);
+	HKASC->AddCharacterAbilities(Abilities, AbilityTypeTag);
 }
 
-void AHKCharacterBase::RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities)
+void AHKCharacterBase::RemoveCharacterAbilities(FGameplayTag AbilityTypeTag)
 {
 	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
 	if (!HasAuthority()) return;
 
-	HKASC->RemoveAbilities(Abilities);
+	HKASC->RemoveAbilities(AbilityTypeTag);
 }
 
 void AHKCharacterBase::OnRep_CharacterClass()

@@ -53,7 +53,7 @@ void AHKCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	InitAbilityActorInfo();
-	AddCharacterAbilities(StartupAbilities);
+	AddCharacterAbilities(StartupAbilities, FHKGameplayTags::Get().AbilityType_StartUp);
 }
 
 void AHKCharacter::OnRep_PlayerState()

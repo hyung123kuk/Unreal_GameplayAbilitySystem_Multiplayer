@@ -7,6 +7,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "Skill/SkillInfoData.h"
+#include "HKGameplayTags.h"
 #include "AbilitySystem/Abilities/HKGameplayAbility.h"
 
 void USkillInventory::Init(UHKAbilitySystemComponent* INASC)
@@ -30,7 +31,7 @@ void USkillInventory::AddSkillInventoryAbilities(UHKAbilitySystemComponent* INAS
 		SkillAbilities.Add(Skill.SkillAbility);
 	}
 
-	ASC->AddCharacterAbilities(SkillAbilities);
+	ASC->AddCharacterAbilities(SkillAbilities, FHKGameplayTags::Get().AbilityType_Skill);
 }
 
 FSkillInfo USkillInventory::FindSkill(const int Id)

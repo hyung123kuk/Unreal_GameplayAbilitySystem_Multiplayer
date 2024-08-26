@@ -70,8 +70,8 @@ protected:
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;
-	void AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities);
-	void RemoveCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities);
+	void AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities, FGameplayTag AbilityTypeTag);
+	void RemoveCharacterAbilities(FGameplayTag AbilityTypeTag);
 
 
 	UPROPERTY(EditAnywhere, Category = "Combat")

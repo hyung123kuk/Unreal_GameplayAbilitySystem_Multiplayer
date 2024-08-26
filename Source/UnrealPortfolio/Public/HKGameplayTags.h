@@ -93,6 +93,11 @@ public:
 
 	FGameplayTag Skill_SuddenAttack_1;
 
+	
+	FGameplayTag AbilityType_Skill;
+	FGameplayTag AbilityType_Weapoon;
+	FGameplayTag AbilityType_StartUp;
+	
 	FGameplayTag EquipmentType_Weapon;
 
 	FGameplayTag Trigger_UseItem;

@@ -363,4 +363,23 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("MeleeImpact")
 	);
 
+	//
+	//	AbilityType
+	//
+
+	GameplayTags.AbilityType_Skill = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AbilityType.Skill"),
+		FString("Skill Ability")
+	);
+
+	GameplayTags.AbilityType_Weapoon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AbilityType.Weapoon"),
+		FString("Weapon Ability")
+	);
+
+	GameplayTags.AbilityType_StartUp = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AbilityType.StartUp"),
+		FString("StartUp Ability")
+	);
+
 }

@@ -70,11 +70,11 @@ void USkillPartTask::Activate_TargetDataUnderMouse(const FGameplayAbilityTargetD
 
 	K2_CastNonTargetSkillTask(HitResult, ActivationTag);
 
-	if (bFacingMousePositionWhenMotionWarping)
+	if (bUseMotionWarpingToHitLocation)
 		FacingPosition(HitResult.Location);
 
 	AActor* HitActor = HitResult.GetActor();
-	if (bTargetingMouseToAbilityStartTarget)
+	if (bTargetingWhenStartingMouseTarget)
 	{
 		if (MouseTargetAtSkiilStartUp != nullptr)
 			K2_CastMouseTargetSkillTask(MouseTargetAtSkiilStartUp, ActivationTag);
