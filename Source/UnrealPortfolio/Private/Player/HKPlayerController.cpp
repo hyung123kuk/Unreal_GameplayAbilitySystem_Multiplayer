@@ -40,6 +40,7 @@ void AHKPlayerController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
 	SettingUserSkillInventory();
+	InitASCToWidget();
 }
 
 void AHKPlayerController::OnRep_PlayerState()
@@ -50,6 +51,7 @@ void AHKPlayerController::OnRep_PlayerState()
 	FString Id = GetPlayerState<AHKPlayerState>()->GetPlayerName();
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
 	SettingUserInventory(PlayerInfo);
+	InitASCToWidget();
 }
 
 void AHKPlayerController::OnPossess(APawn* InPawn)
@@ -60,6 +62,7 @@ void AHKPlayerController::OnPossess(APawn* InPawn)
 	FInGamePlayerInfo PlayerInfo = GameInstance->GetPlayerInfoWithID(Id);
 	SettingUserInventory(PlayerInfo);
 	SettingUserSkillInventory();
+	InitASCToWidget();
 }
 
 void AHKPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bMiss, bool bCriticalHit)
@@ -118,6 +121,25 @@ void AHKPlayerController::InitHUD()
 	{
 		PlayerHUD->InitOverlay(this, HKPlayerState, HKPlayerState->GetAbilitySystemComponent(), HKPlayerState->GetAttributeSet());
 	}
+}
+
+void AHKPlayerController::InitASCToWidget()
+{
+	if (Inventory == nullptr)
+		return;
+
+	if (SkillWindowWidget == nullptr)
+		return;
+
+	if (GetASC() == nullptr)
+		return;
+
+	if (bInitASCToWidget)
+		return;
+
+	bInitASCToWidget = true;
+	InventoryWidget->SetAbilitySystemComponent(GetASC());
+	SkillWindowWidget->SetAbilitySystemComponent(GetASC());
 }
 
 

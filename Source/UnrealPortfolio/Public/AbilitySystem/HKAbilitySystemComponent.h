@@ -7,6 +7,7 @@
 #include "HKAbilitySystemComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /*AssetTags*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCooldownSignature, FGameplayTag, CooldonwTag, bool, bCoolDown, float, RemainTime);
 
 /**
  * 
@@ -21,7 +22,6 @@ public:
 
 	FEffectAssetTags EffectAssetTags;
 
-	void CastSkill();
 
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities, FGameplayTag Tag);
 	void RemoveAbilities(FGameplayTag TypeTag);
@@ -29,12 +29,21 @@ public:
 	bool AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 
+	UFUNCTION()
+	void BroadCastCoolDown();
 
-	TMap<FGameplayTag, TArray<FGameplayAbilitySpecHandle>> AbilitySpecHandle;
+	TMap<FGameplayTag, TArray<FGameplayAbilitySpec>> AbilitySpecs;
+	
+	UPROPERTY()
+	FCooldownSignature SkillCooldownDelegate;
 
 protected:
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 
+	FTimerHandle MainTimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AAGameMode")
+	float CooldownBroadCastInterval = 0.03f;
 	
 };

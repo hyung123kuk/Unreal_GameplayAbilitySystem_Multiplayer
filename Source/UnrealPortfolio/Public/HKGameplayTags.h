@@ -79,6 +79,10 @@ public:
 	FGameplayTag CoolDown_Attack;
 	FGameplayTag CoolDown_SwapWeapon;
 
+	FGameplayTag CoolDown_5Combo;
+	FGameplayTag CoolDown_MultiShot;
+	FGameplayTag CoolDown_SuddenAttack;
+
 	//Skiil
 	FGameplayTag Skill_End;
 

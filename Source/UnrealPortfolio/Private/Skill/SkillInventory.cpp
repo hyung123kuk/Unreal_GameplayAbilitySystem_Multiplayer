@@ -14,7 +14,6 @@ void USkillInventory::Init(UHKAbilitySystemComponent* INASC)
 {
 	ASC = INASC;
 
-	GetWorld()->GetTimerManager().SetTimer(CoolTimeTimerHandle, this, &ThisClass::OnCoolTimeTimer, TimerTickInterval, true);
 	for (FSkillInfo Skill : Skills)
 	{
 		AddSkillDelegate.Broadcast(Skill);
@@ -83,13 +82,5 @@ void USkillInventory::ReleasedSkill(const int Id)
 			ASC->AbilityInputTagReleased(HKGameplayAbility->StartupInputTag);
 			ReleasedSkillDelegate.Broadcast(Skill);
 		}
-	}
-}
-
-void USkillInventory::OnCoolTimeTimer()
-{
-	for (FSkillInfo Skill : Skills)
-	{
-		SkillCoolTimeDelegate.Broadcast(Skill,0.0f);
 	}
 }

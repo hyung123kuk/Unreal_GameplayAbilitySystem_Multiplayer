@@ -266,6 +266,21 @@ void FHKGameplayTags::InitializeNativeGameplayTags()
 		FString("SwapWeapon CoolDown")
 	);
 
+	GameplayTags.CoolDown_5Combo = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CoolDown.5Combo"),
+		FString("5Combo CoolDown")
+	);
+
+	GameplayTags.CoolDown_MultiShot = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CoolDown.MultiShot"),
+		FString("MultiShot CoolDown")
+	);
+
+	GameplayTags.CoolDown_SuddenAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CoolDown.SuddenAttack"),
+		FString("SuddenAttack CoolDown")
+	);
+
 	//
 	//	Skiil
 	//

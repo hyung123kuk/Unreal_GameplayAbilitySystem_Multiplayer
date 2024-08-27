@@ -55,7 +55,7 @@ public:
 	void LockOnTarget(FHitResult TargetResult,float DistanceToOccurTag, FGameplayTag EventTag);
 	UFUNCTION(BlueprintCallable)
 	USkillInventory* GetSkillInventory();
-
+	
 	UHKAbilitySystemComponent* GetASC();
 
 public:
@@ -98,7 +98,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	void InitHUD();
-
+	void InitASCToWidget();
+	bool bInitASCToWidget;
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> HKContext;

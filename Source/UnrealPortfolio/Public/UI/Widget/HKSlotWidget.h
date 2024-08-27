@@ -11,7 +11,7 @@
 class USlot;
 class UUniformGridPanel;
 class UHKWidgetControllerBase;
-
+class UHKAbilitySystemComponent;
 
 UENUM(BlueprintType)
 enum class ESlotContainInformation : uint8
@@ -59,6 +59,8 @@ struct FSlotStruct
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Count;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag CooldownTag;
 };
 
 /**
@@ -93,6 +95,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ToSkillTypeData(USlotWidgetController* SlotWidgetController, int index);
 	
+	UFUNCTION(BlueprintCallable)
+	void SetAbilitySystemComponent(UHKAbilitySystemComponent* ASC);
 
 protected:
 	virtual void NativePreConstruct() override;
@@ -154,5 +158,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Tooltip")
 	TSubclassOf<USlot> TooltipClass; //TODO;
 
+	UPROPERTY()
+	UHKAbilitySystemComponent* HKASC;
 
 };

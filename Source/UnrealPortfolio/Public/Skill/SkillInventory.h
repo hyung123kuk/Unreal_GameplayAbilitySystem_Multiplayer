@@ -10,7 +10,6 @@
 class UHKAbilitySystemComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSkiilDelegate, FSkillInfo, SkillInfo);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSkiilCoolTimeDelegate, FSkillInfo, SkillInfo, float, RemainTime);
 
 
 /**
@@ -30,8 +29,6 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FSkiilDelegate AddSkillDelegate;
 
-	UPROPERTY(BlueprintAssignable)
-	FSkiilCoolTimeDelegate SkillCoolTimeDelegate;
 
 	UPROPERTY(BlueprintAssignable)
 	FSkiilDelegate PressedSkillDelegate;
@@ -59,14 +56,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Skills")
 	TArray<FSkillInfo> Skills;
 
-	FTimerHandle CoolTimeTimerHandle;
-
 	UPROPERTY()
 	TObjectPtr<UHKAbilitySystemComponent> ASC;
 
-	UPROPERTY()
-	float TimerTickInterval = 0.1f;
-
-	UFUNCTION()
-	void OnCoolTimeTimer();
 };

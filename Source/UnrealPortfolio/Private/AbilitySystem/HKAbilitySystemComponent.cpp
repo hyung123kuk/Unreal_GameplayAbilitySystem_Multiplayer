@@ -4,10 +4,18 @@
 #include "AbilitySystem/HKAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/HKGameplayAbility.h"
 #include "Interaction/AbilityInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "HKGameplayTags.h"
 
 void UHKAbilitySystemComponent::AbilityActorInfoSet()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UHKAbilitySystemComponent::ClientEffectApplied);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	const bool bLocalCharacter = PlayerController == GetAvatarActor()->GetInstigatorController();
+	//if (NM_Client == GetNetMode() || NM_Standalone == GetNetMode() || (NM_DedicatedServer == GetNetMode() && bLocalCharacter) )
+	{
+		GetWorld()->GetTimerManager().SetTimer(MainTimerHandle, this, &ThisClass::BroadCastCoolDown, CooldownBroadCastInterval, true);
+	}
 }
 
 void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AddAbilities, FGameplayTag Tag)
@@ -18,19 +26,22 @@ void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<U
 		if (const UHKGameplayAbility* HKAbility = Cast<UHKGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(HKAbility->StartupInputTag);
-			FGameplayAbilitySpecHandle SpecHandle = GiveAbility(AbilitySpec);
-			if (AbilitySpecHandle.Contains(Tag))
+
+			if (IsOwnerActorAuthoritative())
+				GiveAbility(AbilitySpec);
+
+			if (AbilitySpecs.Contains(Tag))
 			{
-				TArray<FGameplayAbilitySpecHandle> SpecHandleArray = AbilitySpecHandle[Tag];
-				SpecHandleArray.Add(SpecHandle);
-				AbilitySpecHandle.Remove(Tag);
-				AbilitySpecHandle.Add(Tag, SpecHandleArray);
+				TArray<FGameplayAbilitySpec> AbilitySpecArray = AbilitySpecs[Tag];
+				AbilitySpecArray.Add(AbilitySpec);
+				AbilitySpecs.Remove(Tag);
+				AbilitySpecs.Add(Tag, AbilitySpecArray);
 			}
 			else
 			{
-				TArray<FGameplayAbilitySpecHandle> SpecHandleArray;
-				SpecHandleArray.Add(SpecHandle);
-				AbilitySpecHandle.Add(Tag, SpecHandleArray);
+				TArray<FGameplayAbilitySpec> AbilitySpecArray;
+				AbilitySpecArray.Add(AbilitySpec);
+				AbilitySpecs.Add(Tag, AbilitySpecArray);
 			}
 		}
 	}
@@ -38,12 +49,13 @@ void UHKAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<U
 
 void UHKAbilitySystemComponent::RemoveAbilities(FGameplayTag Tag)
 {
-	if (AbilitySpecHandle.Contains(Tag))
+	if (AbilitySpecs.Contains(Tag))
 	{
-		TArray<FGameplayAbilitySpecHandle> SpecHandleArray = AbilitySpecHandle[Tag];
-		for (FGameplayAbilitySpecHandle Handle : SpecHandleArray)
+		const TArray<FGameplayAbilitySpec> AbilitySpecArray = AbilitySpecs[Tag];
+		for (FGameplayAbilitySpec Spec : AbilitySpecArray)
 		{
-			ClearAbility(Handle);
+			if (IsOwnerActorAuthoritative())
+				ClearAbility(Spec.Handle);
 		}
 	}
 }
@@ -106,6 +118,19 @@ void UHKAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& Inpu
 			{
 				AbilitySpecInputReleased(AbilitySpec);
 			}
+		}
+	}
+}
+
+void UHKAbilitySystemComponent::BroadCastCoolDown()
+{
+	for (FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		if (AbilitySpec.Ability->GetCooldownGameplayEffect() != nullptr)
+		{
+			FGameplayTag CooldownTag = AbilitySpec.Ability->GetCooldownGameplayEffect()->CachedGrantedTags.GetByIndex(0);
+			float CoolDownRemain = AbilitySpec.Ability->GetCooldownTimeRemaining(AbilityActorInfo.Get());
+			SkillCooldownDelegate.Broadcast(CooldownTag, CoolDownRemain > 0.1f, CoolDownRemain);
 		}
 	}
 }

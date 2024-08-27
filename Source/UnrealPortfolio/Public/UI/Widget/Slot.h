@@ -19,9 +19,14 @@ class UNREALPORTFOLIO_API USlot : public UHKUserWidget
 	
 public:
 	void Init(UHKSlotWidget* Parent, TArray<ESlotContainInformation> ContainTypes, int SlotNum, USlot* DSlot);
+	void SetAbilitySystemComponents(UHKAbilitySystemComponent* ASC);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Refresh();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void K2_SetCooldown(FGameplayTag CooldownTag, bool bCooldown, float RemainTime);
+
 	void RemoveSlotWidgetController();
 	void SetSlotWIdgetController(USlotWidgetController* slotWidgetController);
 
@@ -42,6 +47,10 @@ protected:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	UFUNCTION()
+	void SetCooldown(FGameplayTag CooldownTag, bool bCooldown, float RemainTime);
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USlotWidgetController* SlotWidgetController;

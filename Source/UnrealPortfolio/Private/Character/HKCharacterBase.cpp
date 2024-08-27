@@ -24,8 +24,6 @@ AHKCharacterBase::AHKCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
 }
 
 void AHKCharacterBase::BeginPlay()
@@ -167,7 +165,9 @@ void AHKCharacterBase::InitSkillInventory()
 {
 	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
 	SkillInventory->Init(HKASC);
-	if (!HasAuthority()) return;
+
+	if (!HasAuthority())
+		return;
 
 	if (SkillInventory != nullptr)
 	{
@@ -194,17 +194,17 @@ void AHKCharacterBase::InitializeDefaultAttributes() const
 
 void AHKCharacterBase::AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> Abilities, FGameplayTag AbilityTypeTag)
 {
+	if (!HasAuthority())
+		return;
 	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
-	if (!HasAuthority()) return;
-
 	HKASC->AddCharacterAbilities(Abilities, AbilityTypeTag);
 }
 
 void AHKCharacterBase::RemoveCharacterAbilities(FGameplayTag AbilityTypeTag)
 {
+	if (!HasAuthority())
+		return;
 	UHKAbilitySystemComponent* HKASC = CastChecked<UHKAbilitySystemComponent>(AbilitySystemComponent);
-	if (!HasAuthority()) return;
-
 	HKASC->RemoveAbilities(AbilityTypeTag);
 }
 

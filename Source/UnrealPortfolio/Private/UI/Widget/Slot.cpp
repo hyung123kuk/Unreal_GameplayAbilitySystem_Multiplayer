@@ -7,6 +7,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Player/HKPlayerController.h"
 #include "Skill/SkillInventory.h"
+#include "AbilitySystem/HKAbilitySystemComponent.h"
 
 void USlot::Init(UHKSlotWidget* Parent, TArray<ESlotContainInformation> ContainTypes,int SlotNum, USlot* DSlot)
 {
@@ -16,6 +17,11 @@ void USlot::Init(UHKSlotWidget* Parent, TArray<ESlotContainInformation> ContainT
 	SlotNumber = SlotNum;
 }
 
+void USlot::SetAbilitySystemComponents(UHKAbilitySystemComponent* ASC)
+{
+	K2_SetCooldown(FGameplayTag(), false, 0.f);
+	ASC->SkillCooldownDelegate.AddDynamic(this, &USlot::SetCooldown);
+}
 
 void USlot::RemoveSlotWidgetController()
 {
@@ -134,4 +140,24 @@ bool USlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDr
 	
 	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Drag : Fali"));
 	return false;
+}
+
+void USlot::SetCooldown(FGameplayTag CooldownTag, bool bCooldown, float RemainTime)
+{
+	if (SlotWidgetController == nullptr)
+	{
+		K2_SetCooldown(FGameplayTag(), false, 0.f);
+		return;
+	}
+
+	if (SlotWidgetController->GetSlotInfoParmas().CooldownTag == FGameplayTag())
+	{
+		K2_SetCooldown(FGameplayTag(), false, 0.f);
+		return;
+	}
+
+	if (CooldownTag == SlotWidgetController->GetSlotInfoParmas().CooldownTag)
+	{
+		K2_SetCooldown(CooldownTag, bCooldown, RemainTime);
+	}
 }

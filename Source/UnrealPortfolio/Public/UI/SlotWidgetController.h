@@ -38,6 +38,9 @@ struct FSlotInfoWidgetControllerParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESlotContainInformation ContainInfo;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag CooldownTag;
+
 };
 
 /**

@@ -54,8 +54,8 @@ bool UHKSkillAbilitiy::GetLocalPlayerCondition(UHKAbilitySystemComponent* Abilit
 void UHKSkillAbilitiy::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false);
 	PartCount = 0;
-
 
 	if (!IsLocalPlayer())
 	{

@@ -8,6 +8,15 @@
 #include "UI/HKWidgetControllerBase.h"
 #include "UI/SlotWidgetController.h"
 
+void UHKSlotWidget::SetAbilitySystemComponent(UHKAbilitySystemComponent* ASC)
+{
+	HKASC = ASC;
+	for (USlot* slot : Slots)
+	{
+		slot->SetAbilitySystemComponents(ASC);
+	}
+}
+
 void UHKSlotWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
@@ -81,6 +90,7 @@ void UHKSlotWidget::AddNewWidgetController(FSlotStruct NewSlotItem)
 	SlotWidgetControllerParams.ContainInfo = NewSlotItem.SlotInformation;
 	SlotWidgetControllerParams.Id = NewSlotItem.Id;
 	SlotWidgetControllerParams.UniqueId= NewSlotItem.UniqueId;
+	SlotWidgetControllerParams.CooldownTag = NewSlotItem.CooldownTag;
 	NewSlotWidgetController->SetWidgetControllerParams(SlotWidgetControllerParams);
 	OriginWidgetControllers.Add(NewSlotItem, NewSlotWidgetController);
 	SetItemInfoToEmptySlot(NewSlotWidgetController);
@@ -88,20 +98,33 @@ void UHKSlotWidget::AddNewWidgetController(FSlotStruct NewSlotItem)
 
 void UHKSlotWidget::RemoveWidgetController(FSlotStruct SlotItem)
 {
-	USlotWidgetController* RemoveWidgetController = OriginWidgetControllers.FindAndRemoveChecked(SlotItem);
-	FSlotInfoWidgetControllerParams SlotInfoParmas = RemoveWidgetController->GetSlotInfoParmas();
-	USlot* RemoveSlot = SlotInfoParmas.SlotWitdet->GetSlots()[SlotInfoParmas.SlotNumber];
-	RemoveSlot->RemoveSlotWidgetController();
+	for (auto OriginWidgetController : OriginWidgetControllers)
+	{
+		USlotWidgetController* SlotWidgetController = OriginWidgetController.Value;
+		if (SlotWidgetController->GetSlotInfoParmas().Id == SlotItem.Id)
+		{
+			FSlotInfoWidgetControllerParams SlotInfoParmas = SlotWidgetController->GetSlotInfoParmas();
+			USlot* RemoveSlot = SlotInfoParmas.SlotWitdet->GetSlots()[SlotInfoParmas.SlotNumber];
+			RemoveSlot->RemoveSlotWidgetController();
+		}
+	}
 }
 
 void UHKSlotWidget::ChangeValueWidgetController(FSlotStruct SlotItem)
 {
-	USlotWidgetController* SlotWidgetController = OriginWidgetControllers.Find(SlotItem)->Get();
-	FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
-	SlotInfoParams.Count = SlotItem.Count;
-	SlotWidgetController->SetWidgetControllerParams(SlotInfoParams);
-	USlot* ChangeSlot = SlotInfoParams.SlotWitdet->GetSlots()[SlotInfoParams.SlotNumber];
-	ChangeSlot->Refresh();
+	for (auto OriginWidgetController : OriginWidgetControllers)
+	{
+		USlotWidgetController* SlotWidgetController = OriginWidgetController.Value;
+		if (SlotWidgetController->GetSlotInfoParmas().Id == SlotItem.Id)
+		{
+			FSlotInfoWidgetControllerParams SlotInfoParams = SlotWidgetController->GetSlotInfoParmas();
+			SlotInfoParams.Count = SlotItem.Count;
+			SlotWidgetController->SetWidgetControllerParams(SlotInfoParams);
+			USlot* ChangeSlot = SlotInfoParams.SlotWitdet->GetSlots()[SlotInfoParams.SlotNumber];
+			ChangeSlot->Refresh();
+			break;
+		}
+	}
 }
 
 bool UHKSlotWidget::CanPutItemToSlot(ESlotContainInformation SlotInformationType)
