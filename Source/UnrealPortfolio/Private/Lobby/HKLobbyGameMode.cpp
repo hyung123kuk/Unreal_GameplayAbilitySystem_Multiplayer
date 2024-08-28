@@ -98,11 +98,12 @@ APlayerController* AHKLobbyGameMode::Login(UPlayer* NewPlayer, ENetRole InRemote
 		return NewPlayerController;
 	}
 
-	//const FString Id = UGameplayStatics::ParseOption(Options, FString(TEXT("Id")));
+	const FString Id = UGameplayStatics::ParseOption(Options, FString(TEXT("Id")));
 
+	UE_LOG(ServerLog, Error, TEXT("로그인 시도 아이디."), *Id);
 	//TEST CODE
-	const FString Id = FString::FromInt(ID);
-	ID++;
+	//const FString Id = FString::FromInt(ID);
+	//ID++;
 	//TEST CODE
 
 	AHKLobbyPlayerState* NewPlayerState = NewPlayerController->GetPlayerState<AHKLobbyPlayerState>();
@@ -163,6 +164,13 @@ void AHKLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 
 void AHKLobbyGameMode::Logout(AController* Exiting)
 {
+	//TEST CODE
+	if (GetNetMode() == NM_Standalone)
+	{
+		Super::Logout(Exiting);
+		return;
+	}
+
 	AHKLobbyPlayerState* ExitPlayerState = Exiting->GetPlayerState<AHKLobbyPlayerState>();
 	if (!IsValid(ExitPlayerState))
 	{
@@ -567,7 +575,7 @@ FString AHKLobbyGameMode::GettingListenServerIPLogic(const AHKLobbyPlayerState* 
 	//FString AdminPlayerIP = *RoomAdmin->GetNetConnection()->LowLevelGetRemoteAddress(false);
 
 	//LocalTest
-	FString AdminPlayerIP = TEXT("127.0.0.1:7777");
+	FString AdminPlayerIP = TEXT("127.0.0.1:7779");
 	return AdminPlayerIP;
 }
 

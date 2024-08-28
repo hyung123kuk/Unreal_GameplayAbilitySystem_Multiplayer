@@ -58,6 +58,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FUserItem FindItem(const int Id, const int UniqueId);
 
+	void SendChangedInventoryInformationToClients();
 private:
 	void AddEquipmentItem(const FUserItem Item); 
 	void UseEquipmentItem(const int Id, const int UniqueId);
@@ -67,11 +68,12 @@ private:
 	void UseConsumableItem(const int Id);
 	void RemoveConsumableItem(const int Id, int count = 1);
 
+	
 private:
 	void AddCharacter(const FUserItem Item);
 	void RemoveCharacter(const int Id);
 
-	void SendChangedInventoryInformationToClients();
+
 
 	FUserItem MakeNewUserItem(const FUserItem UserInfo, const  FItemInfomation ItemInfo);
 

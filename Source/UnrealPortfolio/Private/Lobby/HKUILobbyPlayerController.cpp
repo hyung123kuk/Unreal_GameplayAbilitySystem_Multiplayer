@@ -339,6 +339,7 @@ void AHKUILobbyPlayerController::OnRep_ItemInfo()
     }
 
     Inventory->ReSettingItems(ItemInfo.ItemIds,ItemInfo.ItemCounts);
+    Inventory->SendChangedInventoryInformationToClients();
     ChangeGoldDelegate.Broadcast(ItemInfo.PlayerGold);
 }
 
